@@ -14,7 +14,11 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Models\Responses\" />
+    <Folder Include="Models\Requests\" />
     <Folder Include="Options\" />
+    <Folder Include="UseCases\Interfaces\" />
+    <Folder Include="UseCases\Implementations\" />
   </ItemGroup>
 
 </Project>

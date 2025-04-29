@@ -11,6 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadNest.Application", "Rea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadNest.Infrastructure", "ReadNest.Infrastructure\ReadNest.Infrastructure.csproj", "{75C6AED5-B1A1-4B5A-BF4B-4BBB64B58755}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadNest.Shared", "ReadNest.Shared\ReadNest.Shared.csproj", "{193BD649-5D01-425A-B069-7B565F9CE57E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +40,10 @@ Global
 		{75C6AED5-B1A1-4B5A-BF4B-4BBB64B58755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75C6AED5-B1A1-4B5A-BF4B-4BBB64B58755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75C6AED5-B1A1-4B5A-BF4B-4BBB64B58755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{193BD649-5D01-425A-B069-7B565F9CE57E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{193BD649-5D01-425A-B069-7B565F9CE57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{193BD649-5D01-425A-B069-7B565F9CE57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{193BD649-5D01-425A-B069-7B565F9CE57E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

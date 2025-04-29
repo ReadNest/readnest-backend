@@ -1,4 +1,6 @@
 
+using ReadNest.WebAPI.Middlewares;
+
 namespace ReadNest.WebAPI
 {
     public class Program
@@ -23,10 +25,11 @@ namespace ReadNest.WebAPI
                 app.UseSwaggerUI();
             }
 
+            app.UseValidationExceptionMiddleware();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

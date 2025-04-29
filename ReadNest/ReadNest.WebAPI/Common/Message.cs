@@ -16,6 +16,8 @@
         public const string E0000 = "The operation wasn't successful!"; // E0000
         public const string E0001 = "The item could not be found."; // E0001
         public const string E0002 = "An unexpected error occurred. Please try again later."; // E0002
+        public const string E0003 = "Validation failed. Please check your input."; // E0003
+        public const string E0004 = "Please check the detailed error list for more information."; // E0004
 
         // Mapping ID to message
         private static readonly Dictionary<string, string> _messages = new()
@@ -28,7 +30,9 @@
             { nameof(W0002), W0002 },
             { nameof(E0000), E0000 },
             { nameof(E0001), E0001 },
-            { nameof(E0002), E0002 }
+            { nameof(E0002), E0002 },
+            { nameof(E0003), E0003 },
+            { nameof(E0004), E0004 }
         };
 
         // Method to get message content by ID

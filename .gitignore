@@ -398,3 +398,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+ReadNest/ReadNest.WebAPI/ReadNest.WebAPI.http

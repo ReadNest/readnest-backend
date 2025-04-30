@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace ReadNest.WebAPI.Extensions
+﻿namespace ReadNest.WebAPI.Extensions
 {
     public static class DependencyInjection
     {
         public static IServiceCollection AddWebAPI(this IServiceCollection services, IConfiguration configuration)
         {
-            
+            _ = services.AddCustomSwagger();
+            _ = services.AddCustomCors();
+
             return services;
         }
 

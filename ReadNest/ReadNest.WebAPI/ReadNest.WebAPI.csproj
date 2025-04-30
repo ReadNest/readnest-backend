@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
@@ -15,10 +14,12 @@
     <ProjectReference Include="..\ReadNest.Application\ReadNest.Application.csproj">
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\ReadNest.Infrastructure\ReadNest.Infrastructure.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Options\" />
   </ItemGroup>
 

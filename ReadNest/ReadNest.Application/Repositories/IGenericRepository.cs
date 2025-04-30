@@ -16,8 +16,10 @@ namespace ReadNest.Application.Repositories
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
         Task UpdateAsync(T entity);
         Task UpdateRangeAsync(IEnumerable<T> entities);
-        Task DeleteAsync(T entity);
-        Task DeleteByIdAsync(TKey id);
+        Task SoftDeleteAsync(T entity);
+        Task SoftDeleteByIdAsync(TKey id);
+        Task HardDeleteAsync(T entity);
+        Task HardDeleteByIdAsync(TKey id);
         Task DeleteRangeAsync(IEnumerable<T> entities);
         Task<int> CountAsync();
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);

@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Repositories;
+using ReadNest.Domain.Base;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 namespace ReadNest.Infrastructure.Persistence.Repositories
@@ -10,7 +11,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TKey"></typeparam>
-    public class GenericRepository<T, TKey> : IGenericRepository<T, TKey> where T : class
+    public class GenericRepository<T, TKey> : IGenericRepository<T, TKey> where T : class, IBaseEntity
     {
         protected readonly AppDbContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -172,6 +173,42 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+        }
+
+        public Task SoftDeleteAsync(T entity)
+        {
+            var entry = _context.Entry(entity);
+            if (entry.State == EntityState.Detached)
+            {
+                _ = _context.Set<T>().Attach(entity);
+            }
+
+            entity.IsDeleted = true;
+            return Task.CompletedTask;
+        }
+
+        public async Task SoftDeleteByIdAsync(TKey id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                await SoftDeleteAsync(entity);
+            }
+        }
+
+        public Task HardDeleteAsync(T entity)
+        {
+            _ = _dbSet.Remove(entity);
+            return Task.CompletedTask;
+        }
+
+        public async Task HardDeleteByIdAsync(TKey id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                await HardDeleteAsync(entity);
+            }
         }
     }
 }

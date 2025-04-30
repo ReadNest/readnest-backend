@@ -10,6 +10,9 @@
     <ProjectReference Include="..\ReadNest.Application\ReadNest.Application.csproj">
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\ReadNest.Shared\ReadNest.Shared.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 
 	<ItemGroup>

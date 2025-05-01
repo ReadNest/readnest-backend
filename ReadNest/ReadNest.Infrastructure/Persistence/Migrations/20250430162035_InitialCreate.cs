@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,7 +12,7 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "roles",
                 columns: table => new
                 {
@@ -25,10 +24,10 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_roles", x => x.Id);
+                    _ = table.PrimaryKey("PK_roles", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -45,8 +44,8 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_users", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "fk_users_roles",
                         column: x => x.RoleId,
                         principalTable: "roles",
@@ -54,7 +53,7 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -63,7 +62,7 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     { new Guid("6c9e5203-ede3-4437-b9a5-eb6d3f394a3a"), new DateTime(2025, 4, 30, 16, 20, 34, 609, DateTimeKind.Utc).AddTicks(4530), false, "User", new DateTime(2025, 4, 30, 16, 20, 34, 609, DateTimeKind.Utc).AddTicks(4530) }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_users_RoleId",
                 table: "users",
                 column: "RoleId");
@@ -72,10 +71,10 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "users");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "roles");
         }
     }

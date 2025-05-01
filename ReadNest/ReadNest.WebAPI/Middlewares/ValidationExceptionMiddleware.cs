@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using ReadNest.WebAPI.Common;
+using ReadNest.Shared.Common;
 
 namespace ReadNest.WebAPI.Middlewares
 {

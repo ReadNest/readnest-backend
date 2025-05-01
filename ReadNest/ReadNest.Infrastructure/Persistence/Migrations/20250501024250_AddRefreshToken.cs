@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,17 +12,17 @@ namespace ReadNest.Infrastructure.ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("6057fc76-926e-4926-bc8c-273fcd0b43cd"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("6c9e5203-ede3-4437-b9a5-eb6d3f394a3a"));
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "refresh_tokens",
                 columns: table => new
                 {
@@ -37,8 +36,8 @@ namespace ReadNest.Infrastructure.ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_refresh_tokens", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_refresh_tokens", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "fk_refresh_tokens_users",
                         column: x => x.UserId,
                         principalTable: "users",
@@ -46,7 +45,7 @@ namespace ReadNest.Infrastructure.ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -55,7 +54,7 @@ namespace ReadNest.Infrastructure.ReadNest.Infrastructure.Persistence.Migrations
                     { new Guid("d7635345-a7d4-4403-b2e0-3ebab54322eb"), new DateTime(2025, 5, 1, 2, 42, 49, 489, DateTimeKind.Utc).AddTicks(2115), false, "User", new DateTime(2025, 5, 1, 2, 42, 49, 489, DateTimeKind.Utc).AddTicks(2115) }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_refresh_tokens_UserId",
                 table: "refresh_tokens",
                 column: "UserId");
@@ -64,20 +63,20 @@ namespace ReadNest.Infrastructure.ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "refresh_tokens");
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("6d4fd7dd-14e3-41b8-b0a7-b93c5ad7ccdd"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("d7635345-a7d4-4403-b2e0-3ebab54322eb"));
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]

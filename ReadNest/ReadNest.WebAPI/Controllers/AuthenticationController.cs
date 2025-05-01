@@ -1,37 +1,43 @@
-﻿using FluentValidation;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Auth;
-using ReadNest.Application.Validators.Auth;
-using ReadNest.WebAPI.Common;
+using ReadNest.Application.UseCases.Interfaces.Auth;
 
 namespace ReadNest.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/auth")]
+    [AllowAnonymous]
     public class AuthenticationController : ControllerBase
     {
-        private readonly RegisterRequestValidator _registerRequestValidator;
+        private readonly IAuthenticationUseCase _authUseCase;
 
-        public AuthenticationController(RegisterRequestValidator registerRequestValidator)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="authUseCase"></param>
+        public AuthenticationController(IAuthenticationUseCase authUseCase)
         {
-            _registerRequestValidator = registerRequestValidator;
+            _authUseCase = authUseCase;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            await _registerRequestValidator.ValidateAndThrowAsync(request);
+            var response = await _authUseCase.RegisterAsync(request);
 
-            return Ok(new ApiResponse<string>
-            {
-                Success = true,
-                MessageId = MessageId.I0000,
-                Message = Message.GetMessageById(MessageId.I0000),
-            });
+            if (response.Success) return Ok(response);
+            return BadRequest(response);
         }
 
-        //[HttpPost("login")]
-        //public async Task<IActionResult> Login(LoginRequest request) { }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var response = await _authUseCase.LoginAsync(request);
+
+            if (response.Success) return Ok(response);
+            return Unauthorized(response);
+        }
 
         //[HttpPost("forgot-password")]
         //public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request) { }

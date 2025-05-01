@@ -8,8 +8,8 @@ namespace ReadNest.Infrastructure.Extensions
     {
         public static IServiceCollection AddConfigureOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
-            services.Configure<DatabaseOptions>(configuration.GetSection(nameof(DatabaseOptions)));
+            _ = services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+            _ = services.Configure<DatabaseOptions>(configuration.GetSection(nameof(DatabaseOptions)));
 
             return services;
         }

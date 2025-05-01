@@ -1,4 +1,4 @@
-﻿namespace ReadNest.WebAPI.Common
+﻿namespace ReadNest.Shared.Common
 {
     public class ApiResponse<T> where T : class
     {

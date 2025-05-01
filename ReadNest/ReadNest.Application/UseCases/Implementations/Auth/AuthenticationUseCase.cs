@@ -1,0 +1,107 @@
+﻿using FluentValidation;
+using ReadNest.Application.Models.Requests.Auth;
+using ReadNest.Application.Models.Responses.Auth;
+using ReadNest.Application.Repositories;
+using ReadNest.Application.Services;
+using ReadNest.Application.UseCases.Interfaces.Auth;
+using ReadNest.Application.Validators.Auth;
+using ReadNest.Domain.Entities;
+using ReadNest.Shared.Common;
+using ReadNest.Shared.Enums;
+
+namespace ReadNest.Application.UseCases.Implementations.Auth
+{
+    public class AuthenticationUseCase : IAuthenticationUseCase
+    {
+        private readonly RegisterRequestValidator _registerRequestValidator;
+        private readonly LoginRequestValidator _loginRequestValidator;
+        private readonly IUserRepository _userRepository;
+        private readonly IGenericRepository<Role, Guid> _roleRepository;
+        private readonly IJwtService _jwtService;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="registerRequestValidator"></param>
+        /// <param name="loginRequestValidator"></param>
+        /// <param name="userRepository"></param>
+        /// <param name="roleRepository"></param>
+        /// <param name="jwtService"></param>
+        public AuthenticationUseCase(RegisterRequestValidator registerRequestValidator, LoginRequestValidator loginRequestValidator, IUserRepository userRepository, IGenericRepository<Role, Guid> roleRepository, IJwtService jwtService)
+        {
+            _registerRequestValidator = registerRequestValidator;
+            _loginRequestValidator = loginRequestValidator;
+            _userRepository = userRepository;
+            _roleRepository = roleRepository;
+            _jwtService = jwtService;
+        }
+
+        public async Task<ApiResponse<TokenResponse>> LoginAsync(LoginRequest request)
+        {
+            await _loginRequestValidator.ValidateAndThrowAsync(request);
+            var user = await _userRepository.LoginAsync(request.UserName, request.Password);
+            if (user == null)
+            {
+                return new ApiResponse<TokenResponse>
+                {
+                    Success = false,
+                    MessageId = MessageId.E0000,
+                    Message = Message.GetMessageById(MessageId.E0000)
+                };
+            }
+
+            var tokenResponse = new TokenResponse
+            {
+                AccessToken = _jwtService.GenerateAccessToken(user.Id, user.Role.RoleName),
+                RefreshToken = await _jwtService.GenerateRefreshTokenAsync(user.Id),
+            };
+
+            return new ApiResponse<TokenResponse>
+            {
+                Data = tokenResponse,
+                Success = true,
+                MessageId = MessageId.I0000,
+                Message = Message.GetMessageById(MessageId.I0000)
+            };
+        }
+
+        public async Task<ApiResponse<string>> RegisterAsync(RegisterRequest request)
+        {
+            await _registerRequestValidator.ValidateAndThrowAsync(request);
+
+            var role = (await _roleRepository.FindAsync(x => x.RoleName == RoleEnum.User.ToString(), asNoTracking: true)).FirstOrDefault();
+            if (role == null)
+            {
+                return new ApiResponse<string>
+                {
+                    Success = false,
+                    MessageId = MessageId.E0000,
+                    Message = "Role doesn't exists."
+                };
+            }
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                UserName = request.UserName,
+                Email = request.Email,
+                HashPassword = hashedPassword,
+                Address = request.Address,
+                DateOfBirth = request.DateOfBirth,
+                RoleId = role.Id,
+            };
+
+            _ = await _userRepository.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
+
+            return new ApiResponse<string>
+            {
+                Success = true,
+                MessageId = MessageId.I0000,
+                Message = Message.GetMessageById(MessageId.I0000)
+            };
+
+        }
+    }
+}

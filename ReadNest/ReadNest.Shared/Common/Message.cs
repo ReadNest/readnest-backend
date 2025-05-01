@@ -1,4 +1,4 @@
-﻿namespace ReadNest.WebAPI.Common
+﻿namespace ReadNest.Shared.Common
 {
     public partial class Message
     {

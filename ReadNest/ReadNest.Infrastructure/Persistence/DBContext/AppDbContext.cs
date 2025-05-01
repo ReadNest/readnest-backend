@@ -7,61 +7,65 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
 {
     public class AppDbContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .ToTable("users")
                 .HasKey(u => u.Id);
 
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.UserName)
                 .HasColumnName("user_name")
                 .HasMaxLength(255)
                 .HasDefaultValue(string.Empty);
 
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.Email)
                 .HasColumnName("email")
                 .HasMaxLength(255)
                 .HasDefaultValue(string.Empty);
 
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.HashPassword)
                 .HasColumnName("hash_password")
                 .HasMaxLength(255)
                 .HasDefaultValue(string.Empty);
 
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.Address)
                 .HasColumnName("address")
                 .HasMaxLength(500)
                 .HasDefaultValue(string.Empty);
 
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.DateOfBirth)
                 .HasColumnName("date_of_birth")
                 .HasColumnType("date")
                 .HasDefaultValue(DateTime.MinValue);
 
-            modelBuilder.Entity<Role>()
+            _ = modelBuilder.Entity<Role>()
                 .ToTable("roles")
                 .HasKey(r => r.Id);
 
-            modelBuilder.Entity<Role>()
+            _ = modelBuilder.Entity<Role>()
                 .Property(r => r.RoleName)
                 .HasColumnName("role_name")
                 .HasMaxLength(255)
                 .HasDefaultValue(string.Empty);
 
-            modelBuilder.Entity<User>()
+            _ = modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany(r => r.Users)
                 .HasForeignKey(u => u.RoleId)
                 .HasConstraintName("fk_users_roles");
 
-            modelBuilder.Entity<Role>().HasData(
+            _ = modelBuilder.Entity<Role>().HasData(
                 new Role
                 {
                     Id = Guid.NewGuid(),
@@ -74,24 +78,24 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                     Id = Guid.NewGuid(),
                     RoleName = RoleEnum.User.ToString(),
                     CreatedAt = DateTime.UtcNow,
-                    UpdatedAt= DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                 }
             );
 
-            modelBuilder.Entity<RefreshToken>()
+            _ = modelBuilder.Entity<RefreshToken>()
                 .ToTable("refresh_tokens")
                 .HasKey(rt => rt.Id);
 
-            modelBuilder.Entity<RefreshToken>()
+            _ = modelBuilder.Entity<RefreshToken>()
                 .Property(rt => rt.Token)
                 .HasMaxLength(255)
                 .IsRequired();
 
-            modelBuilder.Entity<RefreshToken>()
+            _ = modelBuilder.Entity<RefreshToken>()
                 .Property(rt => rt.ExpiryDate)
                 .IsRequired();
 
-            modelBuilder.Entity<RefreshToken>()
+            _ = modelBuilder.Entity<RefreshToken>()
                 .HasOne(rt => rt.User)
                 .WithMany()
                 .HasForeignKey(rt => rt.UserId)

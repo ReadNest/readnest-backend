@@ -11,6 +11,8 @@ namespace ReadNest.Infrastructure.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             _ = services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            _ = services.AddScoped<IUserRepository, UserRepository>();
+
             _ = services.AddScoped<IJwtService, JwtService>();
 
             return services;

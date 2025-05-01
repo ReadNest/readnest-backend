@@ -59,10 +59,9 @@ namespace ReadNest.Infrastructure.Services
         public async Task<string> GenerateRefreshTokenAsync(Guid userId)
         {
             var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-            var expiry = DateTime.UtcNow.AddDays(7);
+            var expiry = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays);
             var tokenEntity = new RefreshToken
             {
-                Id = Guid.NewGuid(),
                 UserId = userId,
                 Token = refreshToken,
                 ExpiryDate = expiry

@@ -28,7 +28,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 .HasDefaultValue(string.Empty);
 
             modelBuilder.Entity<User>()
-                .Property(u => u.HashPasswod)
+                .Property(u => u.HashPassword)
                 .HasColumnName("hash_password")
                 .HasMaxLength(255)
                 .HasDefaultValue(string.Empty);

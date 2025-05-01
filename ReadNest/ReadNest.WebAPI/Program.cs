@@ -1,3 +1,6 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using ReadNest.Application.Extensions;
 using ReadNest.Infrastructure.Extensions;
 using ReadNest.WebAPI.Extensions;
 using ReadNest.WebAPI.Middlewares;
@@ -11,9 +14,10 @@ namespace ReadNest.WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            _ = builder.Services.AddApplication();
             _ = builder.Services.AddInfrastructure(builder.Configuration);
             _ = builder.Services.AddWebAPI(builder.Configuration);
-
+          
             _ = builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             _ = builder.Services.AddEndpointsApiExplorer();

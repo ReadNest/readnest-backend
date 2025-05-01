@@ -6,7 +6,7 @@ namespace ReadNest.Domain.Entities
     {
         public string UserName { get; set; }
         public string Email { get; set; }
-        public string HashPasswod { get; set; }
+        public string HashPassword { get; set; }
         public string Address { get; set; }
         public DateTime DateOfBirth { get; set; }
         public Guid RoleId { get; set; }

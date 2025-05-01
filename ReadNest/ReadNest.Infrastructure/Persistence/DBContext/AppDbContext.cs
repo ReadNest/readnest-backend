@@ -78,6 +78,26 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 }
             );
 
+            modelBuilder.Entity<RefreshToken>()
+                .ToTable("refresh_tokens")
+                .HasKey(rt => rt.Id);
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.Token)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.ExpiryDate)
+                .IsRequired();
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasOne(rt => rt.User)
+                .WithMany()
+                .HasForeignKey(rt => rt.UserId)
+                .HasConstraintName("fk_refresh_tokens_users");
+
+
             base.OnModelCreating(modelBuilder);
         }
 

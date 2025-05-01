@@ -8,5 +8,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Auth
     {
         Task<ApiResponse<string>> RegisterAsync(RegisterRequest request);
         Task<ApiResponse<TokenResponse>> LoginAsync(LoginRequest request);
+        Task<ApiResponse<TokenResponse>> GetNewAccessToken(TokenRequest request);
     }
 }

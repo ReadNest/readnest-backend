@@ -36,6 +36,45 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
             _jwtService = jwtService;
         }
 
+        public async Task<ApiResponse<TokenResponse>> GetNewAccessToken(TokenRequest request)
+        {
+            var isValid = await _jwtService.ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+            if (isValid)
+            {
+                var user = await _userRepository.GetByUserIdAsync(request.UserId);
+                if (user == null)
+                {
+                    return new ApiResponse<TokenResponse>
+                    {
+                        Success = false,
+                        Message = Message.GetMessageById(MessageId.E0000),
+                        MessageId = MessageId.E0000,
+                    };
+                }
+
+                var responseToken = new TokenResponse
+                {
+                    AccessToken = _jwtService.GenerateAccessToken(user.Id, user.Role.RoleName),
+                    RefreshToken = request.RefreshToken,
+                };
+
+                return new ApiResponse<TokenResponse>
+                {
+                    Data = responseToken,
+                    Success = true,
+                    Message = Message.GetMessageById(MessageId.I0000),
+                    MessageId = MessageId.I0000,
+                };
+            }
+
+            return new ApiResponse<TokenResponse>
+            {
+                Success = false,
+                Message = Message.GetMessageById(MessageId.E0000),
+                MessageId = MessageId.E0000,
+            };
+        }
+
         public async Task<ApiResponse<TokenResponse>> LoginAsync(LoginRequest request)
         {
             await _loginRequestValidator.ValidateAndThrowAsync(request);
@@ -101,7 +140,6 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
                 MessageId = MessageId.I0000,
                 Message = Message.GetMessageById(MessageId.I0000)
             };
-
         }
     }
 }

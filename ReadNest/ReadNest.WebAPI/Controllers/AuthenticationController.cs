@@ -42,7 +42,13 @@ namespace ReadNest.WebAPI.Controllers
         //[HttpPost("forgot-password")]
         //public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request) { }
 
-        //[HttpPost("refresh-token")]
-        //public async Task<IActionResult> RefreshToken(TokenRequest request) { }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(TokenRequest request)
+        {
+            var response = await _authUseCase.GetNewAccessToken(request);
+
+            if (response.Success) return Ok(response);
+            return BadRequest(response);
+        }
     }
 }

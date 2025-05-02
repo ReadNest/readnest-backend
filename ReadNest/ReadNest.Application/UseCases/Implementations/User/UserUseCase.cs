@@ -74,9 +74,30 @@ namespace ReadNest.Application.UseCases.Implementations.User
             return ApiResponse<PagingResponse<GetUserResponse>>.Ok(data); ;
         }
 
-        public Task<ApiResponse<GetUserResponse>> GetByIdAsync(Guid userId)
+        public async Task<ApiResponse<GetUserResponse>> GetByIdAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            var user = (await _userRepository.FindWithIncludeAsync(
+                                       predicate: query => query.Id == userId && !query.IsDeleted,
+                                       include: query => query.Include(x => x.Role),
+                                       asNoTracking: true)).FirstOrDefault();
+
+            if(user == null)
+            {
+                return ApiResponse<GetUserResponse>.Fail(MessageId.E0005);
+            }
+
+            var data = new GetUserResponse
+            {
+                Address = user.Address,
+                DateOfBirth = user.DateOfBirth,
+                Email = user.Email,
+                RoleId = user.RoleId,
+                RoleName = user.Role.RoleName,
+                UserId = user.Id,
+                UserName = user.UserName,
+            };
+
+            return ApiResponse<GetUserResponse>.Ok(data); ;
         }
 
         public Task<ApiResponse<string>> UpdateProfileAsync(Guid userId, UpdateUserRequest request)

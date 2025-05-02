@@ -26,14 +26,15 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> GetAll([FromQuery] PagingRequest request)
         {
             var response = await _userUseCase.GetAllAsync(request);
-            return Ok(response);
+            return response.Success ? Ok(response) : NotFound(response);
         }
 
-        //[HttpGet("{userId}")]
-        //public Task<IActionResult> GetByUserId([FromQuery] Guid userId)
-        //{
-
-        //}
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetByUserId([FromQuery] Guid userId)
+        {
+            var response = await _userUseCase.GetByIdAsync(userId);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
 
         //[HttpPost]
         //public Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)

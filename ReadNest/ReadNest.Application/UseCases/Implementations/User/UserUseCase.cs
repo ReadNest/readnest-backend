@@ -30,9 +30,11 @@ namespace ReadNest.Application.UseCases.Implementations.User
             throw new NotImplementedException();
         }
 
-        public Task<ApiResponse<string>> DeleteAccountAsync(Guid userId)
+        public async Task<ApiResponse<string>> DeleteAccountAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            await _userRepository.SoftDeleteByIdAsync(userId);
+            await _userRepository.SaveChangesAsync();
+            return ApiResponse<string>.Ok(string.Empty);
         }
 
         public async Task<ApiResponse<PagingResponse<GetUserResponse>>> GetAllAsync(PagingRequest request)

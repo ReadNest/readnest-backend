@@ -8,6 +8,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/users")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
         private readonly IUserUseCase _userUseCase;
@@ -22,7 +23,6 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetAll([FromQuery] PagingRequest request)
         {
             var response = await _userUseCase.GetAllAsync(request);
@@ -30,7 +30,7 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetByUserId([FromQuery] Guid userId)
+        public async Task<IActionResult> GetByUserId([FromRoute] Guid userId)
         {
             var response = await _userUseCase.GetByIdAsync(userId);
             return response.Success ? Ok(response) : NotFound(response);
@@ -43,15 +43,16 @@ namespace ReadNest.WebAPI.Controllers
         //}
 
         //[HttpPut("{userId}")]
-        //public Task<IActionResult> UpdateUserProfile([FromQuery] Guid userId, [FromBody] UpdateUserRequest request)
+        //public Task<IActionResult> UpdateUserProfile([FromRoute] Guid userId, [FromBody] UpdateUserRequest request)
         //{
 
         //}
 
-        //[HttpDelete("{userId}")]
-        //public Task<IActionResult> DeleteByUserId([FromQuery] Guid userId)
-        //{
-
-        //}
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteByUserId([FromRoute] Guid userId)
+        {
+            var response = await _userUseCase.DeleteAccountAsync(userId);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
     }
 }

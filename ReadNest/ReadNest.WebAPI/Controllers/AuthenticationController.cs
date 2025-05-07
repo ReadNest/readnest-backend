@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Auth;
+using ReadNest.Application.Models.Responses.Auth;
+using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.UseCases.Interfaces.Auth;
+using ReadNest.Shared.Common;
 
 namespace ReadNest.WebAPI.Controllers
 {
@@ -22,6 +26,8 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpPost("register")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             var response = await _authUseCase.RegisterAsync(request);
@@ -31,6 +37,8 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(typeof(ApiResponse<TokenResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var response = await _authUseCase.LoginAsync(request);
@@ -43,6 +51,8 @@ namespace ReadNest.WebAPI.Controllers
         //public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request) { }
 
         [HttpPost("refresh-token")]
+        [ProducesResponseType(typeof(ApiResponse<TokenResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RefreshToken(TokenRequest request)
         {
             var response = await _authUseCase.GetNewAccessToken(request);

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Auth;
 using ReadNest.Application.Models.Responses.Auth;
-using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.UseCases.Interfaces.Auth;
 using ReadNest.Shared.Common;
 

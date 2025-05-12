@@ -11,5 +11,8 @@ namespace ReadNest.Domain.Entities
         public DateTime DateOfBirth { get; set; }
         public Guid RoleId { get; set; }
         public Role Role { get; set; }
+        public ICollection<FavoriteBook> FavoriteBooks { get; set; }
+        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Comment> LikedComments { get; set; }
     }
 }

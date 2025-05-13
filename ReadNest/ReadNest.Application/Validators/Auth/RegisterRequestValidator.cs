@@ -8,6 +8,9 @@ namespace ReadNest.Application.Validators.Auth
     {
         public RegisterRequestValidator(IUserRepository userRepository)
         {
+            _ = RuleFor(x => x.FullName)
+                .NotEmpty().WithMessage("Full name is required.");
+
             _ = RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Username is required.")
                 .Length(3, 100).WithMessage("Username must be between 3 and 100 characters.")

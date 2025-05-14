@@ -25,6 +25,12 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 .HasKey(u => u.Id);
 
             _ = modelBuilder.Entity<User>()
+                .Property(u => u.FullName)
+                .HasColumnName("full_name")
+                .HasMaxLength(100)
+                .HasDefaultValue(string.Empty);
+
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.UserName)
                 .HasColumnName("user_name")
                 .HasMaxLength(255)

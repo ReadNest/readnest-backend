@@ -91,7 +91,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
 
             var data = new GetUserResponse
             {
-                FullName = x.FullName,
+                FullName = user.FullName,
                 Address = user.Address,
                 DateOfBirth = user.DateOfBirth,
                 Email = user.Email,

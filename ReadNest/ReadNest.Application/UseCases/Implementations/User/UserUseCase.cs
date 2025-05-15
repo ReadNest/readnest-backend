@@ -60,6 +60,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
             {
                 Items = pagingResponse.Items.Select(x => new GetUserResponse
                 {
+                    FullName = x.FullName,
                     Address = x.Address,
                     DateOfBirth = x.DateOfBirth,
                     Email = x.Email,
@@ -83,13 +84,14 @@ namespace ReadNest.Application.UseCases.Implementations.User
                                        include: query => query.Include(x => x.Role),
                                        asNoTracking: true)).FirstOrDefault();
 
-            if(user == null)
+            if (user == null)
             {
                 return ApiResponse<GetUserResponse>.Fail(MessageId.E0005);
             }
 
             var data = new GetUserResponse
             {
+                FullName = x.FullName,
                 Address = user.Address,
                 DateOfBirth = user.DateOfBirth,
                 Email = user.Email,

@@ -31,6 +31,11 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 .HasDefaultValue(string.Empty);
 
             _ = modelBuilder.Entity<User>()
+                .Property(u => u.AvatarUrl)
+                .HasColumnName("avatar_url")
+                .HasDefaultValue(string.Empty);
+
+            _ = modelBuilder.Entity<User>()
                 .Property(u => u.UserName)
                 .HasColumnName("user_name")
                 .HasMaxLength(255)

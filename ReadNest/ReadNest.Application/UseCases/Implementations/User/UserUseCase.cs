@@ -94,6 +94,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 FullName = user.FullName,
                 Address = user.Address,
                 DateOfBirth = user.DateOfBirth,
+                AvatarUrl = user.AvatarUrl,
                 Email = user.Email,
                 RoleId = user.RoleId,
                 RoleName = user.Role.RoleName,

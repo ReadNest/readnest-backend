@@ -12,6 +12,8 @@ namespace ReadNest.Infrastructure.Extensions
         {
             _ = services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             _ = services.AddScoped<IUserRepository, UserRepository>();
+            _ = services.AddScoped<IBookRepository, BookRepository>();
+            _ = services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
 

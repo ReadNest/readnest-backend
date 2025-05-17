@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using ReadNest.Application.UseCases.Implementations.Auth;
+using ReadNest.Application.UseCases.Implementations.Book;
 using ReadNest.Application.UseCases.Implementations.User;
 using ReadNest.Application.UseCases.Interfaces.Auth;
+using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.UseCases.Interfaces.User;
 using ReadNest.Application.Validators.Auth;
 
@@ -14,6 +16,7 @@ namespace ReadNest.Application.Extensions
         {
             _ = services.AddScoped<IAuthenticationUseCase, AuthenticationUseCase>();
             _ = services.AddScoped<IUserUseCase, UserUseCase>();
+            _ = services.AddScoped<IBookUseCase, BookUseCase>();
 
             return services;
         }

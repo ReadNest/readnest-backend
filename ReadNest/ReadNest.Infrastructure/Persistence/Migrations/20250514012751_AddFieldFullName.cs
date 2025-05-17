@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,17 +12,17 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("2f6ffbe7-246f-456b-9b5b-77f71be1ad78"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("845af63e-f0c8-4fb1-91b0-e7ea1cec49f1"));
 
-            migrationBuilder.AddColumn<string>(
+            _ = migrationBuilder.AddColumn<string>(
                 name: "full_name",
                 table: "users",
                 type: "character varying(100)",
@@ -31,7 +30,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 nullable: false,
                 defaultValue: "");
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -44,21 +43,21 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("0c2d0b97-0520-4af3-ab0a-211295f8192a"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("9d5ac316-0291-4983-a765-4ef7d9e64bf6"));
 
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "full_name",
                 table: "users");
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]

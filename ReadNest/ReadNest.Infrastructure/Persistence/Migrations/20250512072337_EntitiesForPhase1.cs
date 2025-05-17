@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,17 +12,17 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("762ff468-377e-4c59-8f2d-552ce8fbc8b0"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("b9f3bef5-2c04-44ed-a638-e52e9690a460"));
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "affiliate_links",
                 columns: table => new
                 {
@@ -37,8 +36,8 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_affiliate_links", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_affiliate_links", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_affiliate_links_book_id",
                         column: x => x.book_id,
                         principalTable: "books",
@@ -46,7 +45,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "categories",
                 columns: table => new
                 {
@@ -59,10 +58,10 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_categories", x => x.id);
+                    _ = table.PrimaryKey("PK_categories", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "comments",
                 columns: table => new
                 {
@@ -76,14 +75,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_comments", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_comments", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_comments_book_id",
                         column: x => x.book_id,
                         principalTable: "books",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_comments_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -91,7 +90,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "book_categories",
                 columns: table => new
                 {
@@ -100,14 +99,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_book_categories", x => new { x.book_id, x.category_id });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_book_categories", x => new { x.book_id, x.category_id });
+                    _ = table.ForeignKey(
                         name: "fk_book_categories_book_id",
                         column: x => x.book_id,
                         principalTable: "books",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_book_categories_category_id",
                         column: x => x.category_id,
                         principalTable: "categories",
@@ -115,7 +114,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "comment_likes",
                 columns: table => new
                 {
@@ -124,14 +123,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_comment_likes", x => new { x.comment_id, x.user_id });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_comment_likes", x => new { x.comment_id, x.user_id });
+                    _ = table.ForeignKey(
                         name: "fk_comment_likes_comment_id",
                         column: x => x.comment_id,
                         principalTable: "comments",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_comment_likes_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -139,7 +138,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -148,27 +147,27 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     { new Guid("845af63e-f0c8-4fb1-91b0-e7ea1cec49f1"), new DateTime(2025, 5, 12, 7, 23, 36, 926, DateTimeKind.Utc).AddTicks(8938), false, "Admin", new DateTime(2025, 5, 12, 7, 23, 36, 926, DateTimeKind.Utc).AddTicks(8940) }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_affiliate_links_book_id",
                 table: "affiliate_links",
                 column: "book_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_book_categories_category_id",
                 table: "book_categories",
                 column: "category_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_comment_likes_user_id",
                 table: "comment_likes",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_comments_book_id",
                 table: "comments",
                 column: "book_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_comments_user_id",
                 table: "comments",
                 column: "user_id");
@@ -177,32 +176,32 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "affiliate_links");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "book_categories");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "comment_likes");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "categories");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "comments");
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("2f6ffbe7-246f-456b-9b5b-77f71be1ad78"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("845af63e-f0c8-4fb1-91b0-e7ea1cec49f1"));
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]

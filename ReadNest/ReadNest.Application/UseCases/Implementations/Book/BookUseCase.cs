@@ -110,7 +110,7 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             var pagingResponse = new PagingResponse<GetBookResponse>
             {
                 Items = bookResponses,
-                TotalItems = bookResponses.Count,
+                TotalItems = await _bookRepository.CountAsync(b => !b.IsDeleted),
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize
             };

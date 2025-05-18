@@ -10,7 +10,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/users")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
         private readonly IUserUseCase _userUseCase;
@@ -60,6 +60,15 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> DeleteByUserId([FromRoute] Guid userId)
         {
             var response = await _userUseCase.DeleteAccountAsync(userId);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
+        [HttpGet("username/{userName}")]
+        [ProducesResponseType(typeof(ApiResponse<GetUserProfileResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetByUserName([FromRoute] string userName)
+        {
+            var response = await _userUseCase.GetByUserNameAsync(userName);
             return response.Success ? Ok(response) : NotFound(response);
         }
     }

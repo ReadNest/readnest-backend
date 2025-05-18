@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Models.Requests.User;
+using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.User;
@@ -103,6 +104,46 @@ namespace ReadNest.Application.UseCases.Implementations.User
             };
 
             return ApiResponse<GetUserResponse>.Ok(data); ;
+        }
+
+        public async Task<ApiResponse<GetUserProfileResponse>> GetByUserNameAsync(string userName)
+        {
+            var user = await _userRepository.GetByUserNameAsync(userName);
+            if (user == null)
+            {
+                return ApiResponse<GetUserProfileResponse>.Fail(MessageId.E0005);
+            }
+            
+            var data = new GetUserProfileResponse
+            {
+                FullName = user.FullName,
+                Address = user.Address,
+                DateOfBirth = user.DateOfBirth,
+                AvatarUrl = user.AvatarUrl,
+                Email = user.Email,
+                RoleId = user.RoleId,
+                RoleName = user.Role.RoleName,
+                UserId = user.Id,
+                UserName = user.UserName,
+                Comments = user.Comments.Select(x => new GetCommentResponse
+                {
+                    CommentId = x.Id,
+                    Content = x.Content,
+                    //CreatedAt = x.CreatedAt,
+                    //UpdatedAt = x.UpdatedAt,
+                    //PostId = x.PostId,
+                    UserId = x.UserId,
+                    BookId = x.BookId,
+                    NumberOfLikes = x.Likes.Count,
+                    CreatorName = x.Creator.FullName,
+                    //UserName = x.User.UserName,
+                }).ToList(),
+                NumberOfComments = user.Comments.Count,
+                numberOfPosts = 0, // TODO: Add logic to get number of posts
+                RatingScores = 0, // TODO: Add logic to get rating scores
+            };
+
+            return ApiResponse<GetUserProfileResponse>.Ok(data);
         }
 
         public Task<ApiResponse<string>> UpdateProfileAsync(Guid userId, UpdateUserRequest request)

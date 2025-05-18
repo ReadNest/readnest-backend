@@ -4,6 +4,6 @@
     {
         public Guid Id { get; set; }
         public string PartnerName { get; set; }
-        public string Link { get; set; }
+        public string AffiliateLink { get; set; }
     }
 }

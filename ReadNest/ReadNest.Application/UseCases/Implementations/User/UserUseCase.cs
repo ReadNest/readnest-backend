@@ -113,7 +113,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
             {
                 return ApiResponse<GetUserProfileResponse>.Fail(MessageId.E0005);
             }
-            
+
             var data = new GetUserProfileResponse
             {
                 FullName = user.FullName,
@@ -146,9 +146,38 @@ namespace ReadNest.Application.UseCases.Implementations.User
             return ApiResponse<GetUserProfileResponse>.Ok(data);
         }
 
-        public Task<ApiResponse<string>> UpdateProfileAsync(Guid userId, UpdateUserRequest request)
+        public async Task<ApiResponse<string>> UpdateProfileAsync(Guid userId, UpdateUserRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ApiResponse<string>.Fail(MessageId.E0005);
+            }
+            if (string.IsNullOrEmpty(request.AvatarUrl))
+            {
+                user.FullName = request.FullName;
+                user.Address = request.Address;
+                user.DateOfBirth = request.DateOfBirth.Value;
+                //user.Bio = request.Bio;
+            }
+            else
+            {
+                user.AvatarUrl = request.AvatarUrl;
+            }
+
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _userRepository.UpdateAsync(user);
+            await _userRepository.SaveChangesAsync();
+
+            if (string.IsNullOrEmpty(request.AvatarUrl))
+            {
+                return ApiResponse<string>.Ok("Update profile info successfully!");
+            }
+            else
+            {
+                return ApiResponse<string>.Ok("Update avatar successfully!");
+            }
         }
     }
 }

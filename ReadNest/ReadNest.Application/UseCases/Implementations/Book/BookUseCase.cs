@@ -78,7 +78,8 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             var books = await _bookRepository.FindWithIncludePagedAsync(
                 predicate: b => !b.IsDeleted,
                 include: query => query
-                    .Include(b => b.Categories),
+                    .Include(b => b.Categories)
+                    .Include(b => b.AffiliateLinks),
                 pageNumber: request.PageIndex,
                 pageSize: request.PageSize,
                 asNoTracking: true);
@@ -98,7 +99,12 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                     Id = c.Id,
                     Name = c.Name
                 }).ToList(),
-                AffiliateLinks = [],
+                AffiliateLinks = book.AffiliateLinks.Select(a => new GetAffiliateLinkResponse
+                {
+                    Id = a.Id,
+                    AffiliateLink = a.Link,
+                    PartnerName = a.PartnerName
+                }).ToList(),
                 FavoriteCount = book.FavoriteBooks?.Count ?? 0
             }).ToList();
 
@@ -153,7 +159,7 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                 {
                     Id = a.Id,
                     PartnerName = a.PartnerName,
-                    Link = a.Link
+                    AffiliateLink = a.Link
                 }).ToList(),
             };
 

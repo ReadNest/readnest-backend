@@ -15,7 +15,7 @@ namespace ReadNest.Application.Models.Responses.Comment
         public string Content { get; set; }
         public Guid BookId { get; set; }
         public Guid UserId { get; set; }
-        public virtual Book Book { get; set; }
+        public virtual Domain.Entities.Book Book { get; set; }
         //[JsonIgnore]
         //public virtual GetUserResponse Creator { get; set; }
         public virtual string CreatorName { get; set; }

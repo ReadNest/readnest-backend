@@ -12,5 +12,6 @@ namespace ReadNest.Application.UseCases.Interfaces.User
         Task<ApiResponse<string>> DeleteAccountAsync(Guid userId);
         Task<ApiResponse<PagingResponse<GetUserResponse>>> GetAllAsync(PagingRequest request);
         Task<ApiResponse<GetUserResponse>> GetByIdAsync(Guid userId);
+        Task<ApiResponse<GetUserProfileResponse>> GetByUserNameAsync(string userName);
     }
 }

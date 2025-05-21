@@ -15,5 +15,6 @@ namespace ReadNest.Domain.Entities
         public ICollection<Category> Categories { get; set; }
         public ICollection<AffiliateLink> AffiliateLinks { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<BookImage> BookImages { get; set; }
     }
 }

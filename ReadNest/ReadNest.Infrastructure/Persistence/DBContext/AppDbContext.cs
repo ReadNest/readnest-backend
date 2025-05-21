@@ -15,6 +15,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<AffiliateLink> AffiliateLinks { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<BookImage> BookImages { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -64,6 +65,12 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 .HasColumnName("date_of_birth")
                 .HasColumnType("date")
                 .HasDefaultValue(DateTime.MinValue);
+
+            _ = modelBuilder.Entity<User>()
+                .Property(u => u.Bio)
+                .HasColumnName("bio")
+                .HasColumnType("text")
+                .HasDefaultValue(string.Empty);
 
             _ = modelBuilder.Entity<Role>()
                 .ToTable("roles")
@@ -311,6 +318,37 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                         _ = j.HasKey("comment_id", "user_id");
                         _ = j.ToTable("comment_likes");
                     });
+
+            _ = modelBuilder.Entity<BookImage>(entity =>
+            {
+                _ = entity.ToTable("book_images");
+
+                _ = entity.HasKey(e => e.Id);
+
+                _ = entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+
+                _ = entity.Property(e => e.BookId)
+                      .HasColumnName("book_id")
+                      .IsRequired();
+
+                _ = entity.Property(e => e.ImageUrl)
+                      .HasColumnName("image_url")
+                      .IsRequired()
+                      .HasMaxLength(500);
+
+                _ = entity.Property(e => e.Order)
+                      .HasColumnName("order")
+                      .IsRequired();
+
+                entity.HasOne(e => e.Book)
+                      .WithMany(b => b.BookImages)
+                      .HasForeignKey(e => e.BookId)
+                      .HasConstraintName("fk_book_images_book_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             base.OnModelCreating(modelBuilder);
         }

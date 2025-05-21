@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Responses.Comment;
-using ReadNest.Domain.Entities;
+﻿using ReadNest.Application.Models.Responses.Comment;
 
 namespace ReadNest.Application.Models.Responses.User
 {

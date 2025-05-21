@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Responses.User;
-using ReadNest.Domain.Entities;
-
-namespace ReadNest.Application.Models.Responses.Comment
+﻿namespace ReadNest.Application.Models.Responses.Comment
 {
     public class GetCommentResponse
     {

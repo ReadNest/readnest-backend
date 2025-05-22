@@ -92,7 +92,7 @@ namespace ReadNest.Application.UseCases.Implementations.Category
                     Name = x.Name,
                     Description = x.Description
                 }).ToList(),
-                TotalItems = pagingResponse.TotalItems,
+                TotalItems = await _categoryRepository.CountAsync(x => !x.IsDeleted),
                 PageIndex = pagingResponse.PageIndex,
                 PageSize = pagingResponse.PageSize
             };

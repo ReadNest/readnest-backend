@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ReadNest.Application.Models.Requests.FavoriteBook;
+using ReadNest.Application.Models.Responses.Book;
+using ReadNest.Application.Models.Responses.Category;
 using ReadNest.Application.Models.Responses.FavoriteBook;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
@@ -41,7 +44,7 @@ namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
             }
             else
             {
-                await _favoriteBookRepository.SoftDeleteAsync(existing);
+                await _favoriteBookRepository.HardDeleteAsync(existing);
                 isFavorited = false;
             }
 
@@ -56,10 +59,40 @@ namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
             return ApiResponse<ToggleFavoriteBookResponse>.Ok(response);
         }
 
-        public async Task<ApiResponse<List<Guid>>> GetFavoriteBookIdsByUserAsync(Guid userId)
+        public async Task<ApiResponse<PagingResponse<GetBookResponse>>> GetFavoriteBooksPagedByUserAsync(Guid userId, PagingRequest request)
         {
-            // Implementation for getting favorite book IDs by user
-            throw new NotImplementedException();
+            var pagingResponse = await _favoriteBookRepository.GetFavoriteBooksByUserPagedAsync(userId, request.PageIndex, request.PageSize);
+
+            if (pagingResponse.TotalItems == 0)
+            {
+                return ApiResponse<PagingResponse<GetBookResponse>>.Fail("No favorite books found.");
+            }
+
+            var data = new PagingResponse<GetBookResponse>
+            {
+                Items = pagingResponse.Items.Select(b => new GetBookResponse
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Author = b.Author,
+                    ImageUrl = b.ImageUrl,
+                    AverageRating = b.AvarageRating,
+                    Description = b.Description,
+                    ISBN = b.ISBN,
+                    Language = b.Language,
+                    Categories = b.Categories.Select(c => new GetCategoryResponse
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Description = c.Description
+                    }).ToList(),
+                }).ToList(),
+                TotalItems = pagingResponse.TotalItems,
+                PageIndex = pagingResponse.PageIndex,
+                PageSize = pagingResponse.PageSize
+            };
+
+            return ApiResponse<PagingResponse<GetBookResponse>>.Ok(data);
         }
     }
 }

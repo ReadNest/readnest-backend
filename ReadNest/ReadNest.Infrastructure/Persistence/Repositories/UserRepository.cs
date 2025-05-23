@@ -26,6 +26,15 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
             return await _context.Users.AsNoTracking().Include(x => x.Role).FirstOrDefaultAsync(x => x.Id == userId && !x.IsDeleted);
         }
 
+        public async Task<User> GetByUserNameAsync(string userName)
+        {
+            var user = await _context.Users
+                .Include(x => x.Role)
+                .Include(x => x.Comments)
+                .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted);
+            return user;
+        }
+
         public async Task<User?> LoginAsync(string username, string password)
         {
             var user = await _context.Users.Include(x => x.Role).AsNoTracking().FirstOrDefaultAsync(x => x.UserName == username && !x.IsDeleted);

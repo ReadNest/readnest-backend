@@ -47,6 +47,7 @@ namespace ReadNest.Application.Repositories
         Task HardDeleteByIdAsync(TKey id);
         Task DeleteRangeAsync(IEnumerable<T> entities);
         Task<int> CountAsync();
+        Task<int> CountAsync(Expression<Func<T, bool>> predicate);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
         void SaveChanges();
         Task SaveChangesAsync();

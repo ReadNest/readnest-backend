@@ -293,5 +293,10 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
 
             return new PagingResponse<T>(items, totalCount, pageNumber, pageSize);
         }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.CountAsync(predicate);
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,17 +12,17 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("6d4fd7dd-14e3-41b8-b0a7-b93c5ad7ccdd"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("d7635345-a7d4-4403-b2e0-3ebab54322eb"));
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "books",
                 columns: table => new
                 {
@@ -39,10 +38,10 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_books", x => x.id);
+                    _ = table.PrimaryKey("PK_books", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "favorite_books",
                 columns: table => new
                 {
@@ -55,14 +54,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_favorite_books", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_favorite_books", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_favorite_books_books_book_id",
                         column: x => x.book_id,
                         principalTable: "books",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_favorite_books_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -70,7 +69,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -79,12 +78,12 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     { new Guid("b9f3bef5-2c04-44ed-a638-e52e9690a460"), new DateTime(2025, 5, 12, 6, 46, 13, 79, DateTimeKind.Utc).AddTicks(7057), false, "User", new DateTime(2025, 5, 12, 6, 46, 13, 79, DateTimeKind.Utc).AddTicks(7057) }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_favorite_books_book_id",
                 table: "favorite_books",
                 column: "book_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_favorite_books_user_id",
                 table: "favorite_books",
                 column: "user_id");
@@ -93,23 +92,23 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "favorite_books");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "books");
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("762ff468-377e-4c59-8f2d-552ce8fbc8b0"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("b9f3bef5-2c04-44ed-a638-e52e9690a460"));
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]

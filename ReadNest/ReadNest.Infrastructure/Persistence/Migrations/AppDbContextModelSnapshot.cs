@@ -86,6 +86,14 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<string>("ISBN")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasDefaultValue("")
+                        .HasColumnName("isbn");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -94,6 +102,14 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("")
+                        .HasColumnName("language");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -107,6 +123,43 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("books", (string)null);
+                });
+
+            modelBuilder.Entity("ReadNest.Domain.Entities.BookImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("book_images", (string)null);
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.Category", b =>
@@ -275,19 +328,19 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("845af63e-f0c8-4fb1-91b0-e7ea1cec49f1"),
-                            CreatedAt = new DateTime(2025, 5, 12, 7, 23, 36, 926, DateTimeKind.Utc).AddTicks(8938),
+                            Id = new Guid("b1b59770-a2de-4127-8c20-b1e1e20a1b82"),
+                            CreatedAt = new DateTime(2025, 5, 21, 16, 9, 2, 686, DateTimeKind.Utc).AddTicks(5331),
                             IsDeleted = false,
                             RoleName = "Admin",
-                            UpdatedAt = new DateTime(2025, 5, 12, 7, 23, 36, 926, DateTimeKind.Utc).AddTicks(8940)
+                            UpdatedAt = new DateTime(2025, 5, 21, 16, 9, 2, 686, DateTimeKind.Utc).AddTicks(5333)
                         },
                         new
                         {
-                            Id = new Guid("2f6ffbe7-246f-456b-9b5b-77f71be1ad78"),
-                            CreatedAt = new DateTime(2025, 5, 12, 7, 23, 36, 926, DateTimeKind.Utc).AddTicks(8943),
+                            Id = new Guid("55de61d6-6c12-4ec6-9600-e7b1df3a8f91"),
+                            CreatedAt = new DateTime(2025, 5, 21, 16, 9, 2, 686, DateTimeKind.Utc).AddTicks(5336),
                             IsDeleted = false,
                             RoleName = "User",
-                            UpdatedAt = new DateTime(2025, 5, 12, 7, 23, 36, 926, DateTimeKind.Utc).AddTicks(8944)
+                            UpdatedAt = new DateTime(2025, 5, 21, 16, 9, 2, 686, DateTimeKind.Utc).AddTicks(5337)
                         });
                 });
 
@@ -305,6 +358,20 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .HasDefaultValue("")
                         .HasColumnName("address");
 
+                    b.Property<string>("AvatarUrl")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("")
+                        .HasColumnName("avatar_url");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("")
+                        .HasColumnName("bio");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -321,6 +388,14 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(255)")
                         .HasDefaultValue("")
                         .HasColumnName("email");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("")
+                        .HasColumnName("full_name");
 
                     b.Property<string>("HashPassword")
                         .IsRequired()
@@ -392,6 +467,18 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_affiliate_links_book_id");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("ReadNest.Domain.Entities.BookImage", b =>
+                {
+                    b.HasOne("ReadNest.Domain.Entities.Book", "Book")
+                        .WithMany("BookImages")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_book_images_book_id");
 
                     b.Navigation("Book");
                 });
@@ -497,6 +584,8 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ReadNest.Domain.Entities.Book", b =>
                 {
                     b.Navigation("AffiliateLinks");
+
+                    b.Navigation("BookImages");
 
                     b.Navigation("Comments");
 

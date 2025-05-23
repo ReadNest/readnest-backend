@@ -123,7 +123,9 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
             var user = new Domain.Entities.User
             {
                 Id = Guid.NewGuid(),
+                FullName = request.FullName,
                 UserName = request.UserName,
+                AvatarUrl = string.Empty,
                 Email = request.Email,
                 HashPassword = hashedPassword,
                 Address = request.Address,

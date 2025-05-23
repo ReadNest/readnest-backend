@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Domain.Base;
+﻿using ReadNest.Domain.Base;
 
 namespace ReadNest.Domain.Entities
 {
@@ -14,9 +9,12 @@ namespace ReadNest.Domain.Entities
         public string ImageUrl { get; set; }
         public double AvarageRating { get; set; }
         public string Description { get; set; }
+        public string ISBN { get; set; }
+        public string Language { get; set; }
         public ICollection<FavoriteBook> FavoriteBooks { get; set; }
         public ICollection<Category> Categories { get; set; }
         public ICollection<AffiliateLink> AffiliateLinks { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<BookImage> BookImages { get; set; }
     }
 }

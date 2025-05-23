@@ -34,6 +34,8 @@ namespace ReadNest.WebAPI
 
             _ = app.UseHttpsRedirection();
 
+            _ = app.UseCors("AllowFrontend");
+
             _ = app.UseAuthentication();
 
             _ = app.UseAuthorization();

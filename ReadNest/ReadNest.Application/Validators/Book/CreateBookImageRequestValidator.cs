@@ -8,8 +8,7 @@ namespace ReadNest.Application.Validators.Book
         public CreateBookImageRequestValidator()
         {
             _ = RuleFor(x => x.ImageUrl).NotEmpty();
-            _ = RuleFor(x => x.Order).NotEmpty()
-                .GreaterThanOrEqualTo(0);
+            _ = RuleFor(x => x.Order).GreaterThanOrEqualTo(0);
         }
     }
 }

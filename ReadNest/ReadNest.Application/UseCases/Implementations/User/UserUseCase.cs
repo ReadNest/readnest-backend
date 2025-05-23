@@ -125,6 +125,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 RoleName = user.Role.RoleName,
                 UserId = user.Id,
                 UserName = user.UserName,
+                Bio = user.Bio,
                 Comments = user.Comments.Select(x => new GetCommentResponse
                 {
                     CommentId = x.Id,
@@ -158,7 +159,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 user.FullName = request.FullName;
                 user.Address = request.Address;
                 user.DateOfBirth = request.DateOfBirth.Value;
-                //user.Bio = request.Bio;
+                user.Bio = request.Bio;
             }
             else
             {

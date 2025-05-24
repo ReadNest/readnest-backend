@@ -15,6 +15,7 @@ namespace ReadNest.Application.Models.Responses.Book
         public string Language { get; set; }
         public List<GetCategoryResponse> Categories { get; set; }
         public List<GetAffiliateLinkResponse> AffiliateLinks { get; set; }
+        public List<GetBookImageResponse> BookImages { get; set; }
         public int FavoriteCount { get; set; }
         //public List<GetCommentResponse> Comments { get; set; } = new();
     }

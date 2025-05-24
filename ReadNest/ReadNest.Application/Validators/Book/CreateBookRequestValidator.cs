@@ -38,6 +38,14 @@ namespace ReadNest.Application.Validators.Book
             _ = RuleFor(x => x.CategoryIds)
                 .NotNull().WithMessage("CategoryIds must not be null.");
             //.Must(ids => ids != null && ids.Count > 0).WithMessage("At least one category must be selected.");
+
+            _ = RuleFor(x => x.BookImages)
+                .NotNull()
+                .Must(bookImages =>
+                    bookImages.Select(img => img.Order).Distinct().Count() == bookImages.Count)
+                .WithMessage("Order in BookImages must be unique.");
+
+            _ = RuleForEach(x => x.BookImages).SetValidator(new CreateBookImageRequestValidator());
         }
     }
 }

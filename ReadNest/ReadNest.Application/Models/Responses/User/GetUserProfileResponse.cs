@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Responses.Comment;
-using ReadNest.Domain.Entities;
+﻿using ReadNest.Application.Models.Responses.Comment;
 
 namespace ReadNest.Application.Models.Responses.User
 {
@@ -15,6 +9,7 @@ namespace ReadNest.Application.Models.Responses.User
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
+        public string Bio { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string AvatarUrl { get; set; }
         public Guid RoleId { get; set; }

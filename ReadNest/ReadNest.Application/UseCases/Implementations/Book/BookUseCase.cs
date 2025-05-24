@@ -45,7 +45,12 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                 Categories = (await _categoryRepository.FindAsync(
                             predicate: query => request.CategoryIds.Contains(query.Id) && query.IsDeleted == false,
                             asNoTracking: false))
-                            .ToList()
+                            .ToList(),
+                BookImages = request.BookImages.Select(x => new Domain.Entities.BookImage
+                {
+                    ImageUrl = x.ImageUrl,
+                    Order = x.Order
+                }).ToList(),
             };
 
             _ = await _bookRepository.AddAsync(book);
@@ -79,7 +84,8 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                 predicate: b => !b.IsDeleted,
                 include: query => query
                     .Include(b => b.Categories)
-                    .Include(b => b.AffiliateLinks),
+                    .Include(b => b.AffiliateLinks)
+                    .Include(b => b.BookImages),
                 pageNumber: request.PageIndex,
                 pageSize: request.PageSize,
                 asNoTracking: true);
@@ -105,6 +111,12 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                     AffiliateLink = a.Link,
                     PartnerName = a.PartnerName
                 }).ToList(),
+                BookImages = book.BookImages.Select(bi => new GetBookImageResponse
+                {
+                    Id = bi.Id,
+                    Order = bi.Order,
+                    ImageUrl = bi.ImageUrl,
+                }).OrderBy(bi => bi.Order).ToList(),
                 FavoriteCount = book.FavoriteBooks?.Count ?? 0
             }).ToList();
 
@@ -130,7 +142,8 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                 predicate: b => b.Id == bookId && !b.IsDeleted,
                 include: query => query
                     .Include(b => b.Categories)
-                    .Include(b => b.AffiliateLinks),
+                    .Include(b => b.AffiliateLinks)
+                    .Include(b => b.BookImages),
                 asNoTracking: true);
 
             var book = books.FirstOrDefault();
@@ -161,6 +174,12 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                     PartnerName = a.PartnerName,
                     AffiliateLink = a.Link
                 }).ToList(),
+                BookImages = book.BookImages.Select(bi => new GetBookImageResponse
+                {
+                    Id = bi.Id,
+                    Order = bi.Order,
+                    ImageUrl = bi.ImageUrl,
+                }).OrderBy(bi => bi.Order).ToList(),
             };
 
             return ApiResponse<GetBookResponse>.Ok(response);

@@ -13,6 +13,7 @@ namespace ReadNest.Application.Models.Responses.Comment
         public virtual string CreatorName { get; set; }
         //public ICollection<GetUserResponse> Likes { get; set; }
         public int NumberOfLikes { get; set; }
+        public DateTime CreatedAt { get; set; }
 
     }
 }

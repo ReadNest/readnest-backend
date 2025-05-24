@@ -21,12 +21,12 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<GetCommentResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequest request)
         {
             var response = await _commentUseCase.CreateAsync(request);
-            return Ok(new { Message = "Comment created successfully" });
+            return response.Success ? Ok(response) : NotFound(response);
         }
 
         [HttpGet("{bookId}")]

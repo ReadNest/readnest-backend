@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.FavoriteBook;
 using ReadNest.Application.Models.Responses.Book;
@@ -10,7 +12,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/favoriteBooks")]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FavoriteBookController : ControllerBase
     {
         private readonly IFavoriteBookUseCase _favoriteBookUseCase;

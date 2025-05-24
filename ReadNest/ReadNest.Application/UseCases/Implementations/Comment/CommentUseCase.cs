@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ReadNest.Application.Models.Requests.Comment;
+using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Comment;
 using ReadNest.Shared.Common;
@@ -51,11 +52,39 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 BookId = request.BookId,
                 UserId = request.UserId,
                 Content = request.Content,
+                Status = "Published", // Assuming "Published" is the default status for a new comment
                 CreatedAt = DateTime.UtcNow
             });
 
             await _commentRepository.SaveChangesAsync();
             return ApiResponse<string>.Ok(string.Empty);
+        }
+
+        public async Task<ApiResponse<List<GetCommentResponse>>> GetPublishedCommentsByBookIdAsync(Guid bookId)
+        {
+            var comments = await _commentRepository.GetPublishedCommentsByBookIdAsync(bookId);
+            if (comments == null || !comments.Any())
+            {
+                return ApiResponse<List<GetCommentResponse>>.Fail("No comments found for this book.");
+            }
+            var response = comments.Select(c => new GetCommentResponse
+            {
+                CommentId = c.Id,
+                BookId = c.BookId,
+                UserId = c.UserId,
+                Content = c.Content,
+                Creator = c.Creator != null ? new Models.Responses.User.GetUserResponse
+                {
+                    UserId = c.Creator.Id,
+                    UserName = c.Creator.UserName,
+                    Email = c.Creator.Email,
+                    AvatarUrl = c.Creator.AvatarUrl,
+                } : null,
+                NumberOfLikes = c.Likes?.Count ?? 0,
+            }).ToList();
+
+            return ApiResponse<List<GetCommentResponse>>.Ok(response);
+
         }
     }
 }

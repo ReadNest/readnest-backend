@@ -16,7 +16,9 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         {
             return await _context.Comments
                 .AsNoTracking()
-                .Where(c => c.BookId == bookId && !c.IsDeleted)
+                .Where(c => c.BookId == bookId && !c.IsDeleted && c.Status == "Published")
+                .Include(c => c.Creator)
+                .Include(c => c.Likes)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
         }

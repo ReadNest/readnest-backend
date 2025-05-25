@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 #nullable disable
 
-namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
+namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250524131831_AddFieldStatusToCommentTable")]
+    partial class AddFieldStatusToCommentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,12 +77,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(150)")
                         .HasColumnName("author");
 
-                    b.Property<string>("AuthorNormalized")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("author_normalized");
-
                     b.Property<double>("AvarageRating")
                         .HasColumnType("double precision")
                         .HasColumnName("average_rating");
@@ -91,11 +88,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
-
-                    b.Property<string>("DescriptionNormalized")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description_normalized");
 
                     b.Property<string>("ISBN")
                         .IsRequired()
@@ -127,12 +119,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("title");
-
-                    b.Property<string>("TitleNormalized")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("title_normalized");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

@@ -288,7 +288,10 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasColumnName("content")
                       .IsRequired()
                       .HasColumnType("text");
-
+                _ = entity.Property(e => e.Status)
+                      .HasColumnName("status")
+                      .IsRequired()
+                      .HasColumnType("text");
                 _ = entity.Property(e => e.BookId)
                       .HasColumnName("book_id")
                       .IsRequired();

@@ -5,12 +5,14 @@ using ReadNest.Application.UseCases.Implementations.Auth;
 using ReadNest.Application.UseCases.Implementations.Book;
 using ReadNest.Application.UseCases.Implementations.Category;
 using ReadNest.Application.UseCases.Implementations.FavoriteBook;
+using ReadNest.Application.UseCases.Implementations.Comment;
 using ReadNest.Application.UseCases.Implementations.User;
 using ReadNest.Application.UseCases.Interfaces.AffiliateLink;
 using ReadNest.Application.UseCases.Interfaces.Auth;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.UseCases.Interfaces.Category;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
+using ReadNest.Application.UseCases.Interfaces.Comment;
 using ReadNest.Application.UseCases.Interfaces.User;
 using ReadNest.Application.Validators.Auth;
 
@@ -26,6 +28,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<IAffiliateLinkUseCase, AffiliateLinkUseCase>();
             _ = services.AddScoped<ICategoryUseCase, CategoryUseCase>();
             _ = services.AddScoped<IFavoriteBookUseCase, FavoriteBookUseCase>();
+            _ = services.AddScoped<ICommentUseCase, CommentUseCase>();
 
             return services;
         }

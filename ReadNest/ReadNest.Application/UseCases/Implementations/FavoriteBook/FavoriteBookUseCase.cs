@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Requests.FavoriteBook;
+﻿using ReadNest.Application.Models.Requests.FavoriteBook;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Category;
 using ReadNest.Application.Models.Responses.FavoriteBook;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
-using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
@@ -39,7 +33,7 @@ namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
                     UpdatedAt = DateTime.UtcNow
                 };
 
-                await _favoriteBookRepository.AddAsync(newFavorite);
+                _ = await _favoriteBookRepository.AddAsync(newFavorite);
                 isFavorited = true;
             }
             else

@@ -144,6 +144,16 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .IsRequired()
                       .HasMaxLength(150);
 
+                _ = entity.Property(e => e.TitleNormalized)
+                      .HasColumnName("title_normalized")
+                      .IsRequired()
+                      .HasMaxLength(200);
+
+                _ = entity.Property(e => e.AuthorNormalized)
+                      .HasColumnName("author_normalized")
+                      .IsRequired()
+                      .HasMaxLength(150);
+
                 _ = entity.Property(e => e.ImageUrl)
                       .HasColumnName("image_url")
                       .HasMaxLength(300);
@@ -153,6 +163,10 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
 
                 _ = entity.Property(e => e.Description)
                       .HasColumnName("description")
+                      .HasColumnType("text");
+
+                _ = entity.Property(e => e.DescriptionNormalized)
+                      .HasColumnName("description_normalized")
                       .HasColumnType("text");
 
                 _ = entity.Property(e => e.ISBN)
@@ -342,7 +356,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasColumnName("order")
                       .IsRequired();
 
-                entity.HasOne(e => e.Book)
+                _ = entity.HasOne(e => e.Book)
                       .WithMany(b => b.BookImages)
                       .HasForeignKey(e => e.BookId)
                       .HasConstraintName("fk_book_images_book_id")

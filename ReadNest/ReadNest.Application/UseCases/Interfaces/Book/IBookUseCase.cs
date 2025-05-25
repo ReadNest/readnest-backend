@@ -9,5 +9,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Book
         Task<ApiResponse<GetBookResponse>> CreateBookAsync(CreateBookRequest request);
         Task<ApiResponse<PagingResponse<GetBookResponse>>> GetAllAsync(PagingRequest request);
         Task<ApiResponse<GetBookResponse>> GetByIdAsync(Guid bookId);
+        Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> SearchBooksAsync(PagingRequest paging, string? keyword);
     }
 }

@@ -34,6 +34,15 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
+        [HttpGet("search")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SearchBooks([FromQuery] PagingRequest paging, [FromQuery] string? keyword)
+        {
+            var response = await _bookUseCase.SearchBooksAsync(paging, keyword);
+            return Ok(response);
+        }
+
+
         [HttpGet("{bookId}")]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

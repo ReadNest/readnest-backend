@@ -14,5 +14,7 @@ namespace ReadNest.Application.UseCases.Interfaces.Comment
         Task<ApiResponse<GetCommentResponse>> CreateAsync(CreateCommentRequest request);
         //Get list of published comments by book id
         Task<ApiResponse<List<GetCommentResponse>>> GetPublishedCommentsByBookIdAsync(Guid bookId);
+        // Like Comment
+        Task<ApiResponse<string>> LikeCommentAsync(Guid commentId, Guid userId);
     }
 }

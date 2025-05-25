@@ -11,7 +11,8 @@ namespace ReadNest.Application.Models.Responses.Comment
         public virtual Domain.Entities.Book Book { get; set; }
         public virtual GetUserResponse Creator { get; set; }
         public virtual string CreatorName { get; set; }
-        //public ICollection<GetUserResponse> Likes { get; set; }
+        // Lưu list Id của user đã lưu
+        public ICollection<string> UserLikes { get; set; }
         public int NumberOfLikes { get; set; }
         public DateTime CreatedAt { get; set; }
 

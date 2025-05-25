@@ -10,5 +10,6 @@ namespace ReadNest.Application.Repositories
     public interface ICommentRepository : IGenericRepository<Comment, Guid>
     {
         public Task<IEnumerable<Comment>> GetPublishedCommentsByBookIdAsync(Guid bookId);
+        public Task<Comment> GetCommentWithLikesByIdAsync(Guid commentId);
     }
 }

@@ -65,7 +65,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 BookId = cmt.BookId,
                 UserId = cmt.UserId,
                 Content = cmt.Content,
-                Creator =  new GetUserResponse
+                Creator = new GetUserResponse
                 {
                     UserId = creator.Id,
                     FullName = creator.FullName,
@@ -103,10 +103,37 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,
+                UserLikes = c.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetCommentResponse>>.Ok(response);
 
+        }
+
+        public async Task<ApiResponse<string>> LikeCommentAsync(Guid commentId, Guid userId)
+        {
+            var comment = await _commentRepository.GetCommentWithLikesByIdAsync(commentId);
+            if (comment == null)
+                return ApiResponse<string>.Fail("Comment not found");
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return ApiResponse<string>.Fail("User not found");
+
+
+            if (comment.Likes.Any(u => u.Id == userId))
+            {
+                // Handle unlike logic
+                comment.Likes.Remove(user);
+                await _commentRepository.SaveChangesAsync();
+                return ApiResponse<string>.Ok("Unlike successfully");
+            }
+            else
+            {
+                comment.Likes.Add(user);
+                await _commentRepository.SaveChangesAsync();
+                return ApiResponse<string>.Ok("Like successfully");
+            }
         }
     }
 }

@@ -12,6 +12,13 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
 {
     public class CommentRepository(AppDbContext context) : GenericRepository<Comment, Guid>(context), ICommentRepository
     {
+        public async Task<Comment> GetCommentWithLikesByIdAsync(Guid commentId)
+        {
+            return await _context.Comments
+                .Include(c => c.Likes)
+                .FirstOrDefaultAsync(c => c.Id == commentId && !c.IsDeleted);
+        }
+
         public async Task<IEnumerable<Comment>> GetPublishedCommentsByBookIdAsync(Guid bookId)
         {
             return await _context.Comments

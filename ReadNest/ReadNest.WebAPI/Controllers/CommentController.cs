@@ -67,7 +67,7 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
         // Report Comment
-        [HttpPut]
+        [HttpPut("report")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ReportComment([FromBody] ReportCommentRequest request)

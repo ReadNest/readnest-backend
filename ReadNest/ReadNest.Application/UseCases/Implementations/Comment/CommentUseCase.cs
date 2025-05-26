@@ -80,6 +80,18 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
             return ApiResponse<GetCommentResponse>.Ok(response);
         }
 
+        public async Task<ApiResponse<string>> DeleteCommentAsync(Guid commentId)
+        {
+            var comment = await _commentRepository.GetByIdAsync(commentId);
+            if (comment is null)
+            {
+                return ApiResponse<string>.Fail("No comments found");
+            }
+            await _commentRepository.SoftDeleteAsync(comment);
+            await _commentRepository.SaveChangesAsync();
+            return ApiResponse<string>.Ok(string.Empty);
+        }
+
         public async Task<ApiResponse<List<GetCommentResponse>>> GetPublishedCommentsByBookIdAsync(Guid bookId)
         {
             var comments = await _commentRepository.GetPublishedCommentsByBookIdAsync(bookId);
@@ -134,6 +146,29 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 await _commentRepository.SaveChangesAsync();
                 return ApiResponse<string>.Ok("Like successfully");
             }
+        }
+
+        public async Task<ApiResponse<string>> UpdateCommentAsync(UpdateCommentRequest request)
+        {
+            var comment = await _commentRepository.GetCommentWithLikesByIdAsync(request.CommentId);
+            if (comment is null)
+            {
+                return ApiResponse<string>.Fail("Comment not found");
+            }
+            if (string.IsNullOrWhiteSpace(request.Content))
+            {
+                return ApiResponse<string>.Fail("Empty Content!");
+            }
+
+            if (request.Content.Length > 255)
+            {
+                return ApiResponse<string>.Fail("Content is too long!");
+            }
+
+            comment.Content = request.Content;
+            await _commentRepository.UpdateAsync(comment);
+            await _commentRepository.SaveChangesAsync();
+            return ApiResponse<string>.Ok("Update comment successfully");
         }
     }
 }

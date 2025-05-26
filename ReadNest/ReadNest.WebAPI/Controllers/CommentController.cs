@@ -47,5 +47,24 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _commentUseCase.LikeCommentAsync(request.CommentId, request.UserId);
             return response.Success ? Ok(response) : NotFound(response);
         }
+
+        // Update Comment content
+        [HttpPut]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request)
+        {
+            var response = await _commentUseCase.UpdateCommentAsync(request);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+        // Soft Delete Comment
+        [HttpDelete("{commentId}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteComment(Guid commentId)
+        {
+            var response = await _commentUseCase.DeleteCommentAsync(commentId);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
     }
 }

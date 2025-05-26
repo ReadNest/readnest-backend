@@ -292,6 +292,10 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasColumnName("status")
                       .IsRequired()
                       .HasColumnType("text");
+                _ = entity.Property(e => e.ModerationReason)
+                      .HasColumnName("moderation_reason")
+                      .IsRequired()
+                      .HasColumnType("text");
                 _ = entity.Property(e => e.BookId)
                       .HasColumnName("book_id")
                       .IsRequired();

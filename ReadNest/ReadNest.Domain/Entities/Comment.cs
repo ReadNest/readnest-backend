@@ -8,6 +8,7 @@ namespace ReadNest.Domain.Entities
         public Guid BookId { get; set; }
         public Guid UserId { get; set; }
         public string Status { get; set; }
+        public string ModerationReason { get; set; }
         public virtual Book Book { get; set; }
         public virtual User Creator { get; set; }
         public ICollection<User> Likes { get; set; }

@@ -15,6 +15,8 @@ using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
 using ReadNest.Application.UseCases.Interfaces.Comment;
 using ReadNest.Application.UseCases.Interfaces.User;
 using ReadNest.Application.Validators.Auth;
+using ReadNest.Application.UseCases.Interfaces.Post;
+using ReadNest.Application.UseCases.Implementations.Post;
 
 namespace ReadNest.Application.Extensions
 {
@@ -29,6 +31,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<ICategoryUseCase, CategoryUseCase>();
             _ = services.AddScoped<IFavoriteBookUseCase, FavoriteBookUseCase>();
             _ = services.AddScoped<ICommentUseCase, CommentUseCase>();
+            _ = services.AddScoped<IPostUseCase, PostUseCase>();
 
             return services;
         }

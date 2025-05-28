@@ -17,6 +17,7 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IAffiliateLinkRepository, AffiliateLinkRepository>();
             _ = services.AddScoped<IFavoriteBookRepository, FavoriteBookRepository>();
             _ = services.AddScoped<ICommentRepository, CommentRepository>();
+            _ = services.AddScoped<IPostRepository, PostRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
 

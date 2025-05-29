@@ -198,15 +198,15 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                                     !b.IsDeleted &&
                                     (normalizedKeyword == null
                                      || b.TitleNormalized.Contains(normalizedKeyword)
-                                     || b.AuthorNormalized.Contains(normalizedKeyword)
-                                     || b.DescriptionNormalized.Contains(normalizedKeyword));
+                                     || b.AuthorNormalized.Contains(normalizedKeyword));
 
             Func<IQueryable<Domain.Entities.Book>, IOrderedQueryable<Domain.Entities.Book>> orderBy = q => q.OrderByDescending(b => b.AvarageRating);
 
             Func<IQueryable<Domain.Entities.Book>, IQueryable<Domain.Entities.Book>> include = q => q
                 .Include(b => b.Categories)
                 .Include(b => b.AffiliateLinks)
-                .Include(b => b.BookImages);
+                .Include(b => b.BookImages)
+                .Include(b => b.FavoriteBooks);
 
             var pagingResult = await _bookRepository.FindPagedAsync(
                                 predicate: filter,
@@ -222,6 +222,7 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                 Title = book.Title,
                 Author = book.Author,
                 ShortDescription = book.Description.Length > 50 ? book.Description.Substring(0, 50) + "..." : book.Description,
+                AverageRating = book.AvarageRating,
                 ImageUrl = book.ImageUrl
             });
 

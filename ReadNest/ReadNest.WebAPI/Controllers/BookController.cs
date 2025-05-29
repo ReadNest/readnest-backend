@@ -11,7 +11,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/books")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [AllowAnonymous]
     public class BookController : ControllerBase
     {
         private readonly IBookUseCase _bookUseCase;
@@ -55,6 +55,7 @@ namespace ReadNest.WebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
             var response = await _bookUseCase.CreateBookAsync(request);

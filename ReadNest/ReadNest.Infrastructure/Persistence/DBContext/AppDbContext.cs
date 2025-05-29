@@ -292,10 +292,6 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasColumnName("status")
                       .IsRequired()
                       .HasColumnType("text");
-                _ = entity.Property(e => e.ModerationReason)
-                      .HasColumnName("moderation_reason")
-                      .IsRequired()
-                      .HasColumnType("text");
                 _ = entity.Property(e => e.BookId)
                       .HasColumnName("book_id")
                       .IsRequired();
@@ -370,6 +366,46 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            _ = modelBuilder.Entity<CommentReport>(entity =>
+            {
+                _ = entity.ToTable("comment_reports");
+
+                _ = entity.HasKey(e => e.Id);
+
+                _ = entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                _ = entity.Property(e => e.ReporterId)
+                    .HasColumnName("reporter_id")
+                    .IsRequired();
+
+                _ = entity.Property(e => e.CommentId)
+                    .HasColumnName("comment_id")
+                    .IsRequired();
+
+                _ = entity.Property(e => e.Reason)
+                    .HasColumnName("reason")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                _ = entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .IsRequired()
+                    .HasMaxLength(20); // Pending, NotViolated, Violated
+
+                _ = entity.HasOne(e => e.Reporter)
+                    .WithMany(u => u.Reports)
+                    .HasForeignKey(e => e.ReporterId)
+                    .HasConstraintName("fk_comment_reports_reporter_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                _ = entity.HasOne(e => e.Comment)
+                    .WithMany(c => c.Reports)
+                    .HasForeignKey(e => e.CommentId)
+                    .HasConstraintName("fk_comment_reports_comment_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             base.OnModelCreating(modelBuilder);
         }

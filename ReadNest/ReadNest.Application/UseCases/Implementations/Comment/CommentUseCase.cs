@@ -161,7 +161,6 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 return ApiResponse<string>.Fail("Reason is too long!");
 
             cmt.Status = "Flagged";
-            cmt.ModerationReason = request.ModerationReason;
             await _commentRepository.SaveChangesAsync();
             return ApiResponse<string>.Ok(string.Empty);
         }

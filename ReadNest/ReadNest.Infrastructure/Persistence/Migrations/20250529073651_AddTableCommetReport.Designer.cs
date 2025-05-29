@@ -12,8 +12,8 @@ using ReadNest.Infrastructure.Persistence.DBContext;
 namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250526132417_AddFieldModerationReasonToCommentTable")]
-    partial class AddFieldModerationReasonToCommentTable
+    [Migration("20250529073651_AddTableCommetReport")]
+    partial class AddTableCommetReport
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -236,11 +236,6 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("ModerationReason")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("moderation_reason");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text")
@@ -260,6 +255,50 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("comments", (string)null);
+                });
+
+            modelBuilder.Entity("ReadNest.Domain.Entities.CommentReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("comment_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("reason");
+
+                    b.Property<Guid>("ReporterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reporter_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("ReporterId");
+
+                    b.ToTable("comment_reports", (string)null);
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.FavoriteBook", b =>
@@ -358,19 +397,19 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("582d5dce-f681-4be0-beb7-20a549b780f0"),
-                            CreatedAt = new DateTime(2025, 5, 26, 13, 24, 15, 940, DateTimeKind.Utc).AddTicks(4227),
+                            Id = new Guid("f2bf4ed5-9634-4c60-b62a-e4b5cf9c2df3"),
+                            CreatedAt = new DateTime(2025, 5, 29, 7, 36, 51, 83, DateTimeKind.Utc).AddTicks(5253),
                             IsDeleted = false,
                             RoleName = "Admin",
-                            UpdatedAt = new DateTime(2025, 5, 26, 13, 24, 15, 940, DateTimeKind.Utc).AddTicks(4235)
+                            UpdatedAt = new DateTime(2025, 5, 29, 7, 36, 51, 83, DateTimeKind.Utc).AddTicks(5255)
                         },
                         new
                         {
-                            Id = new Guid("6bd945b4-c12e-4034-85b1-d8a8ab572ade"),
-                            CreatedAt = new DateTime(2025, 5, 26, 13, 24, 15, 940, DateTimeKind.Utc).AddTicks(4240),
+                            Id = new Guid("50deb9c7-b5f2-41d5-a79a-cef55b29cfce"),
+                            CreatedAt = new DateTime(2025, 5, 29, 7, 36, 51, 83, DateTimeKind.Utc).AddTicks(5257),
                             IsDeleted = false,
                             RoleName = "User",
-                            UpdatedAt = new DateTime(2025, 5, 26, 13, 24, 15, 940, DateTimeKind.Utc).AddTicks(4241)
+                            UpdatedAt = new DateTime(2025, 5, 29, 7, 36, 51, 83, DateTimeKind.Utc).AddTicks(5257)
                         });
                 });
 
@@ -534,6 +573,27 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     b.Navigation("Creator");
                 });
 
+            modelBuilder.Entity("ReadNest.Domain.Entities.CommentReport", b =>
+                {
+                    b.HasOne("ReadNest.Domain.Entities.Comment", "Comment")
+                        .WithMany("Reports")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_comment_reports_comment_id");
+
+                    b.HasOne("ReadNest.Domain.Entities.User", "Reporter")
+                        .WithMany("Reports")
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_comment_reports_reporter_id");
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("Reporter");
+                });
+
             modelBuilder.Entity("ReadNest.Domain.Entities.FavoriteBook", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.Book", "Book")
@@ -622,6 +682,11 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     b.Navigation("FavoriteBooks");
                 });
 
+            modelBuilder.Entity("ReadNest.Domain.Entities.Comment", b =>
+                {
+                    b.Navigation("Reports");
+                });
+
             modelBuilder.Entity("ReadNest.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
@@ -632,6 +697,8 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("FavoriteBooks");
+
+                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,6 +16,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<Comment> Comments { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<BookImage> BookImages { get; set; }
+        public DbSet<CommentReport> CommentReports { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

@@ -11,5 +11,6 @@ namespace ReadNest.Application.Repositories
     {
         public Task<IEnumerable<Comment>> GetPublishCommentsByBookIdAsync(Guid bookId);
         public Task<Comment> GetCommentWithLikesByIdAsync(Guid commentId);
+        public Task<Comment> GetPublishCommentByIdAsync(Guid commentId);
     }
 }

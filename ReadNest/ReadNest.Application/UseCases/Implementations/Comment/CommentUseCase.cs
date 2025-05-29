@@ -148,23 +148,6 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
             }
         }
 
-        public async Task<ApiResponse<string>> ReportCommentAsync(ReportCommentRequest request)
-        {
-            var cmt = await _commentRepository.GetCommentWithLikesByIdAsync(request.CommentId);
-            if (cmt is null)
-                return ApiResponse<string>.Fail("Comment not found");
-
-            if (string.IsNullOrWhiteSpace(request.ModerationReason)) 
-                return ApiResponse<string>.Fail("Empty Reason!");
-
-            if (request.ModerationReason.Length > 255)
-                return ApiResponse<string>.Fail("Reason is too long!");
-
-            cmt.Status = "Flagged";
-            await _commentRepository.SaveChangesAsync();
-            return ApiResponse<string>.Ok(string.Empty);
-        }
-
         public async Task<ApiResponse<string>> UpdateCommentAsync(UpdateCommentRequest request)
         {
             var comment = await _commentRepository.GetCommentWithLikesByIdAsync(request.CommentId);

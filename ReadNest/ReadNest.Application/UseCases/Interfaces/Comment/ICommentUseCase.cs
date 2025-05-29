@@ -18,6 +18,5 @@ namespace ReadNest.Application.UseCases.Interfaces.Comment
         Task<ApiResponse<string>> LikeCommentAsync(Guid commentId, Guid userId);
         Task<ApiResponse<string>> UpdateCommentAsync(UpdateCommentRequest request);
         Task<ApiResponse<string>> DeleteCommentAsync(Guid commentId);
-        Task<ApiResponse<string>> ReportCommentAsync(ReportCommentRequest request);
     }
 }

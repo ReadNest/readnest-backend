@@ -19,11 +19,19 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(c => c.Id == commentId && !c.IsDeleted);
         }
 
+        public async Task<Comment> GetPublishCommentByIdAsync(Guid commentId)
+        {
+            return await _context.Comments
+                .Where(c => c.Id == commentId && !c.IsDeleted && c.Status == "Published")
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<Comment>> GetPublishCommentsByBookIdAsync(Guid bookId)
         {
             return await _context.Comments
                 .AsNoTracking()
-                .Where(c => c.BookId == bookId && !c.IsDeleted && (c.Status == "Published" || c.Status == "Flagged"))
+                .Include(c => c.Reports)
+                .Where(c => c.BookId == bookId && !c.IsDeleted && c.Status == "Published")
                 .Include(c => c.Creator)
                 .Include(c => c.Likes)
                 .OrderByDescending(c => c.CreatedAt)

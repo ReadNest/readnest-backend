@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Models.Requests.User;
 using ReadNest.Application.Models.Responses.Comment;
+using ReadNest.Application.Models.Responses.Post;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.User;
@@ -139,8 +140,19 @@ namespace ReadNest.Application.UseCases.Implementations.User
                     CreatorName = x.Creator.FullName,
                     //UserName = x.User.UserName,
                 }).ToList(),
+                Posts = user.Posts.Select(x => new GetPostResponse
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Content = x.Content,
+                    CreatedAt = x.CreatedAt,
+                    //UpdatedAt = x.UpdatedAt,
+                    //UserId = x.UserId,
+                    //BookId = x.BookId,
+                    LikesCount = x.Likes.Count,
+                }).ToList(),
                 NumberOfComments = user.Comments.Count,
-                numberOfPosts = 0, // TODO: Add logic to get number of posts
+                numberOfPosts = user.Posts.Count,
                 RatingScores = 0, // TODO: Add logic to get rating scores
             };
 

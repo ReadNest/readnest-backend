@@ -46,8 +46,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
                     UserName = p.Creator.UserName,
-                    Email = p.Creator.Email
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
@@ -96,8 +98,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = creator.Id,
+                    FullName = creator.FullName,
                     UserName = creator.UserName,
-                    Email = creator.Email
+                    Email = creator.Email,
+                    AvatarUrl = creator.AvatarUrl
                 },
                 Views = post.Views,
                 LikesCount = 0
@@ -129,8 +133,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = creator.Id,
+                    FullName = creator.FullName,
                     UserName = creator.UserName,
-                    Email = creator.Email
+                    Email = creator.Email,
+                    AvatarUrl = creator.AvatarUrl
                 },
                 Views = post.Views,
                 LikesCount = post.Likes.Count(),
@@ -160,8 +166,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
                     UserName = p.Creator.UserName,
-                    Email = p.Creator.Email
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
@@ -191,8 +199,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
                     UserName = p.Creator.UserName,
-                    Email = p.Creator.Email
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
@@ -222,8 +232,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
                     UserName = p.Creator.UserName,
-                    Email = p.Creator.Email
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
@@ -253,8 +265,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
                     UserName = p.Creator.UserName,
-                    Email = p.Creator.Email
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
@@ -284,8 +298,10 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
                     UserName = p.Creator.UserName,
-                    Email = p.Creator.Email
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),

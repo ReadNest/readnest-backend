@@ -1,4 +1,5 @@
 ﻿using ReadNest.Application.Models.Responses.Comment;
+using ReadNest.Application.Models.Responses.Post;
 
 namespace ReadNest.Application.Models.Responses.User
 {
@@ -15,7 +16,7 @@ namespace ReadNest.Application.Models.Responses.User
         public Guid RoleId { get; set; }
         public string RoleName { get; set; }
         public ICollection<GetCommentResponse> Comments { get; set; }
-        //Sau thêm Posts nữa là đủ
+        public ICollection<GetPostResponse> Posts { get; set; }
         public int numberOfPosts { get; set; }
         public int NumberOfComments { get; set; }
         public int RatingScores { get; set; }

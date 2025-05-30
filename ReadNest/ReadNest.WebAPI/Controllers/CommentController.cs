@@ -73,7 +73,7 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> GetPendingReportedComments()
         {
             var response = await _commentUseCase.GetAllPendingReportedCommentsAsync();
-            return response.Success ? Ok(response) : NotFound(response);
+            return Ok(response);
         }
     }
 }

@@ -11,6 +11,5 @@ namespace ReadNest.Application.Repositories
     {
         public Task<IEnumerable<CommentReport>> GetPendingReportsByCommentIdAsync(Guid commentId);
         public void UpdateRangeReports(List<CommentReport> reports);
-
     }
 }

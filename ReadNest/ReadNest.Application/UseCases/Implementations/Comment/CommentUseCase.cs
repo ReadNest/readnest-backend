@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ReadNest.Application.Models.Requests.Comment;
 using ReadNest.Application.Models.Responses.Comment;
+using ReadNest.Application.Models.Responses.CommentReport;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Comment;
@@ -17,12 +18,14 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
         private readonly ICommentRepository _commentRepository;
         private readonly IBookRepository _bookRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICommentReportRepository _commentReportRepository;
 
-        public CommentUseCase(ICommentRepository commentRepository, IBookRepository bookRepository, IUserRepository userRepository)
+        public CommentUseCase(ICommentRepository commentRepository, IBookRepository bookRepository, IUserRepository userRepository, ICommentReportRepository commentReportRepository)
         {
             _commentRepository = commentRepository;
             _bookRepository = bookRepository;
             _userRepository = userRepository;
+            _commentReportRepository = commentReportRepository;
         }
 
         public async Task<ApiResponse<GetCommentResponse>> CreateAsync(CreateCommentRequest request)
@@ -170,6 +173,51 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
             await _commentRepository.UpdateAsync(comment);
             await _commentRepository.SaveChangesAsync();
             return ApiResponse<string>.Ok("Update comment successfully");
+        }
+
+        public async Task<ApiResponse<List<GetReportedCommentsResponse>>> GetAllPendingReportedCommentsAsync()
+        {
+            var reportedComments = await _commentRepository.GetAllReportedCommentsAsync();
+
+            if (reportedComments == null || !reportedComments.Any())
+            {
+                return ApiResponse<List<GetReportedCommentsResponse>>.Fail("No reported comments found");
+            }
+
+            var response = new List<GetReportedCommentsResponse>();
+
+            foreach (var comment in reportedComments)
+            {
+                var reports = await _commentReportRepository.GetPendingReportsByCommentIdAsync(comment.Id);
+
+                var mappedReports = reports.Select(r => new CommentReportReponse
+                {
+                    CommentId = r.Id,
+                    Reason = r.Reason,
+                    CreatedAt = r.CreatedAt,
+                    Reporter = r.Reporter != null ? new GetUserResponse
+                    {
+                        UserId = r.Reporter.Id,
+                        FullName = r.Reporter.FullName,
+                        AvatarUrl = r.Reporter.AvatarUrl
+                    } : null
+                }).ToList();
+
+                response.Add(new GetReportedCommentsResponse
+                {
+                    CommentId = comment.Id,
+                    Content = comment.Content,
+                    Commenter = comment.Creator != null ? new GetUserResponse
+                    {
+                        UserId = comment.Creator.Id,
+                        FullName = comment.Creator.FullName,
+                        AvatarUrl = comment.Creator.AvatarUrl
+                    } : null,
+                    Reports = mappedReports
+                });
+            }
+
+            return ApiResponse<List<GetReportedCommentsResponse>>.Ok(response);
         }
     }
 }

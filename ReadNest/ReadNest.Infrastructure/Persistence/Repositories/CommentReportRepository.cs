@@ -15,6 +15,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<CommentReport>> GetPendingReportsByCommentIdAsync(Guid commentId)
         {
             var reports = await _context.CommentReports
+                .Include(x => x.Reporter)
                 .Where(report => report.CommentId == commentId && report.Status == "Pending")
                 .ToListAsync();
             return reports;

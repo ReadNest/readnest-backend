@@ -66,5 +66,14 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _commentUseCase.DeleteCommentAsync(commentId);
             return response.Success ? Ok(response) : NotFound(response);
         }
+
+        [HttpGet("pending-reported-comments")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetReportedCommentsResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetPendingReportedComments()
+        {
+            var response = await _commentUseCase.GetAllPendingReportedCommentsAsync();
+            return response.Success ? Ok(response) : NotFound(response);
+        }
     }
 }

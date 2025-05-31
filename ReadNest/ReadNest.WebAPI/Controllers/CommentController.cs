@@ -13,7 +13,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,User")]
+    //[Authorize(Roles = "Admin,User")]
     public class CommentController : ControllerBase
     {
         private readonly ICommentUseCase _commentUseCase;
@@ -77,12 +77,12 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _commentUseCase.GetAllPendingReportedCommentsAsync();
             return Ok(response);
         }
-        [HttpGet("top-3-recent-comments/{userId}")]
+        [HttpGet("top-3-recent-comments/{userName}")]
         [ProducesResponseType(typeof(ApiResponse<List<GetCommentResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetTop3RecentCommentsByUserId(Guid userId)
+        public async Task<IActionResult> GetTop3RecentCommentsByUserId(string userName)
         {
-            var response = await _commentUseCase.GetTop3RecentCommentsByUserIdAsync(userId);
+            var response = await _commentUseCase.GetTop3RecentCommentsByUserNameAsync(userName);
             return response.Success ? Ok(response) : BadRequest(response);
         }
 

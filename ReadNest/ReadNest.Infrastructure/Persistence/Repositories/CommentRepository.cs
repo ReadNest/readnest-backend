@@ -59,13 +59,14 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Comment>> GetTop3RecentCommentsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Comment>> GetTop3RecentCommentsByUserNameAsync(string userName)
         {
             return await _context.Comments
                 .AsNoTracking()
-                .Where(c => c.UserId == userId && !c.IsDeleted && c.Status == "Published")
                 .Include(c => c.Creator)
+                .Where(c => c.Creator.UserName == userName && !c.IsDeleted && c.Status == "Published")
                 .Include(c => c.Likes)
+                .Include(c => c.Book)
                 .OrderByDescending(c => c.CreatedAt)
                 .Take(3)
                 .ToListAsync();
@@ -78,6 +79,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Where(c => !c.IsDeleted && c.Status == "Published")
                 .Include(c => c.Creator)
                 .Include(c => c.Likes)
+                .Include(c => c.Book)
                 .OrderByDescending(c => c.Likes.Count)
                 .Take(3)
                 .ToListAsync();

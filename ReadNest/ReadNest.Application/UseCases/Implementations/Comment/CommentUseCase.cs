@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ReadNest.Application.Models.Requests.Comment;
+using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.CommentReport;
 using ReadNest.Application.Models.Responses.User;
@@ -220,13 +221,13 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
             return ApiResponse<List<GetReportedCommentsResponse>>.Ok(response);
         }
 
-        public async Task<ApiResponse<List<GetCommentResponse>>> GetTop3RecentCommentsByUserIdAsync(Guid userId)
+        public async Task<ApiResponse<List<GetCommentResponse>>> GetTop3RecentCommentsByUserNameAsync(string userName)
         {
-            if (userId == Guid.Empty)
+            if (string.IsNullOrEmpty(userName))
             {
-                return ApiResponse<List<GetCommentResponse>>.Fail("Invalid User ID.");
+                return ApiResponse<List<GetCommentResponse>>.Fail("Invalid User.");
             }
-            var comments = await _commentRepository.GetTop3RecentCommentsByUserIdAsync(userId);
+            var comments = await _commentRepository.GetTop3RecentCommentsByUserNameAsync(userName);
             if (comments == null || !comments.Any())
             {
                 return ApiResponse<List<GetCommentResponse>>.Fail("No recent comments found for this user.");
@@ -244,6 +245,13 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     UserName = c.Creator.UserName,
                     Email = c.Creator.Email,
                     AvatarUrl = c.Creator.AvatarUrl,
+                } : null,
+                Book = c.Book != null ? new GetBookResponse
+                {
+                    Id = c.Book.Id,
+                    Title = c.Book.Title,
+                    Author = c.Book.Author,
+                    ImageUrl = c.Book.ImageUrl,
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,
@@ -271,6 +279,13 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     UserName = c.Creator.UserName,
                     Email = c.Creator.Email,
                     AvatarUrl = c.Creator.AvatarUrl,
+                } : null,
+                Book = c.Book != null ? new GetBookResponse
+                {
+                    Id = c.Book.Id,
+                    Title = c.Book.Title,
+                    Author = c.Book.Author,
+                    ImageUrl = c.Book.ImageUrl,
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,

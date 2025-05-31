@@ -13,5 +13,7 @@ namespace ReadNest.Application.Repositories
         public Task<Comment> GetCommentWithLikesByIdAsync(Guid commentId);
         public Task<Comment> GetPublishCommentByIdAsync(Guid commentId);
         public Task<IEnumerable<Comment>> GetAllReportedCommentsAsync();
+        public Task<IEnumerable<Comment>> GetTop3RecentCommentsByUserIdAsync(Guid userId);
+        public Task<IEnumerable<Comment>> GetTop3MostLikedCommentsAsync();
     }
 }

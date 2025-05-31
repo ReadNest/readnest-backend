@@ -58,5 +58,29 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Comment>> GetTop3RecentCommentsByUserIdAsync(Guid userId)
+        {
+            return await _context.Comments
+                .AsNoTracking()
+                .Where(c => c.UserId == userId && !c.IsDeleted && c.Status == "Published")
+                .Include(c => c.Creator)
+                .Include(c => c.Likes)
+                .OrderByDescending(c => c.CreatedAt)
+                .Take(3)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Comment>> GetTop3MostLikedCommentsAsync()
+        {
+            return await _context.Comments
+                .AsNoTracking()
+                .Where(c => !c.IsDeleted && c.Status == "Published")
+                .Include(c => c.Creator)
+                .Include(c => c.Likes)
+                .OrderByDescending(c => c.Likes.Count)
+                .Take(3)
+                .ToListAsync();
+        }
     }
 }

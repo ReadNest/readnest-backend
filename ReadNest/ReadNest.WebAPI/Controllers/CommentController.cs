@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Comment;
@@ -12,6 +13,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,User")]
     public class CommentController : ControllerBase
     {
         private readonly ICommentUseCase _commentUseCase;
@@ -74,6 +76,23 @@ namespace ReadNest.WebAPI.Controllers
         {
             var response = await _commentUseCase.GetAllPendingReportedCommentsAsync();
             return Ok(response);
+        }
+        [HttpGet("top-3-recent-comments/{userId}")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetCommentResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetTop3RecentCommentsByUserId(Guid userId)
+        {
+            var response = await _commentUseCase.GetTop3RecentCommentsByUserIdAsync(userId);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet("top-3-most-liked-comments")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetCommentResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetTop3MostLikedComments()
+        {
+            var response = await _commentUseCase.GetTop3MostLikedCommentsAsync();
+            return response.Success ? Ok(response) : BadRequest(response);
         }
     }
 }

@@ -17,7 +17,9 @@ namespace ReadNest.Shared.Utils
                 var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
                 if (unicodeCategory != UnicodeCategory.NonSpacingMark)
                 {
-                    _ = stringBuilder.Append(c);
+                    if (c == 'Đ') stringBuilder.Append('D');
+                    else if (c == 'đ') stringBuilder.Append('d');
+                    else stringBuilder.Append(c);
                 }
             }
 

@@ -32,6 +32,8 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Include(x => x.Role)
                 .Include(x => x.Comments)
                 .ThenInclude(c => c.Likes)
+                .Include(x => x.Posts)
+                .ThenInclude(p => p.Likes)
                 .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted);
             return user;
         }

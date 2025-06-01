@@ -18,6 +18,8 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<BookImage> BookImages { get; set; }
         public DbSet<CommentReport> CommentReports { get; set; }
 
+        public DbSet<Post> Posts { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -366,14 +368,73 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasConstraintName("fk_book_images_book_id")
                       .OnDelete(DeleteBehavior.Cascade);
             });
-
-            _ = modelBuilder.Entity<CommentReport>(entity =>
+            _ = modelBuilder.Entity<Post>(entity =>
             {
-                _ = entity.ToTable("comment_reports");
+                _ = entity.ToTable("posts");
 
                 _ = entity.HasKey(e => e.Id);
 
                 _ = entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                _ = entity.Property(p => p.Title)
+                    .HasColumnName("title")
+                    .IsRequired()
+                    .HasMaxLength(200);_ = entity.Property(e => e.Title);
+                _ = entity.Property(e => e.Content)
+                      .HasColumnName("content")
+                      .IsRequired()
+                      .HasColumnType("text");
+                _ = entity.Property(e => e.BookId)
+                      .HasColumnName("book_id")
+                      .IsRequired();
+
+                _ = entity.Property(e => e.UserId)
+                      .HasColumnName("user_id")
+                      .IsRequired();
+                _ = entity.Property(p => p.Views)
+                    .HasColumnName("views")
+                    .HasDefaultValue(0);
+
+                _ = entity.HasOne(e => e.Book)
+                      .WithMany(b => b.Posts)
+                      .HasForeignKey(e => e.BookId)
+                      .HasConstraintName("fk_posts_book_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                _ = entity.HasOne(e => e.Creator)
+                      .WithMany(u => u.Posts)
+                      .HasForeignKey(e => e.UserId)
+                      .HasConstraintName("fk_posts_user_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<Post>()
+                .HasMany(p => p.Likes)
+                .WithMany(u => u.LikedPosts)
+                .UsingEntity<Dictionary<string, object>>(
+                    "post_likes",
+                    j => j
+                        .HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey("user_id")
+                        .HasConstraintName("fk_post_likes_user_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Post>()
+                        .WithMany()
+                        .HasForeignKey("post_id")
+                        .HasConstraintName("fk_post_likes_comment_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                    {
+                        _ = j.HasKey("post_id", "user_id");
+                        _ = j.ToTable("post_likes");
+                    });
+            _ = modelBuilder.Entity<CommentReport>(entity =>
+            {
+                _ = entity.ToTable("comment_reports");
                     .HasColumnName("id")
                     .IsRequired();
 

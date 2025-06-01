@@ -35,6 +35,16 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
+        [HttpGet("all")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetCategoryResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllWithoutPaging()
+        {
+            var response = await _categoryUseCase.GetAllCategoriesAsync();
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<GetCategoryResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

@@ -39,7 +39,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
             var totalRecords = query.Count(x => !x.IsDeleted);
 
             var books = await query
-                .OrderBy(b => b.Title)
+                .OrderByDescending(b => b.AvarageRating)
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync();

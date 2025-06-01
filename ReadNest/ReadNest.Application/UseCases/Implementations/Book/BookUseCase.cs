@@ -83,6 +83,13 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<GetBookResponse>.Ok(response);
         }
 
+        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> FilterBooksAsync(BookFilterRequest request)
+        {
+
+            var response = await _bookRepository.FilterBooks(request);
+            return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(response, MessageId.I0000);
+        }
+
         public async Task<ApiResponse<PagingResponse<GetBookResponse>>> GetAllAsync(PagingRequest request)
         {
             var books = await _bookRepository.FindWithIncludePagedAsync(

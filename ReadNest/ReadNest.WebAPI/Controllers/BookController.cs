@@ -42,6 +42,14 @@ namespace ReadNest.WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpGet("filter")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> FilterBooks([FromQuery] BookFilterRequest request)
+        {
+            var response = await _bookUseCase.FilterBooksAsync(request);
+            return Ok(response);
+        }
+
 
         [HttpGet("{bookId}")]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]

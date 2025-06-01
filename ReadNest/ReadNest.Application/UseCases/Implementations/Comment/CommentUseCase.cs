@@ -255,7 +255,8 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,
-            }).ToList();
+                UserLikes = c.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
+        }).ToList();
             return ApiResponse<List<GetCommentResponse>>.Ok(response);
         }
 
@@ -289,6 +290,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,
+                UserLikes = c.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
             return ApiResponse<List<GetCommentResponse>>.Ok(response);
         }

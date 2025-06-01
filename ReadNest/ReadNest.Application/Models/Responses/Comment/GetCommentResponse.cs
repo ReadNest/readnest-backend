@@ -1,4 +1,5 @@
-﻿using ReadNest.Application.Models.Responses.User;
+﻿using ReadNest.Application.Models.Responses.Book;
+using ReadNest.Application.Models.Responses.User;
 
 namespace ReadNest.Application.Models.Responses.Comment
 {
@@ -8,7 +9,7 @@ namespace ReadNest.Application.Models.Responses.Comment
         public string Content { get; set; }
         public Guid BookId { get; set; }
         public Guid UserId { get; set; }
-        public virtual Domain.Entities.Book Book { get; set; }
+        public GetBookResponse Book { get; set; }
         public virtual GetUserResponse Creator { get; set; }
         public virtual string CreatorName { get; set; }
         // Lưu list Id của user đã lưu

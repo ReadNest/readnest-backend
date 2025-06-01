@@ -25,6 +25,7 @@ namespace ReadNest.WebAPI.Controllers
             _userUseCase = userUseCase;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetUserResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -55,6 +56,7 @@ namespace ReadNest.WebAPI.Controllers
 
         //}
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{userId}")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

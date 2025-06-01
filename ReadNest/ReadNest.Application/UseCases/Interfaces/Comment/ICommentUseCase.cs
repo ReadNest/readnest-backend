@@ -16,5 +16,10 @@ namespace ReadNest.Application.UseCases.Interfaces.Comment
         Task<ApiResponse<List<GetCommentResponse>>> GetPublishedCommentsByBookIdAsync(Guid bookId);
         // Like Comment
         Task<ApiResponse<string>> LikeCommentAsync(Guid commentId, Guid userId);
+        Task<ApiResponse<string>> UpdateCommentAsync(UpdateCommentRequest request);
+        Task<ApiResponse<string>> DeleteCommentAsync(Guid commentId);
+        Task<ApiResponse<List<GetReportedCommentsResponse>>> GetAllPendingReportedCommentsAsync();
+        Task<ApiResponse<List<GetCommentResponse>>> GetTop3RecentCommentsByUserNameAsync(string userName);
+        Task<ApiResponse<List<GetCommentResponse>>> GetTop3MostLikedCommentsAsync();
     }
 }

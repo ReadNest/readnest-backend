@@ -16,6 +16,8 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<Comment> Comments { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<BookImage> BookImages { get; set; }
+        public DbSet<CommentReport> CommentReports { get; set; }
+
         public DbSet<Post> Posts { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -366,7 +368,6 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasConstraintName("fk_book_images_book_id")
                       .OnDelete(DeleteBehavior.Cascade);
             });
-
             _ = modelBuilder.Entity<Post>(entity =>
             {
                 _ = entity.ToTable("posts");
@@ -374,8 +375,8 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 _ = entity.HasKey(e => e.Id);
 
                 _ = entity.Property(e => e.Id)
-                      .HasColumnName("id")
-                      .IsRequired();
+                    .HasColumnName("id")
+                    .IsRequired();
 
                 _ = entity.Property(p => p.Title)
                     .HasColumnName("title")
@@ -431,7 +432,45 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                         _ = j.HasKey("post_id", "user_id");
                         _ = j.ToTable("post_likes");
                     });
+            _ = modelBuilder.Entity<CommentReport>(entity =>
+            {
+                _ = entity.ToTable("comment_reports");
+                _ = entity.HasKey(e => e.Id);
 
+                _ = entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+
+                _ = entity.Property(e => e.ReporterId)
+                    .HasColumnName("reporter_id")
+                    .IsRequired();
+
+                _ = entity.Property(e => e.CommentId)
+                    .HasColumnName("comment_id")
+                    .IsRequired();
+
+                _ = entity.Property(e => e.Reason)
+                    .HasColumnName("reason")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                _ = entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .IsRequired()
+                    .HasMaxLength(20); // Pending, NotViolated, Violated
+
+                _ = entity.HasOne(e => e.Reporter)
+                    .WithMany(u => u.Reports)
+                    .HasForeignKey(e => e.ReporterId)
+                    .HasConstraintName("fk_comment_reports_reporter_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                _ = entity.HasOne(e => e.Comment)
+                    .WithMany(c => c.Reports)
+                    .HasForeignKey(e => e.CommentId)
+                    .HasConstraintName("fk_comment_reports_comment_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             base.OnModelCreating(modelBuilder);
         }

@@ -9,7 +9,11 @@ namespace ReadNest.Application.Repositories
 {
     public interface ICommentRepository : IGenericRepository<Comment, Guid>
     {
-        public Task<IEnumerable<Comment>> GetPublishedCommentsByBookIdAsync(Guid bookId);
+        public Task<IEnumerable<Comment>> GetPublishCommentsByBookIdAsync(Guid bookId);
         public Task<Comment> GetCommentWithLikesByIdAsync(Guid commentId);
+        public Task<Comment> GetPublishCommentByIdAsync(Guid commentId);
+        public Task<IEnumerable<Comment>> GetAllReportedCommentsAsync();
+        public Task<IEnumerable<Comment>> GetTop3RecentCommentsByUserNameAsync(string userName);
+        public Task<IEnumerable<Comment>> GetTop3MostLikedCommentsAsync();
     }
 }

@@ -17,6 +17,7 @@ namespace ReadNest.Domain.Entities
         public ICollection<FavoriteBook> FavoriteBooks { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Comment> LikedComments { get; set; }
+        public ICollection<CommentReport> Reports { get; set; }
         public ICollection<Post> Posts { get; set; }
         public ICollection<Post> LikedPosts { get; set; }
     }

@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 #nullable disable
 
-namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
+namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250529073651_AddTableCommetReport")]
+    partial class AddTableCommetReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -331,56 +334,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.ToTable("favorite_books", (string)null);
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.Post", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("book_id");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("title");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.Property<int>("Views")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("views");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("posts", (string)null);
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -575,21 +528,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.ToTable("comment_likes", (string)null);
                 });
 
-            modelBuilder.Entity("post_likes", b =>
-                {
-                    b.Property<Guid>("post_id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("user_id")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("post_id", "user_id");
-
-                    b.HasIndex("user_id");
-
-                    b.ToTable("post_likes", (string)null);
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.AffiliateLink", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.Book", "Book")
@@ -675,27 +613,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.Post", b =>
-                {
-                    b.HasOne("ReadNest.Domain.Entities.Book", "Book")
-                        .WithMany("Posts")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_posts_book_id");
-
-                    b.HasOne("ReadNest.Domain.Entities.User", "Creator")
-                        .WithMany("Posts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_posts_user_id");
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Creator");
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.User", "User")
@@ -754,23 +671,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_comment_likes_user_id");
                 });
 
-            modelBuilder.Entity("post_likes", b =>
-                {
-                    b.HasOne("ReadNest.Domain.Entities.Post", null)
-                        .WithMany()
-                        .HasForeignKey("post_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_post_likes_comment_id");
-
-                    b.HasOne("ReadNest.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_post_likes_user_id");
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.Book", b =>
                 {
                     b.Navigation("AffiliateLinks");
@@ -780,8 +680,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("FavoriteBooks");
-
-                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.Comment", b =>
@@ -797,9 +695,10 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ReadNest.Domain.Entities.User", b =>
                 {
                     b.Navigation("Comments");
+
                     b.Navigation("FavoriteBooks");
+
                     b.Navigation("Reports");
-                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

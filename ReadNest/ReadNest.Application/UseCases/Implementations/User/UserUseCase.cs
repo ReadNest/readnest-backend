@@ -6,6 +6,7 @@ using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.User;
 using ReadNest.Shared.Common;
+using ReadNest.Shared.Enums;
 
 namespace ReadNest.Application.UseCases.Implementations.User
 {
@@ -113,6 +114,11 @@ namespace ReadNest.Application.UseCases.Implementations.User
             if (user == null)
             {
                 return ApiResponse<GetUserProfileResponse>.Fail(MessageId.E0005);
+            }
+
+            if (user.Role.RoleName == RoleEnum.Admin.ToString())
+            {
+                return ApiResponse<GetUserProfileResponse>.Fail("");
             }
 
             var data = new GetUserProfileResponse

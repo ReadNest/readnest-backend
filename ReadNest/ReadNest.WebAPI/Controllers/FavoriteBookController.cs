@@ -38,11 +38,10 @@ namespace ReadNest.WebAPI.Controllers
 
         [HttpGet("favorites/{userId}")]
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookResponse>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetFavoriteBooksPagedByUser([FromRoute] Guid userId, [FromQuery] PagingRequest request)
         {
             var response = await _favoriteBookUseCase.GetFavoriteBooksPagedByUserAsync(userId, request);
-            return response.Success ? Ok(response) : NotFound(response);
+            return Ok(response);
         }
     }
 }

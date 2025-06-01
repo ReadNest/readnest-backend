@@ -1,0 +1,52 @@
+# Visual Studio files
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+
+# Build results
+bin/
+obj/
+out/
+**/bin/
+**/obj/
+**/out/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuspec
+*.psmdcp
+*.symbols.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Logs
+*.log
+logs/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS files
+.DS_Store
+
+# Docker files
+docker-compose.*
+!.dockerignore   
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+*.trx
+
+# Publish results
+publish/

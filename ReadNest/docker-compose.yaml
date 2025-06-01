@@ -1,0 +1,15 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "28383:28383"
+      - "8386:8386"
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - readnest
+
+networks:
+  readnest:
+    driver: bridge

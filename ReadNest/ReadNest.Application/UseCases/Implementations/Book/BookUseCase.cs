@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Linq.Expressions;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.AffiliateLink;
@@ -8,6 +9,7 @@ using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.Validators.Book;
 using ReadNest.Shared.Common;
+using ReadNest.Shared.Utils;
 
 namespace ReadNest.Application.UseCases.Implementations.Book
 {
@@ -36,8 +38,11 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             var book = new Domain.Entities.Book
             {
                 Title = request.Title,
+                TitleNormalized = HtmlUtil.NormalizeTextWithoutHtml(request.Title),
                 Author = request.Author,
+                AuthorNormalized = HtmlUtil.NormalizeTextWithoutHtml(request.Author),
                 Description = request.Description,
+                DescriptionNormalized = HtmlUtil.NormalizeDescription(request.Description),
                 AvarageRating = request.Rating,
                 ISBN = request.ISBN,
                 ImageUrl = request.ImageUrl,
@@ -76,6 +81,13 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             };
 
             return ApiResponse<GetBookResponse>.Ok(response);
+        }
+
+        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> FilterBooksAsync(BookFilterRequest request)
+        {
+
+            var response = await _bookRepository.FilterBooks(request);
+            return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(response, MessageId.I0000);
         }
 
         public async Task<ApiResponse<PagingResponse<GetBookResponse>>> GetAllAsync(PagingRequest request)
@@ -185,5 +197,49 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<GetBookResponse>.Ok(response);
         }
 
+        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> SearchBooksAsync(PagingRequest paging, string? keyword)
+        {
+            var normalizedKeyword = StringUtil.NormalizeKeyword(keyword);
+
+            Expression<Func<Domain.Entities.Book, bool>> filter = b =>
+                                    !b.IsDeleted &&
+                                    (normalizedKeyword == null
+                                     || b.TitleNormalized.Contains(normalizedKeyword)
+                                     || b.AuthorNormalized.Contains(normalizedKeyword));
+
+            Func<IQueryable<Domain.Entities.Book>, IOrderedQueryable<Domain.Entities.Book>> orderBy = q => q.OrderByDescending(b => b.AvarageRating);
+
+            Func<IQueryable<Domain.Entities.Book>, IQueryable<Domain.Entities.Book>> include = q => q
+                .Include(b => b.Categories)
+                .Include(b => b.AffiliateLinks)
+                .Include(b => b.BookImages)
+                .Include(b => b.FavoriteBooks);
+
+            var pagingResult = await _bookRepository.FindPagedAsync(
+                                predicate: filter,
+                                pageNumber: paging.PageIndex,
+                                pageSize: paging.PageSize,
+                                include: include,
+                                orderBy: orderBy,
+                                asNoTracking: true);
+
+            var searchResponses = pagingResult.Items.Select(book => new GetBookSearchResponse
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Author = book.Author,
+                ShortDescription = book.Description.Length > 50 ? book.Description.Substring(0, 50) + "..." : book.Description,
+                AverageRating = book.AvarageRating,
+                ImageUrl = book.ImageUrl
+            });
+
+            var pagingResponse = new PagingResponse<GetBookSearchResponse>(
+                items: searchResponses,
+                totalCount: pagingResult.TotalItems,
+                pageIndex: pagingResult.PageIndex,
+                pageSize: pagingResult.PageSize);
+
+            return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(pagingResponse);
+        }
     }
 }

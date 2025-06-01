@@ -99,5 +99,23 @@ namespace ReadNest.Application.UseCases.Implementations.Category
 
             return ApiResponse<PagingResponse<GetCategoryResponse>>.Ok(data);
         }
+
+        public async Task<ApiResponse<List<GetCategoryResponse>>> GetAllCategoriesAsync()
+        {
+            var categories = await _categoryRepository.GetAllAsync();
+            if (categories == null || !categories.Any())
+            {
+                return ApiResponse<List<GetCategoryResponse>>.Fail(MessageId.E0005);
+            }
+
+            var response = categories.Select(x => new GetCategoryResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description
+            }).ToList();
+
+            return ApiResponse<List<GetCategoryResponse>>.Ok(response, MessageId.I0000);
+        }
     }
 }

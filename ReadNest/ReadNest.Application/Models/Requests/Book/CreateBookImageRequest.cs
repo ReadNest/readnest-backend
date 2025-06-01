@@ -3,6 +3,6 @@
     public class CreateBookImageRequest
     {
         public string ImageUrl { get; set; }
-        public int Order {  get; set; }
+        public int Order { get; set; }
     }
 }

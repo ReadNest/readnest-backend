@@ -11,7 +11,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/books")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [AllowAnonymous]
     public class BookController : ControllerBase
     {
         private readonly IBookUseCase _bookUseCase;
@@ -34,6 +34,23 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
+        [HttpGet("search")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SearchBooks([FromQuery] PagingRequest paging, [FromQuery] string? keyword)
+        {
+            var response = await _bookUseCase.SearchBooksAsync(paging, keyword);
+            return Ok(response);
+        }
+
+        [HttpGet("filter")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> FilterBooks([FromQuery] BookFilterRequest request)
+        {
+            var response = await _bookUseCase.FilterBooksAsync(request);
+            return Ok(response);
+        }
+
+
         [HttpGet("{bookId}")]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -46,6 +63,7 @@ namespace ReadNest.WebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
             var response = await _bookUseCase.CreateBookAsync(request);

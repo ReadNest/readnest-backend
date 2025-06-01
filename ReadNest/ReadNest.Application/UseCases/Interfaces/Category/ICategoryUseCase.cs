@@ -9,5 +9,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Category
         Task<ApiResponse<GetCategoryResponse>> CreateCategoryAsync(CreateCategoryRequest request);
         Task<ApiResponse<GetCategoryResponse>> UpdateCategoryAsync(UpdateCategoryRequest request);
         Task<ApiResponse<PagingResponse<GetCategoryResponse>>> GetAllAsync(PagingRequest request);
+        Task<ApiResponse<List<GetCategoryResponse>>> GetAllCategoriesAsync();
     }
 }

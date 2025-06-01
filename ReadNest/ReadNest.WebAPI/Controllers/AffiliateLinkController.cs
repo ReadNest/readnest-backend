@@ -11,6 +11,7 @@ namespace ReadNest.WebAPI.Controllers
     [ApiController]
     [Route("api/v1/books/{bookId}/affiliate-links")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "Admin")]
     public class AffiliateLinkController : ControllerBase
     {
         private readonly IAffiliateLinkUseCase _affiliateLinkUseCase;

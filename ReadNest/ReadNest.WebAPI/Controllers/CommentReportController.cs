@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.CommentReport;
@@ -10,6 +12,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CommentReportController : ControllerBase
     {
         private readonly ICommentReportUseCase _commentReportUseCase;
@@ -27,6 +30,7 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("approve/{commentId}")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -36,6 +40,7 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("reject/{commentId}")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

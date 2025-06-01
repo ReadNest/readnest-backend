@@ -435,6 +435,9 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
             _ = modelBuilder.Entity<CommentReport>(entity =>
             {
                 _ = entity.ToTable("comment_reports");
+                _ = entity.HasKey(e => e.Id);
+
+                _ = entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .IsRequired();
 

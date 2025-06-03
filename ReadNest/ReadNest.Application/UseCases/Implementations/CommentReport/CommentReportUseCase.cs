@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using ReadNest.Application.Models.Requests.CommentReport;
-using ReadNest.Application.Models.Responses.Comment;
+﻿using ReadNest.Application.Models.Requests.CommentReport;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.CommentReport;
 using ReadNest.Shared.Common;

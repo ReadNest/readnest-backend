@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Domain.Entities;
+﻿using ReadNest.Domain.Entities;
 
 namespace ReadNest.Application.Repositories
 {

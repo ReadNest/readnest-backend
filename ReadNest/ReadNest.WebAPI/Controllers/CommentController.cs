@@ -1,7 +1,4 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Comment;
 using ReadNest.Application.Models.Requests.CommentLike;

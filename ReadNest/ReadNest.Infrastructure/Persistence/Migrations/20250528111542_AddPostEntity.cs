@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,17 +12,17 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("62df167f-32d9-49b8-9a69-7a5eec389014"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("cf56be60-21eb-4919-bc80-1f64694c6652"));
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "posts",
                 columns: table => new
                 {
@@ -39,14 +38,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_posts", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_posts", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_posts_book_id",
                         column: x => x.book_id,
                         principalTable: "books",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_posts_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -54,7 +53,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "post_likes",
                 columns: table => new
                 {
@@ -63,14 +62,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_post_likes", x => new { x.post_id, x.user_id });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_post_likes", x => new { x.post_id, x.user_id });
+                    _ = table.ForeignKey(
                         name: "fk_post_likes_comment_id",
                         column: x => x.post_id,
                         principalTable: "posts",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_post_likes_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -78,7 +77,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -87,17 +86,17 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     { new Guid("6458791b-5bc8-4c0c-a770-d37f1e1ff74c"), new DateTime(2025, 5, 28, 11, 15, 40, 640, DateTimeKind.Utc).AddTicks(3870), false, "User", new DateTime(2025, 5, 28, 11, 15, 40, 640, DateTimeKind.Utc).AddTicks(3871) }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_post_likes_user_id",
                 table: "post_likes",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_posts_book_id",
                 table: "posts",
                 column: "book_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_posts_user_id",
                 table: "posts",
                 column: "user_id");
@@ -106,23 +105,23 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "post_likes");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "posts");
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("179c6cc0-165c-4e4d-8ef1-f6ff7792d076"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("6458791b-5bc8-4c0c-a770-d37f1e1ff74c"));
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]

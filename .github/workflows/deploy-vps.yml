@@ -45,3 +45,4 @@ jobs:
           script: |
             cd /var/readnest/readnest
             docker compose up -d --pull always backend
+            docker image prune -a

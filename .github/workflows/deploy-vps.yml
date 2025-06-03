@@ -44,6 +44,7 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             cd /var/readnest/readnest
+            echo "BACKEND_TAG=${{ github.sha }}" > .env
             docker compose pull backend
             docker compose up -d backend
             docker image prune -a

@@ -11,5 +11,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Book
         Task<ApiResponse<GetBookResponse>> GetByIdAsync(Guid bookId);
         Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> SearchBooksAsync(PagingRequest paging, string? keyword);
         Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> FilterBooksAsync(BookFilterRequest request);
+        Task<ApiResponse<string>> DeleteBookAsync(Guid bookId);
     }
 }

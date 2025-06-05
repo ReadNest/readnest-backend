@@ -83,6 +83,20 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<GetBookResponse>.Ok(response);
         }
 
+        public async Task<ApiResponse<string>> DeleteBookAsync(Guid bookId)
+        {
+            var book = (await _bookRepository.FindAsync(predicate: query => query.Id == bookId && !query.IsDeleted)).FirstOrDefault();
+            if (book == null)
+            {
+                return ApiResponse<string>.Fail(MessageId.E0001);
+            }
+
+            await _bookRepository.SoftDeleteAsync(book);
+            await _bookRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok(string.Empty);
+        }
+
         public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> FilterBooksAsync(BookFilterRequest request)
         {
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Responses.User;
+﻿using ReadNest.Application.Models.Responses.User;
 
 namespace ReadNest.Application.Models.Responses.CommentReport
 {

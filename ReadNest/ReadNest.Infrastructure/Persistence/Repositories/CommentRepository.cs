@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Repositories;
 using ReadNest.Domain.Entities;
 using ReadNest.Infrastructure.Persistence.DBContext;

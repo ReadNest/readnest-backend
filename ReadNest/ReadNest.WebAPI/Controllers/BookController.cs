@@ -63,10 +63,20 @@ namespace ReadNest.WebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
             var response = await _bookUseCase.CreateBookAsync(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<IActionResult> DeleteBook([FromRoute] Guid id)
+        {
+            var response = await _bookUseCase.DeleteBookAsync(id);
             return response.Success ? Ok(response) : BadRequest(response);
         }
     }

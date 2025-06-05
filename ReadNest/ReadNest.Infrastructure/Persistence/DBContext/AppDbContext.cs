@@ -381,7 +381,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 _ = entity.Property(p => p.Title)
                     .HasColumnName("title")
                     .IsRequired()
-                    .HasMaxLength(200);_ = entity.Property(e => e.Title);
+                    .HasMaxLength(200); _ = entity.Property(e => e.Title);
                 _ = entity.Property(e => e.Content)
                       .HasColumnName("content")
                       .IsRequired()

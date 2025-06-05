@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Post;
 using ReadNest.Application.Models.Responses.Post;
@@ -47,7 +45,7 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _postUseCase.GetPostByIdAsync(postId);
             return response.Success ? Ok(response) : NotFound(response);
         }
-        
+
         [HttpGet("user/{userId}")]
         [ProducesResponseType(typeof(ApiResponse<List<GetPostResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

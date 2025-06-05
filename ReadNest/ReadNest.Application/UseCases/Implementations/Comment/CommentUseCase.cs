@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Requests.Comment;
+﻿using ReadNest.Application.Models.Requests.Comment;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.CommentReport;
@@ -140,7 +135,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
             if (comment.Likes.Any(u => u.Id == userId))
             {
                 // Handle unlike logic
-                comment.Likes.Remove(user);
+                _ = comment.Likes.Remove(user);
                 await _commentRepository.SaveChangesAsync();
                 return ApiResponse<string>.Ok("Unlike successfully");
             }
@@ -252,11 +247,12 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     Title = c.Book.Title,
                     Author = c.Book.Author,
                     ImageUrl = c.Book.ImageUrl,
+                    AverageRating = c.Book.AvarageRating,
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,
                 UserLikes = c.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
-        }).ToList();
+            }).ToList();
             return ApiResponse<List<GetCommentResponse>>.Ok(response);
         }
 
@@ -287,6 +283,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     Title = c.Book.Title,
                     Author = c.Book.Author,
                     ImageUrl = c.Book.ImageUrl,
+                    AverageRating = c.Book.AvarageRating,
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,

@@ -1,10 +1,8 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.CommentReport;
-using ReadNest.Application.UseCases.Interfaces.Comment;
 using ReadNest.Application.UseCases.Interfaces.CommentReport;
 using ReadNest.Shared.Common;
 

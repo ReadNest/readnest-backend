@@ -56,7 +56,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
             return await _context.Posts
                 .AsNoTracking()
                 .Where(p => !p.IsDeleted)
-                .Include(p =>  p.Creator)
+                .Include(p => p.Creator)
                 .OrderByDescending(p => p.Likes.Count())
                 .Take(count)
                 .ToListAsync();

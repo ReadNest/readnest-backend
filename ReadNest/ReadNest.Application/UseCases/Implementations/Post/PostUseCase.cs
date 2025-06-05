@@ -1,12 +1,10 @@
 ﻿using FluentValidation;
 using ReadNest.Application.Models.Requests.Post;
-using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.Post;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.Validators.Post;
-using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.Post
@@ -82,7 +80,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UserId = request.UserId
             };
 
-            await _postRepository.AddAsync(post);
+            _ = await _postRepository.AddAsync(post);
 
             var creator = await _userRepository.GetByIdAsync(request.UserId);
 
@@ -327,7 +325,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             if (post.Likes.Any(l => l.Id == userId))
             {
                 // Handle unlike logic
-                post.Likes.Remove(user);
+                _ = post.Likes.Remove(user);
                 await _postRepository.SaveChangesAsync();
                 return ApiResponse<string>.Ok("Unlike successfully");
             }

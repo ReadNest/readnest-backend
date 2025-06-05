@@ -20,5 +20,10 @@ namespace ReadNest.Domain.Entities
         public ICollection<CommentReport> Reports { get; set; }
         public ICollection<Post> Posts { get; set; }
         public ICollection<Post> LikedPosts { get; set; }
+        public ICollection<UserBadge> UserBadges { get; set; }
+        public ICollection<ChatMessage> SentMessages { get; set; }
+        public ICollection<ChatMessage> ReceivedMessages { get; set; }
+        public ICollection<TradingPost> TradingPosts { get; set; }
+        public ICollection<TradingRequest> TradingRequests { get; set; }
     }
 }

@@ -19,7 +19,11 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<CommentReport> CommentReports { get; set; }
 
         public DbSet<Post> Posts { get; set; }
-
+        public DbSet<UserBadge> UserBadges { get; set; }
+        public DbSet<Badge> Badges { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<TradingPost> TradingPosts { get; set; }
+        public DbSet<TradingRequest> TradingRequests { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -470,6 +474,140 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                     .HasForeignKey(e => e.CommentId)
                     .HasConstraintName("fk_comment_reports_comment_id")
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<UserBadge>(entity =>
+            {
+                _ = entity.ToTable("user_badges");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+                _ = entity.Property(e => e.UserId)
+                      .HasColumnName("user_id")
+                      .IsRequired();
+                _ = entity.Property(e => e.BadgeId)
+                      .HasColumnName("badge_id")
+                      .IsRequired();
+                _ = entity.HasOne(e => e.User)
+                      .WithMany(u => u.UserBadges)
+                      .HasForeignKey(e => e.UserId)
+                      .HasConstraintName("fk_user_badges_user_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+                _ = entity.HasOne(e => e.Badge)
+                      .WithMany(b => b.UserBadges)
+                      .HasForeignKey(e => e.BadgeId)
+                      .HasConstraintName("fk_user_badges_badge_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<Badge>(entity =>
+            {
+                _ = entity.ToTable("badges");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+                _ = entity.Property(e => e.Code)
+                        .HasColumnName("code")
+                        .IsRequired()
+                        .HasMaxLength(50);
+                _ = entity.HasIndex(e => e.Code)
+                      .IsUnique();
+                _ = entity.Property(e => e.Name)
+                      .HasColumnName("name")
+                      .IsRequired()
+                      .HasMaxLength(100);
+                _ = entity.Property(e => e.Description)
+                      .HasColumnName("description")
+                      .HasColumnType("text");
+            });
+
+            _ = modelBuilder.Entity<ChatMessage>(entity =>
+            {
+                _ = entity.ToTable("chat_messages");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+                _ = entity.Property(e => e.SenderId)
+                      .HasColumnName("sender_id")
+                      .IsRequired();
+                _ = entity.Property(e => e.ReceiverId)
+                      .HasColumnName("receiver_id")
+                      .IsRequired();
+                _ = entity.Property(e => e.Message)
+                      .HasColumnName("message")
+                      .IsRequired()
+                      .HasColumnType("text");
+                _ = entity.HasOne(e => e.Sender)
+                      .WithMany(u => u.SentMessages)
+                      .HasForeignKey(e => e.SenderId)
+                      .HasConstraintName("fk_chat_messages_sender_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+                _ = entity.HasOne(e => e.Receiver)
+                      .WithMany(u => u.ReceivedMessages)
+                      .HasForeignKey(e => e.ReceiverId)
+                      .HasConstraintName("fk_chat_messages_receiver_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<TradingPost>(entity =>
+            {
+                _ = entity.ToTable("trading_posts");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+                _ = entity.Property(e => e.Status)
+                      .HasColumnName("title")
+                      .IsRequired()
+                      .HasMaxLength(200);
+                _ = entity.Property(e => e.Condition)
+                      .HasColumnName("condition")
+                      .IsRequired()
+                      .HasMaxLength(200);
+                _ = entity.Property(e => e.ShortDesc)
+                      .HasColumnName("description")
+                      .IsRequired()
+                      .HasColumnType("text");
+                _ = entity.Property(e => e.OwnerId)
+                      .HasColumnName("owner_id")
+                      .IsRequired();
+                _ = entity.HasOne(e => e.Owner)
+                      .WithMany(u => u.TradingPosts)
+                      .HasForeignKey(e => e.OwnerId)
+                      .HasConstraintName("fk_trading_posts_user_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<TradingRequest>(entity => 
+            {
+                _ = entity.ToTable("trading_requests");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                      .HasColumnName("id")
+                      .IsRequired();
+                _ = entity.Property(e => e.TradingPostId)
+                      .HasColumnName("trading_post_id")
+                      .IsRequired();
+                _ = entity.Property(e => e.RequesterId)
+                      .HasColumnName("requester_id")
+                      .IsRequired();
+                _ = entity.Property(e => e.Status)
+                      .HasColumnName("status")
+                      .IsRequired()
+                      .HasMaxLength(20);
+                _ = entity.HasOne(e => e.TradingPost)
+                      .WithMany(tp => tp.TradingRequests)
+                      .HasForeignKey(e => e.TradingPostId)
+                      .HasConstraintName("fk_trading_requests_trading_post_id")
+                      .OnDelete(DeleteBehavior.Cascade);
+                _ = entity.HasOne(e => e.Requester)
+                      .WithMany(u => u.TradingRequests)
+                      .HasForeignKey(e => e.RequesterId)
+                      .HasConstraintName("fk_trading_requests_requester_id")
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             base.OnModelCreating(modelBuilder);

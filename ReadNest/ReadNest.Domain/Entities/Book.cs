@@ -20,5 +20,6 @@ namespace ReadNest.Domain.Entities
         public ICollection<Comment> Comments { get; set; }
         public ICollection<BookImage> BookImages { get; set; }
         public ICollection<Post> Posts { get; set; }
+        public ICollection<TradingPost> TradingPosts { get; set; }
     }
 }

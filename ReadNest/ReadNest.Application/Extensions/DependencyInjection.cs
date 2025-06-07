@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ReadNest.Application.UseCases.Implementations.AffiliateLink;
 using ReadNest.Application.UseCases.Implementations.Auth;
+using ReadNest.Application.UseCases.Implementations.Badge;
 using ReadNest.Application.UseCases.Implementations.Book;
 using ReadNest.Application.UseCases.Implementations.Category;
 using ReadNest.Application.UseCases.Implementations.Comment;
@@ -11,6 +12,7 @@ using ReadNest.Application.UseCases.Implementations.Post;
 using ReadNest.Application.UseCases.Implementations.User;
 using ReadNest.Application.UseCases.Interfaces.AffiliateLink;
 using ReadNest.Application.UseCases.Interfaces.Auth;
+using ReadNest.Application.UseCases.Interfaces.Badge;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.UseCases.Interfaces.Category;
 using ReadNest.Application.UseCases.Interfaces.Comment;
@@ -35,6 +37,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<ICommentUseCase, CommentUseCase>();
             _ = services.AddScoped<ICommentReportUseCase, CommentReportUseCase>();
             _ = services.AddScoped<IPostUseCase, PostUseCase>();
+            _ = services.AddScoped<IBadgeUseCase, BadgeUseCase>();
 
             return services;
         }

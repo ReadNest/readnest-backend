@@ -19,6 +19,7 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<ICommentRepository, CommentRepository>();
             _ = services.AddScoped<ICommentReportRepository, CommentReportRepository>();
             _ = services.AddScoped<IPostRepository, PostRepository>();
+            _ = services.AddScoped<IBadgeRepository, BadgeRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
 

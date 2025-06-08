@@ -8,5 +8,6 @@ namespace ReadNest.Application.Repositories
     public interface IBookRepository : IGenericRepository<Book, Guid>
     {
         public Task<PagingResponse<GetBookSearchResponse>> FilterBooks(BookFilterRequest request);
+        public Task<IEnumerable<Category>> GetCategoriesByBookIds(List<Guid> bookIds);
     }
 }

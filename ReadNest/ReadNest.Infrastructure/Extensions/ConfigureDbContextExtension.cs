@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using ReadNest.Infrastructure.Options;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
@@ -14,8 +13,8 @@ namespace ReadNest.Infrastructure.Extensions
             var databaseOptions = configuration.GetSection(nameof(DatabaseOptions)).Get<DatabaseOptions>();
             _ = services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseNpgsql(databaseOptions?.ConnectionStrings);
-                options.EnableSensitiveDataLogging();
+                _ = options.UseNpgsql(databaseOptions?.ConnectionStrings);
+                _ = options.EnableSensitiveDataLogging();
             });
 
             return services;

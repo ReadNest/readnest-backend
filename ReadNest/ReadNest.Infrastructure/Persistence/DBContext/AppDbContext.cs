@@ -581,7 +581,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            _ = modelBuilder.Entity<TradingRequest>(entity => 
+            _ = modelBuilder.Entity<TradingRequest>(entity =>
             {
                 _ = entity.ToTable("trading_requests");
                 _ = entity.HasKey(e => e.Id);

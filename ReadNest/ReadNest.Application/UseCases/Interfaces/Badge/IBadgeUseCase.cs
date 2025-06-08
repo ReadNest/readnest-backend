@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Requests.Badge;
+﻿using ReadNest.Application.Models.Requests.Badge;
 using ReadNest.Application.Models.Responses.Badge;
 using ReadNest.Shared.Common;
 

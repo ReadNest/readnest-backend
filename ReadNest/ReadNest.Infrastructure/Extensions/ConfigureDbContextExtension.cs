@@ -11,7 +11,11 @@ namespace ReadNest.Infrastructure.Extensions
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             var databaseOptions = configuration.GetSection(nameof(DatabaseOptions)).Get<DatabaseOptions>();
-            _ = services.AddDbContext<AppDbContext>(options => options.UseNpgsql(databaseOptions?.ConnectionStrings));
+            _ = services.AddDbContext<AppDbContext>(options =>
+            {
+                _ = options.UseNpgsql(databaseOptions?.ConnectionStrings);
+                _ = options.EnableSensitiveDataLogging();
+            });
 
             return services;
         }

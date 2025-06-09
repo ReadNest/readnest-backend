@@ -11,5 +11,7 @@ namespace ReadNest.Application.Repositories
     {
         public Task<IEnumerable<UserBadge>> GetAvailableByUserIdAsync(Guid userId);
         public Task<IEnumerable<UserBadge>> GetByBadgeIdAsync(Guid badgeId);
+        public Task<IEnumerable<UserBadge>> GetAvailableByBadgeCodeAsync(string badgeCode);
+        public Task<UserBadge> GetSelectedBadgeByUserIdAsync(Guid userId);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ReadNest.Application.Models.Responses.User
+﻿using ReadNest.Application.Models.Responses.UserBadge;
+
+namespace ReadNest.Application.Models.Responses.User
 {
     public class GetUserResponse
     {
@@ -11,5 +13,9 @@
         public string AvatarUrl { get; set; }
         public Guid RoleId { get; set; }
         public string RoleName { get; set; }
+        // Badge
+        public string SelectedBadgeCode { get; set; }
+        public List<UserBadgeResponse> OwnedBadges { get; set; }
+
     }
 }

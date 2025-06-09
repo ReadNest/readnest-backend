@@ -23,5 +23,19 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _userBadgeUseCase.AssignBadgeToAllUsers(badgeCode);
             return Ok(response);
         }
+        [HttpPost("set-all-badges-active")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SelectUserBadge(string badgeCode)
+        {
+            var response = await _userBadgeUseCase.SetAllBadgesActiveByBadgeCode(badgeCode);
+            return Ok(response);
+        }
+        [HttpPost("select-user-badge")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SelectUserBadge(Guid userId, Guid badgeId)
+        {
+            var response = await _userBadgeUseCase.SelectUserBadge(userId, badgeId);
+            return Ok(response);
+        }
     }
 }

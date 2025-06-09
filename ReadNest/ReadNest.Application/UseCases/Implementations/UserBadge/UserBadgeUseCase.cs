@@ -82,5 +82,32 @@ namespace ReadNest.Application.UseCases.Implementations.UserBadge
             await _userBadgeRepository.SaveChangesAsync();
             return ApiResponse<string>.Ok("Badge selected successfully.");
         }
+
+        public async Task<ApiResponse<string>> SetAllBadgesActiveByBadgeCode(string badgeCode)
+        {
+            // Gỡ tất cả các badge về false
+            var userBadges = await _userBadgeRepository.GetAllAsync();
+            if (userBadges is null || !userBadges.Any())
+            {
+                return ApiResponse<string>.Fail("No user badges found.");
+            }
+            foreach (var ub in userBadges)
+            {
+                ub.IsSelected = false;
+            }
+            // Set tất cả các badge theo badgeCode về true
+            var defaultBadges = await _userBadgeRepository.GetAvailableByBadgeCodeAsync(badgeCode);
+            if (defaultBadges is null || !defaultBadges.Any())
+            {
+                return ApiResponse<string>.Fail("No default badges found.");
+            }
+            foreach (var db in defaultBadges)
+            {
+                db.IsSelected = true;
+            }
+            await _userBadgeRepository.UpdateRangeAsync(defaultBadges);
+            await _userBadgeRepository.SaveChangesAsync();
+            return ApiResponse<string>.Ok("All default badges set to active successfully.");
+        }
     }
 }

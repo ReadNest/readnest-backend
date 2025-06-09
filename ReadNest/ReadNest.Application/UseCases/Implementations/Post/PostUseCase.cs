@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using ReadNest.Application.Models.Requests.Post;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Post;
@@ -7,6 +8,7 @@ using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.Validators.Post;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.Post
@@ -53,6 +55,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = p.Book.Title,
                     Author = p.Book.Author,
                     ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -125,6 +128,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = post.Book.Title,
                     Author = post.Book.Author,
                     ImageUrl = post.Book.ImageUrl,
+                    AvarageRating = post.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -149,6 +153,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 include: query => query
                     .Include(p => p.Creator)
                     .Include(p => p.Book)
+                    .ThenInclude(b => b.Categories)
                     .Include(p => p.Likes),
                 asNoTracking: true);
 
@@ -174,6 +179,12 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = post.Book.Title,
                     Author = post.Book.Author,
                     ImageUrl = post.Book.ImageUrl,
+                    AvarageRating = post.Book.AvarageRating,
+                    Categories = post.Book.Categories.Select(c => new Domain.Entities.Category
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToList()
                 },
                 Creator = new GetUserResponse
                 {
@@ -218,6 +229,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = p.Book.Title,
                     Author = p.Book.Author,
                     ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -271,6 +283,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = p.Book.Title,
                     Author = p.Book.Author,
                     ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -311,6 +324,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = p.Book.Title,
                     Author = p.Book.Author,
                     ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -351,6 +365,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = p.Book.Title,
                     Author = p.Book.Author,
                     ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -391,6 +406,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = p.Book.Title,
                     Author = p.Book.Author,
                     ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {
@@ -475,6 +491,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     Title = post.Book.Title,
                     Author = post.Book.Author,
                     ImageUrl = post.Book.ImageUrl,
+                    AvarageRating = post.Book.AvarageRating,
                 },
                 Creator = new GetUserResponse
                 {

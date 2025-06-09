@@ -49,7 +49,7 @@ namespace ReadNest.WebAPI.Controllers
         [HttpGet("user/{userId}")]
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetPostResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetPostsByUserId(Guid userId, PagingRequest request)
+        public async Task<IActionResult> GetPostsByUserId(Guid userId, [FromQuery] PagingRequest request)
         {
             var response = await _postUseCase.GetPostsByUserIdAsync(userId, request);
             return response.Success ? Ok(response) : NotFound(response);

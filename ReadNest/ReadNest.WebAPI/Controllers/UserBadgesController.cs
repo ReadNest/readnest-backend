@@ -6,7 +6,7 @@ using ReadNest.Shared.Common;
 
 namespace ReadNest.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class UserBadgesController : ControllerBase
     {

@@ -6,6 +6,7 @@ using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Models.Responses.UserBadge;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.User;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 using ReadNest.Shared.Enums;
 
@@ -96,7 +97,6 @@ namespace ReadNest.Application.UseCases.Implementations.User
             }
 
             var selectedBadge = await _userBadgeRepository.GetSelectedBadgeByUserIdAsync(userId);
-            var ownedBadges = await _userBadgeRepository.GetAvailableByUserIdAsync(userId);
 
             var data = new GetUserResponse
             {
@@ -110,16 +110,6 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 UserId = user.Id,
                 UserName = user.UserName,
                 SelectedBadgeCode = selectedBadge is null ? "DEFAULT" : selectedBadge.Badge.Code,
-                OwnedBadges = ownedBadges.Select(x => new UserBadgeResponse
-                {
-                    UserBadgeId = x.Id,
-                    UserId = x.UserId,
-                    BadgeId = x.BadgeId,
-                    BadgeCode = x.Badge.Code,
-                    BadgeName = x.Badge.Name,
-                    BadgeDescription = x.Badge.Description,
-                    IsSelected = x.IsSelected,
-                }).ToList(),
             };
 
             return ApiResponse<GetUserResponse>.Ok(data); ;
@@ -137,6 +127,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
             {
                 return ApiResponse<GetUserProfileResponse>.Fail("");
             }
+            var ownedBadges = await _userBadgeRepository.GetAvailableByUserIdAsync(user.Id);
 
             var data = new GetUserProfileResponse
             {
@@ -177,6 +168,16 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 NumberOfComments = user.Comments.Count,
                 numberOfPosts = user.Posts.Count,
                 RatingScores = 0, // TODO: Add logic to get rating scores
+                OwnedBadges = ownedBadges.Select(x => new UserBadgeResponse
+                {
+                    UserBadgeId = x.Id,
+                    UserId = x.UserId,
+                    BadgeId = x.BadgeId,
+                    BadgeCode = x.Badge.Code,
+                    BadgeName = x.Badge.Name,
+                    BadgeDescription = x.Badge.Description,
+                    IsSelected = x.IsSelected,
+                }).ToList(),
             };
 
             return ApiResponse<GetUserProfileResponse>.Ok(data);

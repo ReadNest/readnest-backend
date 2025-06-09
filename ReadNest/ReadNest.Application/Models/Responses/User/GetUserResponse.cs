@@ -15,7 +15,5 @@ namespace ReadNest.Application.Models.Responses.User
         public string RoleName { get; set; }
         // Badge
         public string SelectedBadgeCode { get; set; }
-        public List<UserBadgeResponse> OwnedBadges { get; set; }
-
     }
 }

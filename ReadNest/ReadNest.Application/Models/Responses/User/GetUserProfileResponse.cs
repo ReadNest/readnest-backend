@@ -1,5 +1,6 @@
 ﻿using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.Post;
+using ReadNest.Application.Models.Responses.UserBadge;
 
 namespace ReadNest.Application.Models.Responses.User
 {
@@ -20,5 +21,6 @@ namespace ReadNest.Application.Models.Responses.User
         public int numberOfPosts { get; set; }
         public int NumberOfComments { get; set; }
         public int RatingScores { get; set; }
+        public List<UserBadgeResponse> OwnedBadges { get; set; }
     }
 }

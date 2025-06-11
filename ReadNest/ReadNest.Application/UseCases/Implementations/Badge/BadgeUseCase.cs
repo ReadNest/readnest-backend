@@ -61,6 +61,7 @@ namespace ReadNest.Application.UseCases.Implementations.Badge
             // Map the badges to the response model
             var response = badges.Select(b => new GetBadgeResponse
             {
+                Id = b.Id,
                 Code = b.Code,
                 Name = b.Name,
                 Description = b.Description

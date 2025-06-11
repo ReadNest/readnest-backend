@@ -277,14 +277,6 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = p.UpdatedAt,
                 BookId = p.BookId,
                 UserId = p.UserId,
-                Book = new Domain.Entities.Book
-                {
-                    Id = p.Book.Id,
-                    Title = p.Book.Title,
-                    Author = p.Book.Author,
-                    ImageUrl = p.Book.ImageUrl,
-                    AvarageRating = p.Book.AvarageRating,
-                },
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,

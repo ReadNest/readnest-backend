@@ -1,16 +1,13 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Badge;
 using ReadNest.Application.Models.Responses.Badge;
 using ReadNest.Application.UseCases.Interfaces.Badge;
-using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class BadgeController : ControllerBase
     {

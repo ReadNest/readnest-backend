@@ -3,8 +3,10 @@ using ReadNest.Application.Models.Requests.User;
 using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.Post;
 using ReadNest.Application.Models.Responses.User;
+using ReadNest.Application.Models.Responses.UserBadge;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.User;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 using ReadNest.Shared.Enums;
 
@@ -13,14 +15,16 @@ namespace ReadNest.Application.UseCases.Implementations.User
     public class UserUseCase : IUserUseCase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUserBadgeRepository _userBadgeRepository;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="userRepository"></param>
-        public UserUseCase(IUserRepository userRepository)
+        public UserUseCase(IUserRepository userRepository, IUserBadgeRepository userBadgeRepository)
         {
             _userRepository = userRepository;
+            _userBadgeRepository = userBadgeRepository;
         }
 
         public Task<ApiResponse<string>> ChangePasswordAsync(Guid userId, ChangePasswordRequest request)
@@ -92,6 +96,8 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 return ApiResponse<GetUserResponse>.Fail(MessageId.E0005);
             }
 
+            var selectedBadge = await _userBadgeRepository.GetSelectedBadgeByUserIdAsync(userId);
+
             var data = new GetUserResponse
             {
                 FullName = user.FullName,
@@ -103,6 +109,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 RoleName = user.Role.RoleName,
                 UserId = user.Id,
                 UserName = user.UserName,
+                SelectedBadgeCode = selectedBadge is null ? "DEFAULT" : selectedBadge.Badge.Code,
             };
 
             return ApiResponse<GetUserResponse>.Ok(data); ;
@@ -120,6 +127,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
             {
                 return ApiResponse<GetUserProfileResponse>.Fail("");
             }
+            var ownedBadges = await _userBadgeRepository.GetAvailableByUserIdAsync(user.Id);
 
             var data = new GetUserProfileResponse
             {
@@ -160,6 +168,16 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 NumberOfComments = user.Comments.Count,
                 numberOfPosts = user.Posts.Count,
                 RatingScores = 0, // TODO: Add logic to get rating scores
+                OwnedBadges = ownedBadges.Select(x => new UserBadgeResponse
+                {
+                    UserBadgeId = x.Id,
+                    UserId = x.UserId,
+                    BadgeId = x.BadgeId,
+                    BadgeCode = x.Badge.Code,
+                    BadgeName = x.Badge.Name,
+                    BadgeDescription = x.Badge.Description,
+                    IsSelected = x.IsSelected,
+                }).ToList(),
             };
 
             return ApiResponse<GetUserProfileResponse>.Ok(data);

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,17 +12,17 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("50deb9c7-b5f2-41d5-a79a-cef55b29cfce"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("f2bf4ed5-9634-4c60-b62a-e4b5cf9c2df3"));
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "badges",
                 columns: table => new
                 {
@@ -37,10 +36,10 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_badges", x => x.id);
+                    _ = table.PrimaryKey("PK_badges", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "chat_messages",
                 columns: table => new
                 {
@@ -54,14 +53,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_chat_messages", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_chat_messages", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_chat_messages_receiver_id",
                         column: x => x.receiver_id,
                         principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_chat_messages_sender_id",
                         column: x => x.sender_id,
                         principalTable: "users",
@@ -69,7 +68,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "trading_posts",
                 columns: table => new
                 {
@@ -85,14 +84,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_trading_posts", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_trading_posts", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_trading_posts_books_OfferedBookId",
                         column: x => x.OfferedBookId,
                         principalTable: "books",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_trading_posts_user_id",
                         column: x => x.owner_id,
                         principalTable: "users",
@@ -100,7 +99,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "user_badges",
                 columns: table => new
                 {
@@ -114,14 +113,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_badges", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_user_badges", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_user_badges_badge_id",
                         column: x => x.badge_id,
                         principalTable: "badges",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_user_badges_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -129,7 +128,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "trading_requests",
                 columns: table => new
                 {
@@ -143,14 +142,14 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_trading_requests", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_trading_requests", x => x.id);
+                    _ = table.ForeignKey(
                         name: "fk_trading_requests_requester_id",
                         column: x => x.requester_id,
                         principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "fk_trading_requests_trading_post_id",
                         column: x => x.trading_post_id,
                         principalTable: "trading_posts",
@@ -158,7 +157,7 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]
@@ -167,48 +166,48 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
                     { new Guid("c595eb59-7e85-4fa9-b189-8703272c9b95"), new DateTime(2025, 6, 5, 14, 8, 42, 664, DateTimeKind.Utc).AddTicks(6493), false, "Admin", new DateTime(2025, 6, 5, 14, 8, 42, 664, DateTimeKind.Utc).AddTicks(6496) }
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_badges_code",
                 table: "badges",
                 column: "code",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_chat_messages_receiver_id",
                 table: "chat_messages",
                 column: "receiver_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_chat_messages_sender_id",
                 table: "chat_messages",
                 column: "sender_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_trading_posts_OfferedBookId",
                 table: "trading_posts",
                 column: "OfferedBookId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_trading_posts_owner_id",
                 table: "trading_posts",
                 column: "owner_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_trading_requests_requester_id",
                 table: "trading_requests",
                 column: "requester_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_trading_requests_trading_post_id",
                 table: "trading_requests",
                 column: "trading_post_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_user_badges_badge_id",
                 table: "user_badges",
                 column: "badge_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_user_badges_user_id",
                 table: "user_badges",
                 column: "user_id");
@@ -217,32 +216,32 @@ namespace ReadNest.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "chat_messages");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "trading_requests");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "user_badges");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "trading_posts");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "badges");
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("0b567d16-08c2-49bd-a84a-064116a86e91"));
 
-            migrationBuilder.DeleteData(
+            _ = migrationBuilder.DeleteData(
                 table: "roles",
                 keyColumn: "Id",
                 keyValue: new Guid("c595eb59-7e85-4fa9-b189-8703272c9b95"));
 
-            migrationBuilder.InsertData(
+            _ = migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "Id", "CreatedAt", "IsDeleted", "role_name", "UpdatedAt" },
                 values: new object[,]

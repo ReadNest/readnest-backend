@@ -10,6 +10,7 @@ using ReadNest.Application.UseCases.Implementations.CommentReport;
 using ReadNest.Application.UseCases.Implementations.FavoriteBook;
 using ReadNest.Application.UseCases.Implementations.Post;
 using ReadNest.Application.UseCases.Implementations.User;
+using ReadNest.Application.UseCases.Implementations.UserBadge;
 using ReadNest.Application.UseCases.Interfaces.AffiliateLink;
 using ReadNest.Application.UseCases.Interfaces.Auth;
 using ReadNest.Application.UseCases.Interfaces.Badge;
@@ -20,6 +21,7 @@ using ReadNest.Application.UseCases.Interfaces.CommentReport;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.UseCases.Interfaces.User;
+using ReadNest.Application.UseCases.Interfaces.UserBadge;
 using ReadNest.Application.Validators.Auth;
 
 namespace ReadNest.Application.Extensions
@@ -38,6 +40,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<ICommentReportUseCase, CommentReportUseCase>();
             _ = services.AddScoped<IPostUseCase, PostUseCase>();
             _ = services.AddScoped<IBadgeUseCase, BadgeUseCase>();
+            _ = services.AddScoped<IUserBadgeUseCase, UserBadgeUseCase>();
 
             return services;
         }

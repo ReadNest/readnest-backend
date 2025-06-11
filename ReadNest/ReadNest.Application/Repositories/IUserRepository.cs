@@ -9,5 +9,6 @@ namespace ReadNest.Application.Repositories
         Task<User?> LoginAsync(string username, string password);
         Task<User?> GetByUserIdAsync(Guid userId);
         Task<User> GetByUserNameAsync(string userName);
+        Task<IEnumerable<User>> GetAllUsersWithRoleUserAsync();
     }
 }

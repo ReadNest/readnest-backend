@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Requests.Badge;
+﻿using ReadNest.Application.Models.Requests.Badge;
 using ReadNest.Application.Models.Responses.Badge;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Badge;
@@ -35,7 +30,7 @@ namespace ReadNest.Application.UseCases.Implementations.Badge
                 Description = request.Description,
             };
             // Save the badge to the database
-            await _badgeRepository.AddAsync(badge);
+            _ = await _badgeRepository.AddAsync(badge);
             await _badgeRepository.SaveChangesAsync();
             return ApiResponse<CreateBadgeResponse>.Ok(new CreateBadgeResponse
             {
@@ -66,6 +61,7 @@ namespace ReadNest.Application.UseCases.Implementations.Badge
             // Map the badges to the response model
             var response = badges.Select(b => new GetBadgeResponse
             {
+                Id = b.Id,
                 Code = b.Code,
                 Name = b.Name,
                 Description = b.Description

@@ -62,5 +62,10 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 PageSize = request.PageSize
             };
         }
+
+        public async Task<IEnumerable<Category>> GetCategoriesByBookIds(List<Guid> bookIds)
+        {
+            return await _context.Categories.AsNoTracking().Where(x => bookIds.Contains(x.Id) && !x.IsDeleted).ToListAsync();
+        }
     }
 }

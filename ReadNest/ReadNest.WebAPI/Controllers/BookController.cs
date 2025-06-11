@@ -70,6 +70,16 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPut("{bookId}")]
+        [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<IActionResult> UpdateBook([FromRoute] Guid bookId, [FromBody] UpdateBookRequest request)
+        {
+            var response = await _bookUseCase.UpdateBookAsync(bookId, request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

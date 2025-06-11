@@ -20,11 +20,11 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<List<GetPostResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetPostResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAllPosts()
+        public async Task<IActionResult> GetAllPosts([FromQuery] PagingRequest request)
         {
-            var response = await _postUseCase.GetAllPostsAsync();
+            var response = await _postUseCase.GetAllPostsAsync(request);
             return response.Success ? Ok(response) : NotFound(response);
         }
 
@@ -47,11 +47,11 @@ namespace ReadNest.WebAPI.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        [ProducesResponseType(typeof(ApiResponse<List<GetPostResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetPostResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetPostsByUserId(Guid userId)
+        public async Task<IActionResult> GetPostsByUserId(Guid userId, [FromQuery] PagingRequest request)
         {
-            var response = await _postUseCase.GetPostsByUserIdAsync(userId);
+            var response = await _postUseCase.GetPostsByUserIdAsync(userId, request);
             return response.Success ? Ok(response) : NotFound(response);
         }
 
@@ -97,6 +97,24 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> LikePost([FromBody] LikePostRequest request)
         {
             var response = await _postUseCase.LikePostAsync(request.PostId, request.UserId);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ApiResponse<GetPostResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdatePost([FromBody] UpdatePostRequest request)
+        {
+            var response = await _postUseCase.UpdateAsync(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpDelete("{postId}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeletePost(Guid postId)
+        {
+            var response = await _postUseCase.DeleteAsync(postId);
             return response.Success ? Ok(response) : BadRequest(response);
         }
 

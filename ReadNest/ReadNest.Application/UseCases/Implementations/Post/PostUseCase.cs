@@ -1,10 +1,14 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using ReadNest.Application.Models.Requests.Post;
+using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Post;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.Validators.Post;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.Post
@@ -24,15 +28,19 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             _userRepository = userRepository;
         }
 
-        public async Task<ApiResponse<List<GetPostResponse>>> GetAllPostsAsync()
+        public async Task<ApiResponse<PagingResponse<GetPostResponse>>> GetAllPostsAsync(PagingRequest request)
         {
-            var posts = await _postRepository.GetAllPostsAsync();
-            if (posts == null || !posts.Any())
-            {
-                return ApiResponse<List<GetPostResponse>>.Fail("No posts found.");
-            }
+            var posts = await _postRepository.FindWithIncludePagedAsync(
+                predicate: p => !p.IsDeleted,
+                include: query => query
+                    .Include(p => p.Creator)
+                    .Include(p => p.Book)
+                    .Include(p => p.Likes),
+                pageNumber: request.PageIndex,
+                pageSize: request.PageSize,
+                asNoTracking: true);
 
-            var response = posts.Select(p => new GetPostResponse
+            var postResponse = posts.Select(p => new GetPostResponse
             {
                 Id = p.Id,
                 Title = p.Title,
@@ -41,6 +49,14 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = p.UpdatedAt,
                 BookId = p.BookId,
                 UserId = p.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = p.Book.Id,
+                    Title = p.Book.Title,
+                    Author = p.Book.Author,
+                    ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
+                },
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
@@ -54,7 +70,20 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UserLikes = p.Likes.Select(l => l.UserName).ToList()
             }).ToList();
 
-            return ApiResponse<List<GetPostResponse>>.Ok(response);
+            if (postResponse.Count == 0)
+            {
+                return ApiResponse<PagingResponse<GetPostResponse>>.Fail(MessageId.E0005);
+            }
+
+            var pagingResponse = new PagingResponse<GetPostResponse>
+            {
+                Items = postResponse,
+                TotalItems = await _postRepository.CountAsync(b => !b.IsDeleted),
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize
+            };
+
+            return ApiResponse<PagingResponse<GetPostResponse>>.Ok(pagingResponse);
         }
 
         public async Task<ApiResponse<GetPostResponse>> CreateAsync(CreatePostRequest request)
@@ -93,6 +122,14 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = post.UpdatedAt,
                 BookId = post.BookId,
                 UserId = post.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = post.Book.Id,
+                    Title = post.Book.Title,
+                    Author = post.Book.Author,
+                    ImageUrl = post.Book.ImageUrl,
+                    AvarageRating = post.Book.AvarageRating,
+                },
                 Creator = new GetUserResponse
                 {
                     UserId = creator.Id,
@@ -111,13 +148,21 @@ namespace ReadNest.Application.UseCases.Implementations.Post
 
         public async Task<ApiResponse<GetPostResponse>> GetPostByIdAsync(Guid postId)
         {
-            var post = await _postRepository.GetByIdAsync(postId);
-            if (post == null || post.IsDeleted)
-            {
-                return ApiResponse<GetPostResponse>.Fail("Post not found");
-            }
+            var posts = await _postRepository.FindWithIncludeAsync(
+                predicate: p => p.Id == postId && !p.IsDeleted,
+                include: query => query
+                    .Include(p => p.Creator)
+                    .Include(p => p.Book)
+                    .ThenInclude(b => b.Categories)
+                    .Include(p => p.Likes),
+                asNoTracking: true);
 
-            var creator = await _userRepository.GetByIdAsync(post.UserId);
+            var post = posts.FirstOrDefault();
+
+            if (post == null)
+            {
+                return ApiResponse<GetPostResponse>.Fail(MessageId.E0005);
+            }
 
             var response = new GetPostResponse
             {
@@ -128,13 +173,26 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = post.UpdatedAt,
                 BookId = post.BookId,
                 UserId = post.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = post.Book.Id,
+                    Title = post.Book.Title,
+                    Author = post.Book.Author,
+                    ImageUrl = post.Book.ImageUrl,
+                    AvarageRating = post.Book.AvarageRating,
+                    Categories = post.Book.Categories.Select(c => new Domain.Entities.Category
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToList()
+                },
                 Creator = new GetUserResponse
                 {
-                    UserId = creator.Id,
-                    FullName = creator.FullName,
-                    UserName = creator.UserName,
-                    Email = creator.Email,
-                    AvatarUrl = creator.AvatarUrl
+                    UserId = post.Creator.Id,
+                    FullName = post.Creator.FullName,
+                    UserName = post.Creator.UserName,
+                    Email = post.Creator.Email,
+                    AvatarUrl = post.Creator.AvatarUrl
                 },
                 Views = post.Views,
                 LikesCount = post.Likes.Count(),
@@ -144,15 +202,19 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             return ApiResponse<GetPostResponse>.Ok(response);
         }
 
-        public async Task<ApiResponse<List<GetPostResponse>>> GetPostsByUserIdAsync(Guid userId)
+        public async Task<ApiResponse<PagingResponse<GetPostResponse>>> GetPostsByUserIdAsync(Guid userId, PagingRequest request)
         {
-            var posts = await _postRepository.GetPostsByUserIdAsync(userId);
-            if (posts == null || !posts.Any())
-            {
-                return ApiResponse<List<GetPostResponse>>.Fail("No posts found for this user.");
-            }
+            var posts = await _postRepository.FindWithIncludePagedAsync( 
+                predicate: p => p.UserId == userId && !p.IsDeleted,
+                include: query => query
+                    .Include(p => p.Creator)
+                    .Include(p => p.Book)
+                    .Include(p => p.Likes),
+                pageNumber: request.PageIndex,
+                pageSize: request.PageSize,
+                asNoTracking: true);
 
-            var response = posts.Select(p => new GetPostResponse
+            var postResponse = posts.Select(p => new GetPostResponse
             {
                 Id = p.Id,
                 Title = p.Title,
@@ -161,6 +223,14 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = p.UpdatedAt,
                 BookId = p.BookId,
                 UserId = p.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = p.Book.Id,
+                    Title = p.Book.Title,
+                    Author = p.Book.Author,
+                    ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
+                },
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
@@ -174,7 +244,20 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UserLikes = p.Likes.Select(l => l.UserName).ToList()
             }).ToList();
 
-            return ApiResponse<List<GetPostResponse>>.Ok(response);
+            if (postResponse.Count == 0)
+            {
+                return ApiResponse<PagingResponse<GetPostResponse>>.Fail("No posts found for this user.");
+            }
+
+            var pagingResponse = new PagingResponse<GetPostResponse>
+            {
+                Items = postResponse,
+                TotalItems = await _postRepository.GetPostCountByUserIdAsync(userId),
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize
+            };
+
+            return ApiResponse<PagingResponse<GetPostResponse>>.Ok(pagingResponse);
         }
 
         public async Task<ApiResponse<List<GetPostResponse>>> GetPostsByBookIdAsync(Guid bookId)
@@ -227,6 +310,14 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = p.UpdatedAt,
                 BookId = p.BookId,
                 UserId = p.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = p.Book.Id,
+                    Title = p.Book.Title,
+                    Author = p.Book.Author,
+                    ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
+                },
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
@@ -260,6 +351,14 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = p.UpdatedAt,
                 BookId = p.BookId,
                 UserId = p.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = p.Book.Id,
+                    Title = p.Book.Title,
+                    Author = p.Book.Author,
+                    ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
+                },
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
@@ -293,6 +392,14 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 UpdatedAt = p.UpdatedAt,
                 BookId = p.BookId,
                 UserId = p.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = p.Book.Id,
+                    Title = p.Book.Title,
+                    Author = p.Book.Author,
+                    ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
+                },
                 Creator = new GetUserResponse
                 {
                     UserId = p.Creator.Id,
@@ -335,6 +442,79 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 await _postRepository.SaveChangesAsync();
                 return ApiResponse<string>.Ok("Like successfully");
             }
+        }
+
+        public async Task<ApiResponse<GetPostResponse>> UpdateAsync(UpdatePostRequest request)
+        {
+            var posts = await _postRepository.FindWithIncludeAsync(
+                predicate: p => p.Id == request.Id && !p.IsDeleted,
+                include: query => query
+                    .Include(p => p.Creator)
+                    .Include(p => p.Book)
+                    .Include(p => p.Likes),
+                asNoTracking: true);
+
+            var post = posts.FirstOrDefault();
+
+            if (post == null)
+            {
+                return ApiResponse<GetPostResponse>.Fail(MessageId.E0005);
+            }
+
+            post.Title = request.Title;
+            post.Content = request.Content;
+            post.BookId = request.BookId;
+            post.UpdatedAt = DateTime.UtcNow;
+
+            await _postRepository.UpdateAsync(post);
+
+            var response = new GetPostResponse
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt,
+                BookId = post.BookId,
+                UserId = post.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = post.Book.Id,
+                    Title = post.Book.Title,
+                    Author = post.Book.Author,
+                    ImageUrl = post.Book.ImageUrl,
+                    AvarageRating = post.Book.AvarageRating,
+                },
+                Creator = new GetUserResponse
+                {
+                    UserId = post.Creator.Id,
+                    FullName = post.Creator.FullName,
+                    UserName = post.Creator.UserName,
+                    Email = post.Creator.Email,
+                    AvatarUrl = post.Creator.AvatarUrl
+                },
+                Views = post.Views,
+                LikesCount = post.Likes.Count(),
+                UserLikes = post.Likes.Select(l => l.UserName).ToList()
+            };
+
+            await _postRepository.SaveChangesAsync();
+
+            return ApiResponse<GetPostResponse>.Ok(response);
+        }
+
+        public async Task<ApiResponse<string>> DeleteAsync(Guid postId)
+        {
+            var post = (await _postRepository.FindAsync(predicate: query => query.Id == postId && !query.IsDeleted)).FirstOrDefault();
+            if (post == null)
+            {
+                return ApiResponse<string>.Fail(MessageId.E0001);
+            }
+
+            await _postRepository.SoftDeleteAsync(post);
+            await _postRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok("Post deleted successfully");
         }
     }
 }

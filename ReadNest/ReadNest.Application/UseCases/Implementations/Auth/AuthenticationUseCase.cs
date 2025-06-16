@@ -162,7 +162,7 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
                     IsSelected = isSelected
                 };
 
-                await _userBadgeRepository.AddAsync(userBadge);
+                _ = await _userBadgeRepository.AddAsync(userBadge);
                 await _userBadgeRepository.SaveChangesAsync();
             }
         }

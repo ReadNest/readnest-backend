@@ -1,14 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using ReadNest.Application.Models.Requests.Post;
-using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Post;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.Validators.Post;
-using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.Post
@@ -204,7 +201,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
 
         public async Task<ApiResponse<PagingResponse<GetPostResponse>>> GetPostsByUserIdAsync(Guid userId, PagingRequest request)
         {
-            var posts = await _postRepository.FindWithIncludePagedAsync( 
+            var posts = await _postRepository.FindWithIncludePagedAsync(
                 predicate: p => p.UserId == userId && !p.IsDeleted,
                 include: query => query
                     .Include(p => p.Creator)

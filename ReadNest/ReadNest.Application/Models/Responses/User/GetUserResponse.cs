@@ -1,6 +1,4 @@
-﻿using ReadNest.Application.Models.Responses.UserBadge;
-
-namespace ReadNest.Application.Models.Responses.User
+﻿namespace ReadNest.Application.Models.Responses.User
 {
     public class GetUserResponse
     {

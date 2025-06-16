@@ -6,7 +6,6 @@ using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Models.Responses.UserBadge;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.User;
-using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 using ReadNest.Shared.Enums;
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Repositories;
+﻿using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.UserBadge;
 using ReadNest.Shared.Common;
 

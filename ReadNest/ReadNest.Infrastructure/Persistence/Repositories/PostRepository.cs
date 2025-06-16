@@ -14,6 +14,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Book)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -31,6 +32,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Where(p => p.UserId == userId && !p.IsDeleted)
                 .Include(p => p.Book)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -47,6 +49,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(p => p.BookId == bookId && !p.IsDeleted)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -57,6 +60,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.Likes.Count())
                 .Take(count)
                 .ToListAsync();
@@ -68,6 +72,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.Views)
                 .Take(count)
                 .ToListAsync();

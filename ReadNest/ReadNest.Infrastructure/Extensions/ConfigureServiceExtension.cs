@@ -23,6 +23,8 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
+            // Redis tracker
+            services.AddScoped<IViewTracker, RedisViewTracker>();
 
             return services;
         }

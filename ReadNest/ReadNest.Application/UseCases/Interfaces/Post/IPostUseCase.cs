@@ -17,5 +17,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Post
         Task<ApiResponse<string>> LikePostAsync(Guid postId, Guid userId);
         Task<ApiResponse<GetPostResponse>> UpdateAsync(UpdatePostRequest request);
         Task<ApiResponse<string>> DeleteAsync(Guid postId);
+        Task<ApiResponse<string>> IncreasePostViewsAsync(Guid postId);
     }
 }

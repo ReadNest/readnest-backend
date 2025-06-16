@@ -67,7 +67,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             if (postResponse.Count == 0)
@@ -196,7 +196,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = post.Views,
                 LikesCount = post.Likes.Count(),
-                UserLikes = post.Likes.Select(l => l.UserName).ToList()
+                UserLikes = post.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             };
 
             return ApiResponse<GetPostResponse>.Ok(response);
@@ -241,7 +241,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             if (postResponse.Count == 0)
@@ -287,7 +287,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -328,7 +328,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -369,7 +369,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -410,7 +410,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -495,7 +495,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = post.Views,
                 LikesCount = post.Likes.Count(),
-                UserLikes = post.Likes.Select(l => l.UserName).ToList()
+                UserLikes = post.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             };
 
             await _postRepository.SaveChangesAsync();
@@ -515,6 +515,21 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             await _postRepository.SaveChangesAsync();
 
             return ApiResponse<string>.Ok("Post deleted successfully");
+        }
+
+        public async Task<ApiResponse<string>> IncreasePostViewsAsync(Guid postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            if (post == null || post.IsDeleted)
+            {
+                return ApiResponse<string>.Fail("Post not found");
+            }
+
+            post.Views++;
+            await _postRepository.UpdateAsync(post);
+            await _postRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok("Post views increased successfully");
         }
     }
 }

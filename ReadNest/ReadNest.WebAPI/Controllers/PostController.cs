@@ -145,5 +145,14 @@ namespace ReadNest.WebAPI.Controllers
 
             return Ok(ApiResponse<string>.Ok("View already counted recently"));
         }
+
+        [HttpPost("filter")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetPostResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FilterPosts([FromBody] FilterPostRequest request)
+        {
+            var response = await _postUseCase.FilterPostsAsync(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
     }
 }

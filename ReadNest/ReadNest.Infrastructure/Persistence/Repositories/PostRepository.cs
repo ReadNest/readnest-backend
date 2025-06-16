@@ -86,6 +86,13 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
-
+        public IQueryable<Post> GetQueryableWithIncludes()
+        {
+            return _context.Posts
+                .Include(p => p.Book)
+                .Include(p => p.Creator)
+                .Include(p => p.Likes)
+                .Where(p => !p.IsDeleted);
+        }
     }
 }

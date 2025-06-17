@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using ReadNest.Application.Models.Requests.Comment;
+﻿using ReadNest.Application.Models.Requests.Comment;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Comment;
 using ReadNest.Application.Models.Responses.CommentReport;

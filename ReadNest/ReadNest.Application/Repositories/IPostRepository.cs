@@ -11,8 +11,6 @@ namespace ReadNest.Application.Repositories
         Task<IEnumerable<Post>> GetPostsByBookIdAsync(Guid bookId);
         Task<IEnumerable<Post>> GetTopMostLikedPostsAsync(int count);
         Task<IEnumerable<Post>> GetTopMostViewedPostsAsync(int count);
-        Task<IEnumerable<Post>> SearchByTitleAsync(string keyword);
-
-
+        IQueryable<Post> GetQueryableWithIncludes();
     }
 }

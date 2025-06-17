@@ -7,6 +7,7 @@ using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.Validators.Post;
 using ReadNest.Shared.Common;
+using ReadNest.Shared.Utils;
 
 namespace ReadNest.Application.UseCases.Implementations.Post
 {
@@ -64,7 +65,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             if (postResponse.Count == 0)
@@ -103,7 +104,8 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 Title = request.Title,
                 Content = request.Content,
                 BookId = request.BookId,
-                UserId = request.UserId
+                UserId = request.UserId,
+                TitleNormalized = StringUtil.NormalizeKeyword(request.Title),
             };
 
             _ = await _postRepository.AddAsync(post);
@@ -193,7 +195,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = post.Views,
                 LikesCount = post.Likes.Count(),
-                UserLikes = post.Likes.Select(l => l.UserName).ToList()
+                UserLikes = post.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             };
 
             return ApiResponse<GetPostResponse>.Ok(response);
@@ -238,7 +240,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             if (postResponse.Count == 0)
@@ -284,7 +286,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -325,7 +327,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -366,48 +368,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = p.Views,
                 LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
-            }).ToList();
-
-            return ApiResponse<List<GetPostResponse>>.Ok(response);
-        }
-
-        public async Task<ApiResponse<List<GetPostResponse>>> SearchByTitleAsync(string keyword)
-        {
-            var posts = await _postRepository.SearchByTitleAsync(keyword);
-            if (posts == null || !posts.Any())
-            {
-                return ApiResponse<List<GetPostResponse>>.Fail("No posts found matching the search criteria.");
-            }
-
-            var response = posts.Select(p => new GetPostResponse
-            {
-                Id = p.Id,
-                Title = p.Title,
-                Content = p.Content,
-                CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt,
-                BookId = p.BookId,
-                UserId = p.UserId,
-                Book = new Domain.Entities.Book
-                {
-                    Id = p.Book.Id,
-                    Title = p.Book.Title,
-                    Author = p.Book.Author,
-                    ImageUrl = p.Book.ImageUrl,
-                    AvarageRating = p.Book.AvarageRating,
-                },
-                Creator = new GetUserResponse
-                {
-                    UserId = p.Creator.Id,
-                    FullName = p.Creator.FullName,
-                    UserName = p.Creator.UserName,
-                    Email = p.Creator.Email,
-                    AvatarUrl = p.Creator.AvatarUrl
-                },
-                Views = p.Views,
-                LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes.Select(l => l.UserName).ToList()
+                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
 
             return ApiResponse<List<GetPostResponse>>.Ok(response);
@@ -462,6 +423,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             post.Content = request.Content;
             post.BookId = request.BookId;
             post.UpdatedAt = DateTime.UtcNow;
+            post.TitleNormalized = StringUtil.NormalizeKeyword(request.Title);
 
             await _postRepository.UpdateAsync(post);
 
@@ -492,7 +454,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                 },
                 Views = post.Views,
                 LikesCount = post.Likes.Count(),
-                UserLikes = post.Likes.Select(l => l.UserName).ToList()
+                UserLikes = post.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             };
 
             await _postRepository.SaveChangesAsync();
@@ -513,5 +475,94 @@ namespace ReadNest.Application.UseCases.Implementations.Post
 
             return ApiResponse<string>.Ok("Post deleted successfully");
         }
+
+        public async Task<ApiResponse<string>> IncreasePostViewsAsync(Guid postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            if (post == null || post.IsDeleted)
+            {
+                return ApiResponse<string>.Fail("Post not found");
+            }
+
+            post.Views++;
+            await _postRepository.UpdateAsync(post);
+            await _postRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok("Post views increased successfully");
+        }
+
+        public async Task<ApiResponse<PagingResponse<GetPostResponse>>> FilterPostsAsync(FilterPostRequest request)
+        {
+            var query = _postRepository.GetQueryableWithIncludes();
+
+            var normalizedKeyword = StringUtil.NormalizeKeyword(request.Keyword);
+
+            if (!string.IsNullOrEmpty(normalizedKeyword))
+            {
+                query = query.Where(p =>
+                    p.TitleNormalized.Contains(normalizedKeyword) ||
+                    p.Book.TitleNormalized.Contains(normalizedKeyword));
+            }
+
+            if (request.BookId.HasValue)
+            {
+                query = query.Where(p => p.BookId == request.BookId.Value);
+            }
+
+            query = request.SortBy?.ToLower() switch
+            {
+                "views" => query.OrderByDescending(p => p.Views),
+                "likes" => query.OrderByDescending(p => p.Likes.Count),
+                "oldest" => query.OrderBy(p => p.CreatedAt),
+                _ => query.OrderByDescending(p => p.CreatedAt)
+            };
+
+            var totalItems = await query.CountAsync();
+            var posts = await query
+                .Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            var postResponse = posts.Select(p => new GetPostResponse
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Content = p.Content,
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt,
+                BookId = p.BookId,
+                UserId = p.UserId,
+                Book = new Domain.Entities.Book
+                {
+                    Id = p.Book.Id,
+                    Title = p.Book.Title,
+                    Author = p.Book.Author,
+                    ImageUrl = p.Book.ImageUrl,
+                    AvarageRating = p.Book.AvarageRating,
+                },
+                Creator = new GetUserResponse
+                {
+                    UserId = p.Creator.Id,
+                    FullName = p.Creator.FullName,
+                    UserName = p.Creator.UserName,
+                    Email = p.Creator.Email,
+                    AvatarUrl = p.Creator.AvatarUrl
+                },
+                Views = p.Views,
+                LikesCount = p.Likes.Count,
+                UserLikes = p.Likes.Select(l => l.Id.ToString()).ToList()
+            }).ToList();
+
+            var pagingResponse = new PagingResponse<GetPostResponse>
+            {
+                Items = postResponse,
+                TotalItems = totalItems,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize
+            };
+
+            return ApiResponse<PagingResponse<GetPostResponse>>.Ok(pagingResponse);
+        }
+
     }
 }

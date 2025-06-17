@@ -377,47 +377,6 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             return ApiResponse<List<GetPostResponse>>.Ok(response);
         }
 
-        public async Task<ApiResponse<List<GetPostResponse>>> SearchByTitleAsync(string keyword)
-        {
-            var posts = await _postRepository.SearchByTitleAsync(keyword);
-            if (posts == null || !posts.Any())
-            {
-                return ApiResponse<List<GetPostResponse>>.Fail("No posts found matching the search criteria.");
-            }
-
-            var response = posts.Select(p => new GetPostResponse
-            {
-                Id = p.Id,
-                Title = p.Title,
-                Content = p.Content,
-                CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt,
-                BookId = p.BookId,
-                UserId = p.UserId,
-                Book = new Domain.Entities.Book
-                {
-                    Id = p.Book.Id,
-                    Title = p.Book.Title,
-                    Author = p.Book.Author,
-                    ImageUrl = p.Book.ImageUrl,
-                    AvarageRating = p.Book.AvarageRating,
-                },
-                Creator = new GetUserResponse
-                {
-                    UserId = p.Creator.Id,
-                    FullName = p.Creator.FullName,
-                    UserName = p.Creator.UserName,
-                    Email = p.Creator.Email,
-                    AvatarUrl = p.Creator.AvatarUrl
-                },
-                Views = p.Views,
-                LikesCount = p.Likes.Count(),
-                UserLikes = p.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
-            }).ToList();
-
-            return ApiResponse<List<GetPostResponse>>.Ok(response);
-        }
-
         public async Task<ApiResponse<string>> LikePostAsync(Guid postId, Guid userId)
         {
             var post = await _postRepository.GetPostWithLikesByIdAsync(postId);
@@ -557,6 +516,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
             {
                 "views" => query.OrderByDescending(p => p.Views),
                 "likes" => query.OrderByDescending(p => p.Likes.Count),
+                "oldest" => query.OrderBy(p => p.CreatedAt),
                 _ => query.OrderByDescending(p => p.CreatedAt)
             };
 

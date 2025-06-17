@@ -78,14 +78,6 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Post>> SearchByTitleAsync(string keyword)
-        {
-            return await _context.Posts
-                .AsNoTracking()
-                .Where(p => !p.IsDeleted && EF.Functions.Like(p.Title, $"%{keyword}%"))
-                .ToListAsync();
-        }
-
         public IQueryable<Post> GetQueryableWithIncludes()
         {
             return _context.Posts

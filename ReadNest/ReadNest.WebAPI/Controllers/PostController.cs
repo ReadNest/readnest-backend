@@ -89,15 +89,6 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
-        [HttpGet("search")]
-        [ProducesResponseType(typeof(ApiResponse<List<GetPostResponse>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> SearchByTitle([FromQuery] string keyword)
-        {
-            var response = await _postUseCase.SearchByTitleAsync(keyword);
-            return response.Success ? Ok(response) : NotFound(response);
-        }
-
         [HttpPost("like")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

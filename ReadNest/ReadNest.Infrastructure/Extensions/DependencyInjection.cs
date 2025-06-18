@@ -13,13 +13,8 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddConfigureOptions(configuration);
             _ = services.AddCustomDbContext(configuration);
             _ = services.AddCustomJwt(configuration);
+            _ = services.AddCustomRedis(configuration);
             _ = services.AddServices();
-
-            // Redis connection
-            services.AddSingleton<IConnectionMultiplexer>(
-                ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"))
-            );
-
             
 
             return services;

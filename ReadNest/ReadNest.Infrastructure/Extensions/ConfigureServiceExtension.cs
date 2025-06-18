@@ -21,10 +21,12 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IPostRepository, PostRepository>();
             _ = services.AddScoped<IBadgeRepository, BadgeRepository>();
             _ = services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
+            _ = services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
             // Redis tracker
             services.AddScoped<IViewTracker, RedisViewTracker>();
+            services.AddScoped<IRedisChatQueue, RedisChatQueue>();
 
             return services;
         }

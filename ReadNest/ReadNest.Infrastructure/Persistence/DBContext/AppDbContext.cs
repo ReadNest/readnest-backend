@@ -610,6 +610,99 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            _ = modelBuilder.Entity<Event>(entity =>
+            {
+                _ = entity.ToTable("events");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+                _ = entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .IsRequired()
+                    .HasMaxLength(100);
+                _ = entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("text");
+                _ = entity.Property(e => e.StartDate)
+                    .HasColumnName("start_date")
+                    .IsRequired();
+                _ = entity.Property(e => e.EndDate)
+                    .HasColumnName("end_date")
+                    .IsRequired();
+                _ = entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .IsRequired()
+                    .HasMaxLength(50);
+                _ = entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            _ = modelBuilder.Entity<EventReward>(entity =>
+            {
+                _ = entity.ToTable("event_rewards");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+                _ = entity.Property(e => e.ConditionType)
+                    .HasColumnName("condition_type")
+                    .IsRequired()
+                    .HasMaxLength(50);
+                _ = entity.Property(e => e.Threshold)
+                    .HasColumnName("threshold")
+                    .IsRequired();
+                _ = entity.Property(e => e.BadgeId)
+                    .HasColumnName("badge_id")
+                    .IsRequired();
+                _ = entity.Property(e => e.EventId)
+                    .HasColumnName("event_id")
+                    .IsRequired();
+                _ = entity.HasOne(e => e.Badge)
+                    .WithMany(b => b.EventRewards)
+                    .HasForeignKey(e => e.BadgeId)
+                    .HasConstraintName("fk_event_rewards_badge_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+                _ = entity.HasOne(e => e.Event)
+                    .WithMany(ev => ev.Rewards)
+                    .HasForeignKey(e => e.EventId)
+                    .HasConstraintName("fk_event_rewards_event_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<Leaderboard>(entity =>
+            {
+                _ = entity.ToTable("leaderboards");
+                _ = entity.HasKey(e => e.Id);
+                _ = entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .IsRequired();
+                _ = entity.Property(e => e.EventId)
+                    .HasColumnName("event_id")
+                    .IsRequired();
+                _ = entity.Property(e => e.UserId)
+                    .HasColumnName("user_id")
+                    .IsRequired();
+                _ = entity.Property(e => e.Rank)
+                    .HasColumnName("rank")
+                    .IsRequired();
+                _ = entity.Property(e => e.Score)
+                    .HasColumnName("score")
+                    .IsRequired();
+                _ = entity.HasOne(e => e.Event)
+                    .WithMany(ev => ev.Leaderboards)
+                    .HasForeignKey(e => e.EventId)
+                    .HasConstraintName("fk_leaderboards_event_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+                _ = entity.HasOne(e => e.User)
+                    .WithMany(u => u.Leaderboards)
+                    .HasForeignKey(e => e.UserId)
+                    .HasConstraintName("fk_leaderboards_user_id")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             base.OnModelCreating(modelBuilder);
         }
 

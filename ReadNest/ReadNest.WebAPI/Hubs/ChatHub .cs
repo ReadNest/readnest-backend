@@ -33,17 +33,19 @@ namespace ReadNest.WebAPI.Hubs
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task SendMessage(ChatMessageRequest request)
         {
-            var message = new ChatMessage
+            var message = new ChatMessageCacheModel
             {
                 Id = request.Id,
                 SenderId = request.SenderId,
                 ReceiverId = request.ReceiverId,
                 Message = request.Message,
+                SentAt =DateTime.UtcNow, // Ensure a valid timestamp
+                IsRead = false, // Default to unread 
             };
             // Broadcast gửi về cho all clients
             await Clients.All.SendAsync("ReceiveMessage", message);
             // Đẩy vào redisQueue lưu tạm thời
-            await _redisChatQueue.EnqueueMessageAsync(message);
+            await _redisChatQueue.AddMessageAsync(message, false);
         }
     }
 }

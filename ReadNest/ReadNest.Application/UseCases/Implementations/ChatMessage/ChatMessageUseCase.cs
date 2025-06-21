@@ -51,6 +51,39 @@ namespace ReadNest.Application.UseCases.Implementations.ChatMessage
             };
         }
 
+        public async Task<ApiResponse<List<ChatMessageCacheModel>>> GetFullConversationAsync(Guid userAId, Guid userBId)
+        {
+            var conversation = await _chatMessageRepository.GetFullConversationAsync(userAId, userBId);
+            if (conversation == null || !conversation.Any())
+            {
+                return new ApiResponse<List<ChatMessageCacheModel>>
+                {
+                    Success = true,
+                    Message = "No conversation found between the specified users.",
+                    Data = new List<ChatMessageCacheModel>()
+                };
+            }
+            else
+            {
+                var conversationModel = conversation.Select(m => new ChatMessageCacheModel
+                {
+                    Id = m.Id,
+                    SenderId = m.SenderId,
+                    ReceiverId = m.ReceiverId,
+                    Message = m.Message,
+                    SentAt = m.SentAt,
+                    IsRead = m.IsRead,
+                    IsSaved = true // true = from DB; false = new pending
+                }).ToList();
+                return new ApiResponse<List<ChatMessageCacheModel>>
+                {
+                    Success = true,
+                    Message = "Conversation retrieved successfully.",
+                    Data = conversationModel
+                };
+            }
+        }
+
         public async Task<ApiResponse<string>> SaveRangeMessageAsync(List<Domain.Entities.ChatMessage> messages)
         {
             if (messages == null || !messages.Any())

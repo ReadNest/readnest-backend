@@ -24,5 +24,13 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
 
             return users;
         }
+
+        public async Task<IEnumerable<ChatMessage>> GetFullConversationAsync(Guid userAId, Guid userBId)
+        {
+            return await _context.ChatMessages
+                .Where(m => (m.SenderId == userAId && m.ReceiverId == userBId) || (m.SenderId == userBId && m.ReceiverId == userAId))
+                .OrderBy(m => m.SentAt)
+                .ToListAsync();
+        }
     }
 }

@@ -537,19 +537,19 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("39c15c9c-7566-462f-a993-0699530f1cb0"),
-                            CreatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7690),
+                            Id = new Guid("bf40b391-fdba-4c1a-ae5e-dee234bd970a"),
+                            CreatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6182),
                             IsDeleted = false,
                             RoleName = "Admin",
-                            UpdatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7692)
+                            UpdatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6184)
                         },
                         new
                         {
-                            Id = new Guid("e65180fb-c725-4d06-b0c0-cdae5f427bf9"),
-                            CreatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7694),
+                            Id = new Guid("ca4c94d5-40f9-4c2a-b246-5f506ff68467"),
+                            CreatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6186),
                             IsDeleted = false,
                             RoleName = "User",
-                            UpdatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7695)
+                            UpdatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6186)
                         });
                 });
 
@@ -569,8 +569,23 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("ExternalBookUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("external_book_url");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
+                    b.Property<string>("MessageToRequester")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("message_to_requester");
 
                     b.Property<Guid>("OfferedBookId")
                         .HasColumnType("uuid");
@@ -588,6 +603,12 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("title");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -600,6 +621,43 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("trading_posts", (string)null);
+                });
+
+            modelBuilder.Entity("ReadNest.Domain.Entities.TradingPostImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("image_url");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.Property<Guid>("TradingPostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trading_post_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TradingPostId");
+
+                    b.ToTable("trading_post_images", (string)null);
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.TradingRequest", b =>
@@ -966,6 +1024,18 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("ReadNest.Domain.Entities.TradingPostImage", b =>
+                {
+                    b.HasOne("ReadNest.Domain.Entities.TradingPost", "TradingPost")
+                        .WithMany("Images")
+                        .HasForeignKey("TradingPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_trading_post_images_post_id");
+
+                    b.Navigation("TradingPost");
+                });
+
             modelBuilder.Entity("ReadNest.Domain.Entities.TradingRequest", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.User", "Requester")
@@ -1103,6 +1173,8 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ReadNest.Domain.Entities.TradingPost", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("TradingRequests");
                 });
 

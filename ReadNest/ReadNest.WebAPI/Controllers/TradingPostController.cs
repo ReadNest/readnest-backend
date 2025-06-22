@@ -25,7 +25,7 @@ namespace ReadNest.WebAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookTradingPostResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetTradingPostByUserId([FromRoute] GetTradingPostPagingRequest request)
+        public async Task<IActionResult> GetTradingPostByUserId([FromQuery] GetTradingPostPagingRequest request)
         {
             var response = await _tradingPostUseCase.GetTradingPostByUserIdAsync(request);
             return response.Success ? Ok(response) : NotFound(response);

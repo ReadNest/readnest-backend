@@ -9,5 +9,7 @@ namespace ReadNest.Domain.Entities
         public Guid ReceiverId { get; set; }
         public User Receiver { get; set; }
         public string Message { get; set; }
+        public DateTime SentAt { get; set; } = DateTime.UtcNow;
+        public bool IsRead { get; set; } = false;
     }
 }

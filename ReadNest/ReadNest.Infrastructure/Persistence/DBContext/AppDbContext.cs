@@ -553,6 +553,13 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                       .HasForeignKey(e => e.ReceiverId)
                       .HasConstraintName("fk_chat_messages_receiver_id")
                       .OnDelete(DeleteBehavior.Cascade);
+                _ = entity.Property(e => e.SentAt)
+                        .HasColumnName("sent_at")
+                        .IsRequired();
+                _ = entity.Property(e => e.IsRead)
+                      .HasColumnName("is_read")
+                      .IsRequired()
+                      .HasDefaultValue(false);
             });
 
             _ = modelBuilder.Entity<TradingPost>(entity =>

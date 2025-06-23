@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadNest.WebAPI", "ReadNest.WebAPI\ReadNest.WebAPI.csproj", "{BA5FC6CD-4D18-44DF-93BE-FE8AFBBC51EC}"
 EndProject
@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadNest.BackgroundServices", "ReadNest.BackgroundService\ReadNest.BackgroundServices.csproj", "{2EACC772-7F4A-456B-B8AE-7EB50045A266}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{193BD649-5D01-425A-B069-7B565F9CE57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{193BD649-5D01-425A-B069-7B565F9CE57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{193BD649-5D01-425A-B069-7B565F9CE57E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EACC772-7F4A-456B-B8AE-7EB50045A266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EACC772-7F4A-456B-B8AE-7EB50045A266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EACC772-7F4A-456B-B8AE-7EB50045A266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EACC772-7F4A-456B-B8AE-7EB50045A266}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

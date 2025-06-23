@@ -14,6 +14,7 @@
     <ProjectReference Include="..\ReadNest.Application\ReadNest.Application.csproj">
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\ReadNest.BackgroundService\ReadNest.BackgroundServices.csproj" />
     <ProjectReference Include="..\ReadNest.Infrastructure\ReadNest.Infrastructure.csproj">
       <Private>True</Private>
     </ProjectReference>

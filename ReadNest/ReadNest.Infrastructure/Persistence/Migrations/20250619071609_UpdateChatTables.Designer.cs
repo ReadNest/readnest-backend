@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 #nullable disable
 
-namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
+namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250619071609_UpdateChatTables")]
+    partial class UpdateChatTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -387,101 +390,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.ToTable("comment_reports", (string)null);
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.Event", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("end_date");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("start_date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("type");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("events", (string)null);
-                });
-
-            modelBuilder.Entity("ReadNest.Domain.Entities.EventReward", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("BadgeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("badge_id");
-
-                    b.Property<string>("ConditionType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("condition_type");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Threshold")
-                        .HasColumnType("integer")
-                        .HasColumnName("threshold");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BadgeId");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("event_rewards", (string)null);
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.FavoriteBook", b =>
                 {
                     b.Property<Guid>("Id")
@@ -513,56 +421,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("favorite_books", (string)null);
-                });
-
-            modelBuilder.Entity("ReadNest.Domain.Entities.Leaderboard", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Rank")
-                        .HasColumnType("integer")
-                        .HasColumnName("rank");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("integer")
-                        .HasColumnName("score");
-
-                    b.Property<int>("TotalLikes")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalPosts")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalViews")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("leaderboards", (string)null);
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.Post", b =>
@@ -682,7 +540,7 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ab6374cb-29f7-468f-8977-7fabcd66f797"),
+                            Id = new Guid("39c15c9c-7566-462f-a993-0699530f1cb0"),
                             CreatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7690),
                             IsDeleted = false,
                             RoleName = "Admin",
@@ -1039,27 +897,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("Reporter");
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.EventReward", b =>
-                {
-                    b.HasOne("ReadNest.Domain.Entities.Badge", "Badge")
-                        .WithMany("EventRewards")
-                        .HasForeignKey("BadgeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_event_rewards_badge_id");
-
-                    b.HasOne("ReadNest.Domain.Entities.Event", "Event")
-                        .WithMany("Rewards")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_event_rewards_event_id");
-
-                    b.Navigation("Badge");
-
-                    b.Navigation("Event");
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.FavoriteBook", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.Book", "Book")
@@ -1075,27 +912,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ReadNest.Domain.Entities.Leaderboard", b =>
-                {
-                    b.HasOne("ReadNest.Domain.Entities.Event", "Event")
-                        .WithMany("Leaderboards")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_leaderboards_event_id");
-
-                    b.HasOne("ReadNest.Domain.Entities.User", "User")
-                        .WithMany("Leaderboards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_leaderboards_user_id");
-
-                    b.Navigation("Event");
 
                     b.Navigation("User");
                 });
@@ -1260,8 +1076,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ReadNest.Domain.Entities.Badge", b =>
                 {
-                    b.Navigation("EventRewards");
-
                     b.Navigation("UserBadges");
                 });
 
@@ -1285,13 +1099,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("Reports");
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.Event", b =>
-                {
-                    b.Navigation("Leaderboards");
-
-                    b.Navigation("Rewards");
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
@@ -1307,8 +1114,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("FavoriteBooks");
-
-                    b.Navigation("Leaderboards");
 
                     b.Navigation("Posts");
 

@@ -109,13 +109,16 @@ namespace ReadNest.Infrastructure.Services
         public async Task RefreshConversationCacheAsync(Guid senderId, Guid receiverId, List<ChatMessageCacheModel> dbMessages)
         {
             var key = GetChatKey(senderId, receiverId);
+
+            await _redisDb.KeyDeleteAsync(key); // XÓA dữ liệu cũ → tránh duplicated
+
             foreach (var message in dbMessages)
             {
                 var score = new DateTimeOffset(message.SentAt).ToUnixTimeMilliseconds();
                 await _redisDb.SortedSetAddAsync(key, JsonSerializer.Serialize(message), score);
             }
 
-            await _redisDb.KeyExpireAsync(key, _cacheTTL); // Reset TTL
+            await _redisDb.KeyExpireAsync(key, _cacheTTL); // Reset TTL sau khi lưu mới
         }
     }
 }

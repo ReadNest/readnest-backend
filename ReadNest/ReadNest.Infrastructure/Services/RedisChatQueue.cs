@@ -8,7 +8,10 @@ namespace ReadNest.Infrastructure.Services
 {
     public class RedisChatQueue : IRedisChatQueue
     {
-        private string GetChatKey(Guid senderId, Guid receiverId) => $"chat:{senderId}:{receiverId}";
+        private string GetChatKey(Guid senderId, Guid receiverId)
+        {
+            return senderId.CompareTo(receiverId) < 0 ? $"chat:{senderId}:{receiverId}" : $"chat:{receiverId}:{senderId}";
+        }
         private string PendingChatKey = "chat:pending"; // Key for pending messages, if needed
         private readonly IDatabase _redisDb;
         /// <summary>
@@ -63,20 +66,23 @@ namespace ReadNest.Infrastructure.Services
         public async Task<List<ChatMessageCacheModel>> GetFullConversationDequeueAsync(Guid userAId, Guid userBId)
         {
             var keyAB = GetChatKey(userAId, userBId);
-            var keyBA = GetChatKey(userBId, userAId);
+            //var keyBA = GetChatKey(userBId, userAId);
 
             var redisMessagesAB = await _redisDb.SortedSetRangeByRankAsync(keyAB);
-            var redisMessagesBA = await _redisDb.SortedSetRangeByRankAsync(keyBA);
+            //var redisMessagesBA = await _redisDb.SortedSetRangeByRankAsync(keyBA);
 
             var messagesAB = redisMessagesAB
                 .Select(m => JsonSerializer.Deserialize<ChatMessageCacheModel>(m!)!)
                 .ToList();
 
-            var messagesBA = redisMessagesBA
-                .Select(m => JsonSerializer.Deserialize<ChatMessageCacheModel>(m!)!)
-                .ToList();
+            //var messagesBA = redisMessagesBA
+            //    .Select(m => JsonSerializer.Deserialize<ChatMessageCacheModel>(m!)!)
+            //    .ToList();
 
-            var fullConversation = messagesAB.Concat(messagesBA)
+            //var fullConversation = messagesAB.Concat(messagesBA)
+            //    .OrderBy(m => m.SentAt)
+            //    .ToList();
+            var fullConversation = messagesAB
                 .OrderBy(m => m.SentAt)
                 .ToList();
 
@@ -86,9 +92,9 @@ namespace ReadNest.Infrastructure.Services
         /// Retrieves pending message from the Redis cache.
         /// </summary>
         /// <returns></returns>
-        public async Task<string> DequeuePendingMessageAsync()
+        public async Task<string?> DequeuePendingMessageAsync()
         {
-           return await _redisDb.ListLeftPopAsync(PendingChatKey);
+            return await _redisDb.ListLeftPopAsync(PendingChatKey);
         }
 
         public async Task ClearMessagesAsync(Guid senderId, Guid receiverId)

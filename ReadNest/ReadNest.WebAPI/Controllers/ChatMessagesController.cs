@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ReadNest.Application.Models.Requests.ChatMessage;
 using ReadNest.Application.Models.Responses.ChatMessage;
 using ReadNest.Application.UseCases.Interfaces.ChatMessage;
 using ReadNest.Shared.Common;
@@ -28,6 +29,19 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _chatMessageUseCase.GetAllChattersByUserIdAsync(id);
             // This method should call the ChatMessageUseCase to get all chatters by user ID.
             // For now, we return a placeholder response.
+            return Ok(response);
+        }
+
+        [HttpGet("get-full-conversation/{userAId}/{userBId}")]
+        [ProducesResponseType(typeof(ApiResponse<List<ChatMessageCacheModel>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetFullConversationAsync(Guid userAId, Guid userBId)
+        {
+            if (userAId == Guid.Empty || userBId == Guid.Empty)
+            {
+                return BadRequest("User IDs cannot be empty.");
+            }
+            var response = await _chatMessageUseCase.GetFullConversationAsync(userAId, userBId);
             return Ok(response);
         }
     }

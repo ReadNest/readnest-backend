@@ -21,6 +21,9 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IPostRepository, PostRepository>();
             _ = services.AddScoped<IBadgeRepository, BadgeRepository>();
             _ = services.AddScoped<IUserBadgeRepository, UserBadgeRepository>();
+            _ = services.AddScoped<IEventRepository, EventRepository>();
+            _ = services.AddScoped<IEventRewardRepository, EventRewardRepository>();
+            _ = services.AddScoped<ILeaderboardRepository, LeaderboardRepository>();
             _ = services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();

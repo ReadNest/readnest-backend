@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 #nullable disable
 
-namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
+namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250619144707_AddRankEntities")]
+    partial class AddRankEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,12 +268,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsRead")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_read");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text")
@@ -283,10 +280,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uuid")
                         .HasColumnName("sender_id");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("sent_at");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -683,18 +676,18 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("ab6374cb-29f7-468f-8977-7fabcd66f797"),
-                            CreatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7690),
+                            CreatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1572),
                             IsDeleted = false,
                             RoleName = "Admin",
-                            UpdatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7692)
+                            UpdatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1573)
                         },
                         new
                         {
-                            Id = new Guid("e65180fb-c725-4d06-b0c0-cdae5f427bf9"),
-                            CreatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7694),
+                            Id = new Guid("87859145-ac0b-4b20-8983-7870d80e1abd"),
+                            CreatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1576),
                             IsDeleted = false,
                             RoleName = "User",
-                            UpdatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7695)
+                            UpdatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1577)
                         });
                 });
 

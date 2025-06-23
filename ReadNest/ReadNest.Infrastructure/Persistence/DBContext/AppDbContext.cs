@@ -24,6 +24,9 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<TradingPost> TradingPosts { get; set; }
         public DbSet<TradingRequest> TradingRequests { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventReward> EventRewards { get; set; }
+        public DbSet<Leaderboard> Leaderboards { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

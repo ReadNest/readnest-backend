@@ -10,7 +10,7 @@ namespace ReadNest.Domain.Entities
         public DateTime EndDate { get; set; }
         public string Type { get; set; } // e.g., "Weekly", "Monthly", "Special", etc.
         public string Status { get; set; } // e.g., "Upcoming", "Ongoing", "Ended"
-        public ICollection<Leaderboard> Leaderboards { get; set; } = new List<Leaderboard>();
-        public ICollection<EventReward> Rewards { get; set; } = new List<EventReward>();
+        public ICollection<Leaderboard> Leaderboards { get; set; } 
+        public ICollection<EventReward> Rewards { get; set; } 
     }
 }

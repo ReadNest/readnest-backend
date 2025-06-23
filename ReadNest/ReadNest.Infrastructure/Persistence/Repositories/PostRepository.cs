@@ -86,5 +86,45 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Include(p => p.Likes)
                 .Where(p => !p.IsDeleted);
         }
+
+        public async Task<List<Guid>> GetUserIdsWithPostsInTimeRange(DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .Where(p => p.CreatedAt >= from && p.CreatedAt <= to && !p.IsDeleted)
+                .Select(p => p.UserId)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        public async Task<int> CountPostsByUserInEventAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .CountAsync(p => p.UserId == userId
+                              && !p.IsDeleted
+                              && p.CreatedAt >= from
+                              && p.CreatedAt <= to);
+        }
+
+        public async Task<int> CountLikesByUserInEventAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .Where(p => p.UserId == userId
+                         && !p.IsDeleted
+                         && p.CreatedAt >= from
+                         && p.CreatedAt <= to)
+                .Select(p => p.Likes.Count)
+                .SumAsync();
+        }
+
+        public async Task<int> CountViewsByUserInEventAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .Where(p => p.UserId == userId
+                         && !p.IsDeleted
+                         && p.CreatedAt >= from
+                         && p.CreatedAt <= to)
+                .Select(p => p.Views)
+                .SumAsync();
+        }
     }
 }

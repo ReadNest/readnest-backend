@@ -8,6 +8,7 @@ namespace ReadNest.Application.UseCases.Interfaces.Event
     {
         Task<ApiResponse<EventResponse?>> GetCurrentEventAsync();
         Task<ApiResponse<IEnumerable<EventResponse>>> GetAllEventsAsync();
+        Task<ApiResponse<PagingResponse<EventResponse>>> GetAllEventsWithPagingAsync(PagingRequest request);
 
         Task<ApiResponse<EventResponse>> CreateAsync(CreateEventRequest request);
         Task<ApiResponse<EventResponse>> UpdateAsync(UpdateEventRequest request);

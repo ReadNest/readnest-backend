@@ -42,6 +42,15 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
+        [HttpGet("all-paging")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<EventResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAllEventsWithPagingAsync([FromQuery] PagingRequest request)
+        {
+            var response = await _eventUseCase.GetAllEventsWithPagingAsync(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<EventResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

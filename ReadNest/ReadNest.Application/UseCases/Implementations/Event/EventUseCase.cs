@@ -1,4 +1,6 @@
-﻿using ReadNest.Application.Models.Requests.Event;
+﻿using Microsoft.EntityFrameworkCore;
+using ReadNest.Application.Models.Requests.Event;
+using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Event;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Event;
@@ -50,6 +52,43 @@ namespace ReadNest.Application.UseCases.Implementations.Event
             });
 
             return ApiResponse<IEnumerable<EventResponse>>.Ok(result);
+        }
+
+        public async Task<ApiResponse<PagingResponse<EventResponse>>> GetAllEventsWithPagingAsync(PagingRequest request)
+        {
+            var events = await _eventRepository.FindWithIncludePagedAsync(
+                predicate: e => !e.IsDeleted,
+                include: query => query
+                    .Include(e => e.Rewards),
+                pageNumber: request.PageIndex,
+                pageSize: request.PageSize,
+                asNoTracking: true);
+
+            var eventResponses = events.Select(e => new EventResponse
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                StartDate = e.StartDate,
+                EndDate = e.EndDate,
+                Type = e.Type,
+                Status = e.Status
+            }).ToList();
+
+            if (eventResponses.Count == 0)
+            {
+                return ApiResponse<PagingResponse<EventResponse>>.Fail(MessageId.E0005);
+            }
+
+            var response = new PagingResponse<EventResponse>
+            {
+                Items = eventResponses,
+                TotalItems = await _eventRepository.CountAsync(b => !b.IsDeleted),
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize
+            };
+
+            return ApiResponse<PagingResponse<EventResponse>>.Ok(response);
         }
 
         public async Task<ApiResponse<EventResponse>> CreateAsync(CreateEventRequest request)

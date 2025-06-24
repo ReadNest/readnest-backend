@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 #nullable disable
 
-namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
+namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250619144707_AddRankEntities")]
+    partial class AddRankEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,12 +268,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsRead")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_read");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text")
@@ -283,10 +280,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uuid")
                         .HasColumnName("sender_id");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("sent_at");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -683,18 +676,18 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = new Guid("ab6374cb-29f7-468f-8977-7fabcd66f797"),
-                            CreatedAt = new DateTime(2025, 6, 19, 7, 16, 8, 446, DateTimeKind.Utc).AddTicks(7690),
+                            CreatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1572),
                             IsDeleted = false,
                             RoleName = "Admin",
-                            UpdatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6184)
+                            UpdatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1573)
                         },
                         new
                         {
-                            Id = new Guid("ca4c94d5-40f9-4c2a-b246-5f506ff68467"),
-                            CreatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6186),
+                            Id = new Guid("87859145-ac0b-4b20-8983-7870d80e1abd"),
+                            CreatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1576),
                             IsDeleted = false,
                             RoleName = "User",
-                            UpdatedAt = new DateTime(2025, 6, 22, 3, 56, 10, 737, DateTimeKind.Utc).AddTicks(6186)
+                            UpdatedAt = new DateTime(2025, 6, 19, 14, 47, 5, 56, DateTimeKind.Utc).AddTicks(1577)
                         });
                 });
 
@@ -714,23 +707,8 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ExternalBookUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("external_book_url");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("text")
-                        .HasColumnName("message");
-
-                    b.Property<string>("MessageToRequester")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("message_to_requester");
 
                     b.Property<Guid>("OfferedBookId")
                         .HasColumnType("uuid");
@@ -748,12 +726,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
                         .HasColumnName("title");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -766,43 +738,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("trading_posts", (string)null);
-                });
-
-            modelBuilder.Entity("ReadNest.Domain.Entities.TradingPostImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("image_url");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer")
-                        .HasColumnName("order");
-
-                    b.Property<Guid>("TradingPostId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trading_post_id");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TradingPostId");
-
-                    b.ToTable("trading_post_images", (string)null);
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.TradingRequest", b =>
@@ -1211,18 +1146,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.TradingPostImage", b =>
-                {
-                    b.HasOne("ReadNest.Domain.Entities.TradingPost", "TradingPost")
-                        .WithMany("Images")
-                        .HasForeignKey("TradingPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trading_post_images_post_id");
-
-                    b.Navigation("TradingPost");
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.TradingRequest", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.User", "Requester")
@@ -1369,8 +1292,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ReadNest.Domain.Entities.TradingPost", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("TradingRequests");
                 });
 

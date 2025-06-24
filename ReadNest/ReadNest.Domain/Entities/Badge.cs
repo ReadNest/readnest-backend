@@ -8,5 +8,6 @@ namespace ReadNest.Domain.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public ICollection<UserBadge> UserBadges { get; set; }
+        public ICollection<EventReward> EventRewards { get; set; }
     }
 }

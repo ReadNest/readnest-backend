@@ -13,7 +13,7 @@ namespace ReadNest.WebAPI.Controllers
     [ApiController]
     [Route("api/v1/posts")]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PostController : Controller
+    public class PostController : ControllerBase
     {
         private readonly IPostUseCase _postUseCase;
         private readonly IViewTracker _viewTracker;

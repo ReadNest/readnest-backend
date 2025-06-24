@@ -5,6 +5,7 @@ COPY ["ReadNest.Application/ReadNest.Application.csproj", "ReadNest.Application/
 COPY ["ReadNest.Domain/ReadNest.Domain.csproj", "ReadNest.Domain/"]
 COPY ["ReadNest.Infrastructure/ReadNest.Infrastructure.csproj", "ReadNest.Infrastructure/"]
 COPY ["ReadNest.Shared/ReadNest.Shared.csproj", "ReadNest.Shared/"]
+COPY ["ReadNest.BackgroundServices/ReadNest.BackgroundServices.csproj", "ReadNest.BackgroundServices/"]
 COPY ["ReadNest.WebAPI/ReadNest.WebAPI.csproj", "ReadNest.WebAPI/"]
 
 RUN dotnet restore "ReadNest.WebAPI/ReadNest.WebAPI.csproj"

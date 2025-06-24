@@ -5,9 +5,11 @@ using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.AffiliateLink;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Category;
+using ReadNest.Application.Models.Responses.TradingPost;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.Validators.Book;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 using ReadNest.Shared.Utils;
 
@@ -162,6 +164,26 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<PagingResponse<GetBookResponse>>.Ok(pagingResponse);
         }
 
+        public async Task<ApiResponse<List<GetBookTradingPostResponse>>> GetBookTradingPostAsync()
+        {
+            var books = await _bookRepository.GetAllAsync();
+
+            if (!books.Any())
+            {
+                return ApiResponse<List<GetBookTradingPostResponse>>.Fail(MessageId.E0005);
+            }
+
+            var response = books.Select(x => new GetBookTradingPostResponse
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Author = x.Author,
+                ImageUrl = x.ImageUrl,
+            }).ToList();
+
+            return ApiResponse<List<GetBookTradingPostResponse>>.Ok(response);
+        }
+
         public async Task<ApiResponse<GetBookResponse>> GetByIdAsync(Guid bookId)
         {
             var books = await _bookRepository.FindWithIncludeAsync(
@@ -254,6 +276,63 @@ namespace ReadNest.Application.UseCases.Implementations.Book
                 pageSize: pagingResult.PageSize);
 
             return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(pagingResponse);
+        }
+
+        public async Task<ApiResponse<string>> UpdateBookAsync(Guid bookId, UpdateBookRequest request)
+        {
+            var book = (await _bookRepository.FindWithIncludeAsync(predicate: query => !query.IsDeleted && query.Id == bookId,
+                include: query => query.Include(x => x.Categories).Include(x => x.BookImages), asNoTracking: false))
+                       .FirstOrDefault();
+
+            if (book == null)
+            {
+                return ApiResponse<string>.Fail(MessageId.E0005);
+            }
+
+            book.Title = request.Title;
+            book.TitleNormalized = HtmlUtil.NormalizeTextWithoutHtml(request.Title);
+            book.Description = request.Description;
+            book.Author = request.Author;
+            book.AuthorNormalized = HtmlUtil.NormalizeTextWithoutHtml(request.Author);
+            book.Description = request.Description;
+            book.DescriptionNormalized = HtmlUtil.NormalizeDescription(request.Description);
+            book.AvarageRating = request.Rating;
+            book.ISBN = request.ISBN;
+            book.ImageUrl = request.ImageUrl;
+            book.Language = request.Language;
+
+            var categoriesToRemove = book.Categories.Where(c => !request.CategoryIds.Contains(c.Id)).ToList();
+            foreach (var c in categoriesToRemove)
+            {
+                _ = book.Categories.Remove(c);
+            }
+
+            var existingCategories = await _bookRepository.GetCategoriesByBookIds(request.CategoryIds);
+            foreach (var category in existingCategories)
+            {
+                if (!book.Categories.Any(c => c.Id == category.Id))
+                {
+                    book.Categories.Add(category);
+                }
+            }
+
+            book.BookImages.Clear();
+
+            var newImages = request.BookImages.Select(r => new BookImage
+            {
+                ImageUrl = r.ImageUrl,
+                Order = r.Order,
+                BookId = book.Id
+            });
+
+            foreach (var image in newImages)
+            {
+                book.BookImages.Add(image);
+            }
+
+            await _bookRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok(bookId.ToString());
         }
     }
 }

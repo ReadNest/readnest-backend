@@ -9,36 +9,36 @@ namespace ReadNest.Application.Validators.Auth
         public RegisterRequestValidator(IUserRepository userRepository)
         {
             _ = RuleFor(x => x.FullName)
-                .NotEmpty().WithMessage("Full name is required.");
+                .NotEmpty().WithMessage("Họ và tên là bắt buộc.");
 
             _ = RuleFor(x => x.UserName)
-                .NotEmpty().WithMessage("Username is required.")
-                .Length(3, 100).WithMessage("Username must be between 3 and 100 characters.")
+                .NotEmpty().WithMessage("Tên đăng nhập là bắt buộc.")
+                .Length(3, 100).WithMessage("Tên đăng nhập phải có độ dài từ 3 đến 100 ký tự.")
                 .MustAsync(async (userName, cancellation) => !await userRepository.ExistsByUserNameAsync(userName))
-                .WithMessage("UserName already is taken.");
+                .WithMessage("Tên đăng nhập đã được sử dụng.");
 
             _ = RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.")
-                .Length(0, 255).WithMessage("Email must be less than 255 characters.")
-                .MustAsync(async (email, cancellation) => !await userRepository.ExistsByEmailAsync(email) == true)
-                .WithMessage("Email already is taken.");
+                .NotEmpty().WithMessage("Email là bắt buộc.")
+                .EmailAddress().WithMessage("Định dạng email không hợp lệ.")
+                .MaximumLength(255).WithMessage("Email phải nhỏ hơn 255 ký tự.")
+                .MustAsync(async (email, cancellation) => !await userRepository.ExistsByEmailAsync(email))
+                .WithMessage("Email đã được sử dụng.");
 
             _ = RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters.");
+                .NotEmpty().WithMessage("Mật khẩu là bắt buộc.")
+                .MinimumLength(6).WithMessage("Mật khẩu phải có ít nhất 6 ký tự.");
 
             _ = RuleFor(x => x.ConfirmPassword)
-                .NotEmpty().WithMessage("Confirm Password is required.")
-                .Equal(x => x.Password).WithMessage("Confirm Password must match Password.");
+                .NotEmpty().WithMessage("Xác nhận mật khẩu là bắt buộc.")
+                .Equal(x => x.Password).WithMessage("Xác nhận mật khẩu phải khớp với mật khẩu.");
 
             _ = RuleFor(x => x.Address)
-                .NotEmpty().WithMessage("Address is required.")
-                .Length(0, 500).WithMessage("Address must be less than 500 characters.");
+                .NotEmpty().WithMessage("Địa chỉ là bắt buộc.")
+                .MaximumLength(500).WithMessage("Địa chỉ phải nhỏ hơn 500 ký tự.");
 
             _ = RuleFor(x => x.DateOfBirth)
-                .NotEmpty().WithMessage("Date of Birth is required.")
-                .LessThan(DateTime.UtcNow).WithMessage("Date of Birth must be in the past.");
+                .NotEmpty().WithMessage("Ngày sinh là bắt buộc.")
+                .LessThan(DateTime.UtcNow).WithMessage("Ngày sinh phải là ngày trong quá khứ.");
         }
     }
 }

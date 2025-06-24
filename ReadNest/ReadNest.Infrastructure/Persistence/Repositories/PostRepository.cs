@@ -14,6 +14,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Book)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -31,6 +32,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Where(p => p.UserId == userId && !p.IsDeleted)
                 .Include(p => p.Book)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -47,6 +49,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(p => p.BookId == bookId && !p.IsDeleted)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -57,6 +60,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.Likes.Count())
                 .Take(count)
                 .ToListAsync();
@@ -68,19 +72,59 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Creator)
+                .Include(p => p.Likes)
                 .OrderByDescending(p => p.Views)
                 .Take(count)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Post>> SearchByTitleAsync(string keyword)
+        public IQueryable<Post> GetQueryableWithIncludes()
+        {
+            return _context.Posts
+                .Include(p => p.Book)
+                .Include(p => p.Creator)
+                .Include(p => p.Likes)
+                .Where(p => !p.IsDeleted);
+        }
+
+        public async Task<List<Guid>> GetUserIdsWithPostsInTimeRange(DateTime from, DateTime to)
         {
             return await _context.Posts
-                .AsNoTracking()
-                .Where(p => !p.IsDeleted && EF.Functions.Like(p.Title, $"%{keyword}%"))
+                .Where(p => p.CreatedAt >= from && p.CreatedAt <= to && !p.IsDeleted)
+                .Select(p => p.UserId)
+                .Distinct()
                 .ToListAsync();
         }
 
+        public async Task<int> CountPostsByUserInEventAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .CountAsync(p => p.UserId == userId
+                              && !p.IsDeleted
+                              && p.CreatedAt >= from
+                              && p.CreatedAt <= to);
+        }
 
+        public async Task<int> CountLikesByUserInEventAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .Where(p => p.UserId == userId
+                         && !p.IsDeleted
+                         && p.CreatedAt >= from
+                         && p.CreatedAt <= to)
+                .Select(p => p.Likes.Count)
+                .SumAsync();
+        }
+
+        public async Task<int> CountViewsByUserInEventAsync(Guid userId, DateTime from, DateTime to)
+        {
+            return await _context.Posts
+                .Where(p => p.UserId == userId
+                         && !p.IsDeleted
+                         && p.CreatedAt >= from
+                         && p.CreatedAt <= to)
+                .Select(p => p.Views)
+                .SumAsync();
+        }
     }
 }

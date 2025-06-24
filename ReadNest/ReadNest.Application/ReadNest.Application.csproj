@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Options\" />
+    <Folder Include="UseCases\Implementations\ChatMessage\" />
   </ItemGroup>
 
   <ItemGroup>

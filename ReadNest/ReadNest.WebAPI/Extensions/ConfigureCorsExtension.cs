@@ -9,10 +9,10 @@
                 options.AddPolicy("AllowFrontend",
                     policy =>
                     {
-                        _ = policy.SetIsOriginAllowed(_ => true)
-                              .AllowAnyOrigin()
+                        policy.WithOrigins("http://localhost:5173", "https://readnest.id.vn")
                               .AllowAnyHeader()
-                              .AllowAnyMethod();
+                              .AllowAnyMethod()
+                              .AllowCredentials();
                     });
             });
 

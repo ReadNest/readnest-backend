@@ -18,6 +18,8 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
         private readonly IUserRepository _userRepository;
         private readonly IGenericRepository<Role, Guid> _roleRepository;
         private readonly IJwtService _jwtService;
+        private readonly IUserBadgeRepository _userBadgeRepository;
+        private readonly IBadgeRepository _badgeRepository;
 
         /// <summary>
         /// Constructor
@@ -27,13 +29,15 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
         /// <param name="userRepository"></param>
         /// <param name="roleRepository"></param>
         /// <param name="jwtService"></param>
-        public AuthenticationUseCase(RegisterRequestValidator registerRequestValidator, LoginRequestValidator loginRequestValidator, IUserRepository userRepository, IGenericRepository<Role, Guid> roleRepository, IJwtService jwtService)
+        public AuthenticationUseCase(RegisterRequestValidator registerRequestValidator, LoginRequestValidator loginRequestValidator, IUserRepository userRepository, IGenericRepository<Role, Guid> roleRepository, IJwtService jwtService, IUserBadgeRepository userBadgeRepository, IBadgeRepository badgeRepository)
         {
             _registerRequestValidator = registerRequestValidator;
             _loginRequestValidator = loginRequestValidator;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _jwtService = jwtService;
+            _userBadgeRepository = userBadgeRepository;
+            _badgeRepository = badgeRepository;
         }
 
         public async Task<ApiResponse<TokenResponse>> GetNewAccessToken(TokenRequest request)
@@ -135,6 +139,9 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
 
             _ = await _userRepository.AddAsync(user);
             await _userRepository.SaveChangesAsync();
+            // Tặng badge sau khi user đã lưu thành công
+            await AssignBadgeToUserAsync(user.Id, "DEFAULT", true);
+            await AssignBadgeToUserAsync(user.Id, "PIONEER_001", false);
 
             return new ApiResponse<string>
             {
@@ -142,6 +149,22 @@ namespace ReadNest.Application.UseCases.Implementations.Auth
                 MessageId = MessageId.I0000,
                 Message = Message.GetMessageById(MessageId.I0000)
             };
+        }
+        private async Task AssignBadgeToUserAsync(Guid userId, string badgeCode, bool isSelected = false)
+        {
+            var badge = await _badgeRepository.GetByCodeAsync(badgeCode);
+            if (badge != null)
+            {
+                var userBadge = new Domain.Entities.UserBadge
+                {
+                    UserId = userId,
+                    BadgeId = badge.Id,
+                    IsSelected = isSelected
+                };
+
+                _ = await _userBadgeRepository.AddAsync(userBadge);
+                await _userBadgeRepository.SaveChangesAsync();
+            }
         }
     }
 }

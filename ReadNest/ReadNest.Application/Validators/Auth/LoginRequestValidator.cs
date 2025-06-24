@@ -8,12 +8,12 @@ namespace ReadNest.Application.Validators.Auth
         public LoginRequestValidator()
         {
             _ = RuleFor(x => x.UserName)
-                .NotEmpty().WithMessage("Username is required.")
-                .Length(3, 100).WithMessage("Username must be between 3 and 100 characters.");
+                .NotEmpty().WithMessage("Tên đăng nhập là bắt buộc.")
+                .Length(3, 100).WithMessage("Tên đăng nhập phải có độ dài từ 3 đến 100 ký tự.");
 
             _ = RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters.");
+                .NotEmpty().WithMessage("Mật khẩu là bắt buộc.")
+                .MinimumLength(6).WithMessage("Mật khẩu phải có ít nhất 6 ký tự.");
         }
     }
 }

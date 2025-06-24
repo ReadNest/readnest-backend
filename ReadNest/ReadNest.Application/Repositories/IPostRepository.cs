@@ -11,8 +11,11 @@ namespace ReadNest.Application.Repositories
         Task<IEnumerable<Post>> GetPostsByBookIdAsync(Guid bookId);
         Task<IEnumerable<Post>> GetTopMostLikedPostsAsync(int count);
         Task<IEnumerable<Post>> GetTopMostViewedPostsAsync(int count);
-        Task<IEnumerable<Post>> SearchByTitleAsync(string keyword);
+        IQueryable<Post> GetQueryableWithIncludes();
 
-
+        Task<List<Guid>> GetUserIdsWithPostsInTimeRange(DateTime from, DateTime to);
+        Task<int> CountPostsByUserInEventAsync(Guid userId, DateTime from, DateTime to);
+        Task<int> CountLikesByUserInEventAsync(Guid userId, DateTime from, DateTime to);
+        Task<int> CountViewsByUserInEventAsync(Guid userId, DateTime from, DateTime to);
     }
 }

@@ -1,6 +1,8 @@
 using ReadNest.Application.Extensions;
+using ReadNest.BackgroundServices;
 using ReadNest.Infrastructure.Extensions;
 using ReadNest.WebAPI.Extensions;
+using ReadNest.WebAPI.Hubs;
 using ReadNest.WebAPI.Middlewares;
 
 namespace ReadNest.WebAPI
@@ -20,6 +22,10 @@ namespace ReadNest.WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             _ = builder.Services.AddEndpointsApiExplorer();
             _ = builder.Services.AddSwaggerGen();
+            _ = builder.Services.AddHostedService<ChatMessageSaver>();
+
+            // SignalR
+            _ = builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -41,6 +47,8 @@ namespace ReadNest.WebAPI
             _ = app.UseAuthorization();
 
             _ = app.MapControllers();
+
+            _ = app.MapHub<ChatHub>("/chatHub");
 
             app.Run();
         }

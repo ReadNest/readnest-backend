@@ -11,5 +11,7 @@
         public string AvatarUrl { get; set; }
         public Guid RoleId { get; set; }
         public string RoleName { get; set; }
+        // Badge
+        public string SelectedBadgeCode { get; set; }
     }
 }

@@ -15,13 +15,15 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
         private readonly IBookRepository _bookRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICommentReportRepository _commentReportRepository;
+        private readonly IUserBadgeRepository _userBadgeRepository;
 
-        public CommentUseCase(ICommentRepository commentRepository, IBookRepository bookRepository, IUserRepository userRepository, ICommentReportRepository commentReportRepository)
+        public CommentUseCase(ICommentRepository commentRepository, IBookRepository bookRepository, IUserRepository userRepository, ICommentReportRepository commentReportRepository, IUserBadgeRepository userBadgeRepository)
         {
             _commentRepository = commentRepository;
             _bookRepository = bookRepository;
             _userRepository = userRepository;
             _commentReportRepository = commentReportRepository;
+            _userBadgeRepository = userBadgeRepository;
         }
 
         public async Task<ApiResponse<GetCommentResponse>> CreateAsync(CreateCommentRequest request)
@@ -71,6 +73,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     UserName = creator.UserName,
                     Email = creator.Email,
                     AvatarUrl = creator.AvatarUrl,
+                    SelectedBadgeCode = await GetSelectedBadgeCodeByUserId(creator.Id),
                 },
                 NumberOfLikes = cmt.Likes?.Count ?? 0,
                 CreatedAt = cmt.CreatedAt,
@@ -111,6 +114,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     UserName = c.Creator.UserName,
                     Email = c.Creator.Email,
                     AvatarUrl = c.Creator.AvatarUrl,
+                    SelectedBadgeCode = GetSelectedBadgeCodeByUserId(c.Creator.Id).Result,
                 } : null,
                 NumberOfLikes = c.Likes?.Count ?? 0,
                 CreatedAt = c.CreatedAt,
@@ -276,6 +280,7 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                     UserName = c.Creator.UserName,
                     Email = c.Creator.Email,
                     AvatarUrl = c.Creator.AvatarUrl,
+                    SelectedBadgeCode = GetSelectedBadgeCodeByUserId(c.Creator.Id).Result,
                 } : null,
                 Book = c.Book != null ? new GetBookResponse
                 {
@@ -290,6 +295,16 @@ namespace ReadNest.Application.UseCases.Implementations.Comment
                 UserLikes = c.Likes?.Select(l => l.Id.ToString()).ToList() ?? new List<string>()
             }).ToList();
             return ApiResponse<List<GetCommentResponse>>.Ok(response);
+        }
+
+        private async Task<string> GetSelectedBadgeCodeByUserId(Guid userId)
+        {
+            var userBadge = await _userBadgeRepository.GetSelectedBadgeByUserIdAsync(userId);
+            if (userBadge is null)
+            {
+                return "DEFAULT";
+            }
+            return userBadge.Badge.Code;
         }
     }
 }

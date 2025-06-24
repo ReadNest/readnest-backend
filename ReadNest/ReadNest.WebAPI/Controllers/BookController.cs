@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.Book;
+using ReadNest.Application.Models.Responses.TradingPost;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Shared.Common;
 
@@ -60,6 +61,15 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
+        [HttpGet("all")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetBookTradingPostResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAllBookWithoutPaging()
+        {
+            var response = await _bookUseCase.GetBookTradingPostAsync();
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -67,6 +77,16 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request)
         {
             var response = await _bookUseCase.CreateBookAsync(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPut("{bookId}")]
+        [ProducesResponseType(typeof(ApiResponse<GetBookResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        public async Task<IActionResult> UpdateBook([FromRoute] Guid bookId, [FromBody] UpdateBookRequest request)
+        {
+            var response = await _bookUseCase.UpdateBookAsync(bookId, request);
             return response.Success ? Ok(response) : BadRequest(response);
         }
 

@@ -2,6 +2,7 @@
 using ReadNest.Application.Repositories;
 using ReadNest.Domain.Entities;
 using ReadNest.Infrastructure.Persistence.DBContext;
+using ReadNest.Shared.Enums;
 
 namespace ReadNest.Infrastructure.Persistence.Repositories
 {
@@ -19,6 +20,15 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         public async Task<bool> ExistsByUserNameAsync(string username)
         {
             return await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserName == username && !x.IsDeleted) != null;
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersWithRoleUserAsync()
+        {
+            return await _context.Users
+                .Include(x => x.Role)
+                .Where(x => x.Role.RoleName == RoleEnum.User.ToString() && !x.IsDeleted)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<User?> GetByUserIdAsync(Guid userId)

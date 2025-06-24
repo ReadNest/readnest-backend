@@ -27,6 +27,8 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<Event> Events { get; set; }
         public DbSet<EventReward> EventRewards { get; set; }
         public DbSet<Leaderboard> Leaderboards { get; set; }
+        public DbSet<TradingPostImage> TradingPostImages { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -569,8 +571,12 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 _ = entity.Property(e => e.Id)
                       .HasColumnName("id")
                       .IsRequired();
-                _ = entity.Property(e => e.Status)
+                _ = entity.Property(e => e.Title)
                       .HasColumnName("title")
+                      .IsRequired()
+                      .HasMaxLength(200);
+                _ = entity.Property(e => e.Status)
+                      .HasColumnName("status")
                       .IsRequired()
                       .HasMaxLength(200);
                 _ = entity.Property(e => e.Condition)
@@ -584,11 +590,23 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 _ = entity.Property(e => e.OwnerId)
                       .HasColumnName("owner_id")
                       .IsRequired();
+                _ = entity.Property(e => e.ExternalBookUrl)
+                      .HasColumnName("external_book_url")
+                      .HasMaxLength(500);
+
+                _ = entity.Property(e => e.Message)
+                      .HasColumnName("message")
+                      .HasColumnType("text");
+
                 _ = entity.HasOne(e => e.Owner)
                       .WithMany(u => u.TradingPosts)
                       .HasForeignKey(e => e.OwnerId)
                       .HasConstraintName("fk_trading_posts_user_id")
                       .OnDelete(DeleteBehavior.Cascade);
+
+                _ = entity.Property(e => e.MessageToRequester)
+                      .HasColumnName("message_to_requester")
+                      .HasMaxLength(500);
             });
 
             _ = modelBuilder.Entity<TradingRequest>(entity =>
@@ -711,6 +729,35 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                     .HasForeignKey(e => e.UserId)
                     .HasConstraintName("fk_leaderboards_user_id")
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            _ = modelBuilder.Entity<TradingPostImage>(entity =>
+            {
+                _ = entity.ToTable("trading_post_images");
+                _ = entity.HasKey(e => e.Id);
+
+                _ = entity.Property(e => e.Id)
+                          .HasColumnName("id")
+                          .IsRequired();
+
+                _ = entity.Property(e => e.TradingPostId)
+                          .HasColumnName("trading_post_id")
+                          .IsRequired();
+
+                _ = entity.Property(e => e.ImageUrl)
+                          .HasColumnName("image_url")
+                          .IsRequired()
+                          .HasMaxLength(1000);
+
+                _ = entity.Property(e => e.Order)
+                          .HasColumnName("order")
+                          .IsRequired();
+
+                _ = entity.HasOne(e => e.TradingPost)
+                          .WithMany(p => p.Images)
+                          .HasForeignKey(e => e.TradingPostId)
+                          .HasConstraintName("fk_trading_post_images_post_id")
+                          .OnDelete(DeleteBehavior.Cascade);
             });
 
             base.OnModelCreating(modelBuilder);

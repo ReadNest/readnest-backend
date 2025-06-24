@@ -25,6 +25,7 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IEventRewardRepository, EventRewardRepository>();
             _ = services.AddScoped<ILeaderboardRepository, LeaderboardRepository>();
             _ = services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+            _ = services.AddScoped<ITradingPostRepository, TradingPostRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
             // Redis tracker

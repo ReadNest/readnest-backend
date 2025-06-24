@@ -72,7 +72,7 @@ namespace ReadNest.BackgroundServices
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error during batch save: {ex.Message}");
+                    _logger.LogError($"Error during batch save: {ex.Message}");
                 }
             }
         }

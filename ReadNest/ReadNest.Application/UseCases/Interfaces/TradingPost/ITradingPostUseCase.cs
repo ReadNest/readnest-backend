@@ -1,0 +1,12 @@
+﻿using ReadNest.Application.Models.Requests.TradingPost;
+using ReadNest.Application.Models.Responses.TradingPost;
+using ReadNest.Shared.Common;
+
+namespace ReadNest.Application.UseCases.Interfaces.TradingPost
+{
+    public interface ITradingPostUseCase
+    {
+        Task<ApiResponse<string>> CreateTradingPostAsync(CreateTradingPostRequest request);
+        Task<ApiResponse<PagingResponse<GetBookTradingPostResponse>>> GetTradingPostByUserIdAsync(GetTradingPostPagingRequest request);
+    }
+}

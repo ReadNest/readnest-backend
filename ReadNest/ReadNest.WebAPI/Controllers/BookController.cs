@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.Book;
+using ReadNest.Application.Models.Responses.TradingPost;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Shared.Common;
 
@@ -57,6 +58,15 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> GetBookById([FromRoute] Guid bookId)
         {
             var response = await _bookUseCase.GetByIdAsync(bookId);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
+        [HttpGet("all")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetBookTradingPostResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAllBookWithoutPaging()
+        {
+            var response = await _bookUseCase.GetBookTradingPostAsync();
             return response.Success ? Ok(response) : NotFound(response);
         }
 

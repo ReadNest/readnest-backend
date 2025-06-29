@@ -5,6 +5,7 @@ using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.AffiliateLink;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Category;
+using ReadNest.Application.Models.Responses.TradingPost;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.Validators.Book;
@@ -161,6 +162,26 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             };
 
             return ApiResponse<PagingResponse<GetBookResponse>>.Ok(pagingResponse);
+        }
+
+        public async Task<ApiResponse<List<GetBookTradingPostResponse>>> GetBookTradingPostAsync()
+        {
+            var books = await _bookRepository.GetAllAsync();
+
+            if (!books.Any())
+            {
+                return ApiResponse<List<GetBookTradingPostResponse>>.Fail(MessageId.E0005);
+            }
+
+            var response = books.Select(x => new GetBookTradingPostResponse
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Author = x.Author,
+                ImageUrl = x.ImageUrl,
+            }).ToList();
+
+            return ApiResponse<List<GetBookTradingPostResponse>>.Ok(response);
         }
 
         public async Task<ApiResponse<GetBookResponse>> GetByIdAsync(Guid bookId)

@@ -410,7 +410,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
                     .Include(p => p.Creator)
                     .Include(p => p.Book)
                     .Include(p => p.Likes),
-                asNoTracking: true);
+                asNoTracking: false);
 
             var post = posts.FirstOrDefault();
 

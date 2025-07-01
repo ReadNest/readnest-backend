@@ -25,9 +25,18 @@ namespace ReadNest.WebAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookTradingPostResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetTradingPostByUserId([FromQuery] GetTradingPostPagingRequest request)
+        public async Task<IActionResult> GetTradingPostsByUserId([FromQuery] GetTradingPostPagingRequest request)
         {
             var response = await _tradingPostUseCase.GetTradingPostByUserIdAsync(request);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
+        [HttpGet("top")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetBookTradingPostV2Response>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetTradingPosts([FromQuery] int? limit = 5)
+        {
+            var response = await _tradingPostUseCase.GetTopTradingPostsAsync(limit);
             return response.Success ? Ok(response) : NotFound(response);
         }
 

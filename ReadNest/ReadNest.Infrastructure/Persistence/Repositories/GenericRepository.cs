@@ -298,5 +298,92 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         {
             return await _dbSet.CountAsync(predicate);
         }
+
+        public async Task<IEnumerable<T>> GetAllWithIncludeAsync(
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool asNoTracking = true)
+        {
+            IQueryable<T> query = _dbSet;
+            if (asNoTracking)
+                query = query.AsNoTracking();
+            if (include != null)
+                query = include(query);
+            if (orderBy != null)
+                query = orderBy(query);
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FindWithIncludeAsync(
+            Expression<Func<T, bool>> predicate,
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool asNoTracking = true)
+        {
+            IQueryable<T> query = _dbSet.Where(predicate);
+            if (asNoTracking)
+                query = query.AsNoTracking();
+            if (include != null)
+                query = include(query);
+            if (orderBy != null)
+                query = orderBy(query);
+            return await query.ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool asNoTracking = true)
+        {
+            IQueryable<T> query = _dbSet;
+            if (asNoTracking)
+                query = query.AsNoTracking();
+            if (orderBy != null)
+                query = orderBy(query);
+            return await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FindPagedAsync(
+            Expression<Func<T, bool>> predicate,
+            int pageNumber,
+            int pageSize,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool asNoTracking = true)
+        {
+            IQueryable<T> query = _dbSet.Where(predicate);
+            if (asNoTracking)
+                query = query.AsNoTracking();
+            if (orderBy != null)
+                query = orderBy(query);
+            return await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FindWithIncludePagedAsync(
+            Expression<Func<T, bool>> predicate,
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int pageNumber = 1,
+            int pageSize = 10,
+            bool asNoTracking = true)
+        {
+            IQueryable<T> query = _dbSet.Where(predicate);
+            if (asNoTracking)
+                query = query.AsNoTracking();
+            if (include != null)
+                query = include(query);
+            if (orderBy != null)
+                query = orderBy(query);
+            return await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
     }
 }

@@ -14,16 +14,22 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
     public class TradingPostUseCase : ITradingPostUseCase
     {
         private readonly ITradingPostRepository _tradingPostRepository;
+        private readonly ITradingRequestRepository _tradingRequestRepository;
+        private readonly IUserRepository _userRepository;
         private readonly CreateTradingPostRequestValidator _validator;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="tradingPostRepository"></param>
+        /// <param name="tradingRequestRepository"></param>
+        /// <param name="userRepository"></param>
         /// <param name="validator"></param>
-        public TradingPostUseCase(ITradingPostRepository tradingPostRepository, CreateTradingPostRequestValidator validator)
+        public TradingPostUseCase(ITradingPostRepository tradingPostRepository, ITradingRequestRepository tradingRequestRepository, IUserRepository userRepository, CreateTradingPostRequestValidator validator)
         {
             _tradingPostRepository = tradingPostRepository;
+            _tradingRequestRepository = tradingRequestRepository;
+            _userRepository = userRepository;
             _validator = validator;
         }
 
@@ -51,6 +57,19 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
             await _tradingPostRepository.SaveChangesAsync();
 
             return ApiResponse<string>.Ok(string.Empty);
+        }
+
+        public async Task<ApiResponse<string>> DeleteTradingPostAsync(Guid tradingPostId)
+        {
+            var tradingPost = await _tradingPostRepository.GetByIdAsync(tradingPostId);
+            if (tradingPost == null)
+            {
+                return ApiResponse<string>.Fail(messageId: Message.E0005);
+            }
+
+            await _tradingPostRepository.SoftDeleteAsync(tradingPost);
+
+            return ApiResponse<string>.Ok(data: tradingPost.Id.ToString());
         }
 
         public async Task<ApiResponse<PagingResponse<GetBookTradingPostResponse>>> GetTradingPostByUserIdAsync(GetTradingPostPagingRequest request)
@@ -84,6 +103,29 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
             };
 
             return ApiResponse<PagingResponse<GetBookTradingPostResponse>>.Ok(response);
+        }
+
+        public async Task<ApiResponse<List<GetUserRequestResponse>>> GetUserRequestsByIdAsync(Guid tradingPostId)
+        {
+            var tradingRequest = (await _tradingRequestRepository.FindWithIncludeAsync(
+                predicate: query => !query.IsDeleted && query.TradingPostId == tradingPostId,
+                include: query => query.Include(x => x.Requester)));
+
+            if (!tradingRequest.Any())
+            {
+                return ApiResponse<List<GetUserRequestResponse>>.Fail(messageId: Message.E0005);
+            }
+
+            var response = tradingRequest.Select(x => new GetUserRequestResponse
+            {
+                TradingRequestId = x.Id,
+                UserId = x.RequesterId,
+                FullName = x.Requester.FullName,
+                AvatarUrl = x.Requester.AvatarUrl,
+                Status = x.Status,
+            }).ToList();
+
+            return ApiResponse<List<GetUserRequestResponse>>.Ok(data: response);
         }
     }
 }

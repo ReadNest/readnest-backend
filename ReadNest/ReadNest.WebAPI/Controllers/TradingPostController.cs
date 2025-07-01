@@ -31,12 +31,30 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : NotFound(response);
         }
 
+        [HttpGet("{tradingPostId}/trading-requests")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetUserRequestResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetTradingRequestsByTradingPostId([FromRoute] Guid tradingPostId)
+        {
+            var response = await _tradingPostUseCase.GetUserRequestsByIdAsync(tradingPostId);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateTradingPost([FromBody] CreateTradingPostRequest request)
         {
             var response = await _tradingPostUseCase.CreateTradingPostAsync(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteTradingPost([FromRoute] Guid id)
+        {
+            var response = await _tradingPostUseCase.DeleteTradingPostAsync(id);
             return response.Success ? Ok(response) : BadRequest(response);
         }
     }

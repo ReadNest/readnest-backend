@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Models.Responses.Leaderboard;
 using ReadNest.Application.Models.Responses.User;
 using ReadNest.Application.Repositories;
@@ -125,7 +124,7 @@ namespace ReadNest.Application.UseCases.Implementations.Leaderboard
 
             if (newEntries.Any())
             {
-                await _leaderboardRepository.AddRangeAsync(newEntries);
+                _ = await _leaderboardRepository.AddRangeAsync(newEntries);
                 await _leaderboardRepository.SaveChangesAsync();
 
                 leaderboards.AddRange(newEntries);

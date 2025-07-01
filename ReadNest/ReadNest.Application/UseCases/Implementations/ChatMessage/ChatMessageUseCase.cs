@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ReadNest.Application.Models.Requests.ChatMessage;
+﻿using ReadNest.Application.Models.Requests.ChatMessage;
 using ReadNest.Application.Models.Responses.ChatMessage;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.Services;
@@ -128,7 +123,7 @@ namespace ReadNest.Application.UseCases.Implementations.ChatMessage
             }
             try
             {
-                await _chatMessageRepository.AddRangeAsync(messages);
+                _ = await _chatMessageRepository.AddRangeAsync(messages);
                 await _chatMessageRepository.SaveChangesAsync();
                 return await Task.FromResult(new ApiResponse<string>
                 {

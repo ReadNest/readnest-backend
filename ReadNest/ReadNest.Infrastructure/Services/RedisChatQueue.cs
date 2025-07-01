@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using ReadNest.Application.Models.Requests.ChatMessage;
 using ReadNest.Application.Services;
-using ReadNest.Domain.Entities;
 using StackExchange.Redis;
 
 namespace ReadNest.Infrastructure.Services
@@ -12,7 +11,7 @@ namespace ReadNest.Infrastructure.Services
         {
             return senderId.CompareTo(receiverId) < 0 ? $"chat:{senderId}:{receiverId}" : $"chat:{receiverId}:{senderId}";
         }
-        private string PendingChatKey = "chat:pending"; // Key for pending messages, if needed
+        private readonly string PendingChatKey = "chat:pending"; // Key for pending messages, if needed
         private readonly IDatabase _redisDb;
         /// <summary>
         /// Cache Time To Live (TTL) for chat messages in Redis.
@@ -38,21 +37,21 @@ namespace ReadNest.Infrastructure.Services
             // Flag to check if the key already exists
             bool keyExists = await _redisDb.KeyExistsAsync(key);
             var score = new DateTimeOffset(message.SentAt).ToUnixTimeMilliseconds();
-            await _redisDb.SortedSetAddAsync(key, JsonSerializer.Serialize(message), score);
+            _ = await _redisDb.SortedSetAddAsync(key, JsonSerializer.Serialize(message), score);
             // TTL chỉ set khi TẠO KEY MỚI. Nếu key đã tồn tại → không reset TTL.
             if (!keyExists)
             {
-                await _redisDb.KeyExpireAsync(key, _cacheTTL);
+                _ = await _redisDb.KeyExpireAsync(key, _cacheTTL);
             }
 
             if (!isSaved)
             {
                 // If the message is saved, we can also add it to a pending messages set if needed
-                await _redisDb.ListRightPushAsync(PendingChatKey, JsonSerializer.Serialize(message));
+                _ = await _redisDb.ListRightPushAsync(PendingChatKey, JsonSerializer.Serialize(message));
                 bool pendingKeyExists = await _redisDb.KeyExistsAsync(PendingChatKey);
                 if (!pendingKeyExists)
                 {
-                    await _redisDb.KeyExpireAsync(PendingChatKey, _cacheTTL);
+                    _ = await _redisDb.KeyExpireAsync(PendingChatKey, _cacheTTL);
                 }
             }
 
@@ -99,26 +98,26 @@ namespace ReadNest.Infrastructure.Services
 
         public async Task ClearMessagesAsync(Guid senderId, Guid receiverId)
         {
-            await _redisDb.KeyDeleteAsync(GetChatKey(senderId, receiverId));
+            _ = await _redisDb.KeyDeleteAsync(GetChatKey(senderId, receiverId));
         }
         public async Task ClearPendingMessagesAsync()
         {
-            await _redisDb.KeyDeleteAsync(PendingChatKey);
+            _ = await _redisDb.KeyDeleteAsync(PendingChatKey);
         }
 
         public async Task RefreshConversationCacheAsync(Guid senderId, Guid receiverId, List<ChatMessageCacheModel> dbMessages)
         {
             var key = GetChatKey(senderId, receiverId);
 
-            await _redisDb.KeyDeleteAsync(key); // XÓA dữ liệu cũ → tránh duplicated
+            _ = await _redisDb.KeyDeleteAsync(key); // XÓA dữ liệu cũ → tránh duplicated
 
             foreach (var message in dbMessages)
             {
                 var score = new DateTimeOffset(message.SentAt).ToUnixTimeMilliseconds();
-                await _redisDb.SortedSetAddAsync(key, JsonSerializer.Serialize(message), score);
+                _ = await _redisDb.SortedSetAddAsync(key, JsonSerializer.Serialize(message), score);
             }
 
-            await _redisDb.KeyExpireAsync(key, _cacheTTL); // Reset TTL sau khi lưu mới
+            _ = await _redisDb.KeyExpireAsync(key, _cacheTTL); // Reset TTL sau khi lưu mới
         }
     }
 }

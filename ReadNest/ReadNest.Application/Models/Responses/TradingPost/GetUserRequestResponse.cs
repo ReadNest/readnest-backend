@@ -1,4 +1,4 @@
-﻿namespace ReadNest.Application.Models.Requests.TradingPost
+﻿namespace ReadNest.Application.Models.Responses.TradingPost
 {
     public class GetUserRequestResponse
     {

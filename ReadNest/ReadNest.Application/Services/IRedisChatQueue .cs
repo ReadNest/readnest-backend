@@ -1,5 +1,4 @@
 ﻿using ReadNest.Application.Models.Requests.ChatMessage;
-using ReadNest.Domain.Entities;
 
 namespace ReadNest.Application.Services
 {

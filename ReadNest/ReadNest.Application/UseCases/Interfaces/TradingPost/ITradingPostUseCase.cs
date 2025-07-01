@@ -10,6 +10,6 @@ namespace ReadNest.Application.UseCases.Interfaces.TradingPost
         Task<ApiResponse<PagingResponse<GetBookTradingPostResponse>>> GetTradingPostByUserIdAsync(GetTradingPostPagingRequest request);
         Task<ApiResponse<List<GetUserRequestResponse>>> GetUserRequestsByIdAsync(Guid tradingPostId);
         Task<ApiResponse<string>> DeleteTradingPostAsync(Guid tradingPostId);
-        Task<ApiResponse<string>> CompleteTradingRequest(Guid tradingRequestId);
+        Task<ApiResponse<string>> UpdateStatusTradingRequestAsync(Guid tradingPostId, Guid tradingRequestId, UpdateStatusTradingRequest request);
     }
 }

@@ -68,6 +68,7 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
             }
 
             await _tradingPostRepository.SoftDeleteAsync(tradingPost);
+            await _tradingPostRepository.SaveChangesAsync();
 
             return ApiResponse<string>.Ok(data: tradingPost.Id.ToString());
         }
@@ -126,6 +127,35 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
             }).ToList();
 
             return ApiResponse<List<GetUserRequestResponse>>.Ok(data: response);
+        }
+
+        public async Task<ApiResponse<string>> UpdateStatusTradingRequestAsync(Guid tradingPostId, Guid tradingRequestId, UpdateStatusTradingRequest request)
+        {
+            var tradingRequests = await _tradingRequestRepository.FindWithIncludeAsync(
+                predicate: query => !query.IsDeleted && query.TradingPostId == tradingPostId,
+                asNoTracking: false);
+
+            if (!tradingRequests.Any())
+            {
+                return ApiResponse<string>.Fail(MessageId.E0000);
+            }
+
+            foreach (var item in tradingRequests)
+            {
+                if (item.Id == tradingRequestId)
+                {
+                    item.Status = request.Status;
+                }
+                else
+                {
+                    item.Status = StatusEnum.Expired.ToString();
+                }
+            }
+
+            await _tradingRequestRepository.UpdateRangeAsync(tradingRequests);
+            await _tradingRequestRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok(string.Empty);
         }
     }
 }

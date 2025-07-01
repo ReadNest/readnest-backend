@@ -39,7 +39,7 @@ namespace ReadNest.WebAPI.Hubs
                 SenderId = request.SenderId,
                 ReceiverId = request.ReceiverId,
                 Message = request.Message,
-                SentAt =DateTime.UtcNow, // Ensure a valid timestamp
+                SentAt = DateTime.UtcNow, // Ensure a valid timestamp
                 IsRead = false, // Default to unread 
             };
             // Broadcast gửi về cho all clients

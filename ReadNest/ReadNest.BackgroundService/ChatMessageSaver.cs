@@ -51,7 +51,7 @@ namespace ReadNest.BackgroundServices
                         //var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                         //dbContext.ChatMessages.AddRange(messages);
                         //await dbContext.SaveChangesAsync(stoppingToken);
-                        await chatMessageUseCase.SaveRangeMessageAsync(messages); // Chờ hoàn thành lưu trữ
+                        _ = await chatMessageUseCase.SaveRangeMessageAsync(messages); // Chờ hoàn thành lưu trữ
 
                         //Sau khi flush → Refresh lại Redis cache từ DB
                         var distinctPairs = messages

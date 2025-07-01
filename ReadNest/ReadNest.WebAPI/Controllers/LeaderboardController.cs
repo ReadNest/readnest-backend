@@ -27,7 +27,7 @@ namespace ReadNest.WebAPI.Controllers
         //    var response = await _leaderboardUseCase.GetLeaderboardsByEventIdAsync(eventId);
         //    return response.Success ? Ok(response) : BadRequest(response);
         //}
-        
+
         [HttpGet("user/{eventId}/{userId}")]
         [ProducesResponseType(typeof(ApiResponse<LeaderboardResponse?>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

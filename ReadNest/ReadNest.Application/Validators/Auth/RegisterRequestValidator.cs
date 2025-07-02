@@ -14,6 +14,7 @@ namespace ReadNest.Application.Validators.Auth
             _ = RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Tên đăng nhập là bắt buộc.")
                 .Length(3, 100).WithMessage("Tên đăng nhập phải có độ dài từ 3 đến 100 ký tự.")
+                .Matches(@"^\S+$").WithMessage("Tên đăng nhập không được chứa khoảng trắng.")
                 .MustAsync(async (userName, cancellation) => !await userRepository.ExistsByUserNameAsync(userName))
                 .WithMessage("Tên đăng nhập đã được sử dụng.");
 
@@ -21,6 +22,7 @@ namespace ReadNest.Application.Validators.Auth
                 .NotEmpty().WithMessage("Email là bắt buộc.")
                 .EmailAddress().WithMessage("Định dạng email không hợp lệ.")
                 .MaximumLength(255).WithMessage("Email phải nhỏ hơn 255 ký tự.")
+                .Matches(@"^\S+$").WithMessage("Email không được chứa khoảng trắng.")
                 .MustAsync(async (email, cancellation) => !await userRepository.ExistsByEmailAsync(email))
                 .WithMessage("Email đã được sử dụng.");
 

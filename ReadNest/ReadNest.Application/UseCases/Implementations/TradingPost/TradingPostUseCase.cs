@@ -199,6 +199,53 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
             return ApiResponse<PagingResponse<GetBookTradingPostResponse>>.Ok(response);
         }
 
+        public async Task<ApiResponse<PagingResponse<GetBookTradingPostV2Response>>> GetTradingPostv2Async(PagingRequest request)
+        {
+            var tradingPosts = await _tradingPostRepository.FindWithIncludePagedAsync(
+                predicate: query => !query.IsDeleted,
+                include: query => query.Include(x => x.Owner)
+                                       .Include(x => x.OfferedBook)
+                                       .Include(x => x.TradingRequests)
+                                       .Include(x => x.Images),
+                pageNumber: request.PageIndex,
+                pageSize: request.PageSize,
+                orderBy: query => query.OrderByDescending(x => x.TradingRequests.Count())
+                                       .ThenByDescending(x => x.CreatedAt));
+
+            if (!tradingPosts.Any())
+            {
+                return ApiResponse<PagingResponse<GetBookTradingPostV2Response>>.Fail(messageId: Message.E0005);
+            }
+
+            var response = new PagingResponse<GetBookTradingPostV2Response>
+            {
+                Items = tradingPosts.Select(x => new GetBookTradingPostV2Response
+                {
+                    Id = x.Id,
+                    OwnerName = x.Owner.FullName,
+                    UserName = x.Owner.UserName,
+                    Author = x.OfferedBook.Author,
+                    ImageUrl = x.OfferedBook.ImageUrl,
+                    Title = x.OfferedBook.Title,
+                    Condition = x.Condition,
+                    MessageToRequester = x.MessageToRequester,
+                    ShortDesc = x.ShortDesc,
+                    NumberOfTradingRequests = x.TradingRequests.Count(),
+                    Images = x.Images.Select(x => new GetTradingPostImageResponse
+                    {
+                        Id = x.Id,
+                        ImageUrl = x.ImageUrl,
+                        Order = x.Order,
+                    }).ToList()
+                }).ToList(),
+                TotalItems = await _tradingPostRepository.CountAsync(query => !query.IsDeleted),
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+            };
+
+            return ApiResponse<PagingResponse<GetBookTradingPostV2Response>>.Ok(response);
+        }
+
         public async Task<ApiResponse<List<GetUserRequestResponse>>> GetUserRequestsByIdAsync(Guid tradingPostId)
         {
             var tradingRequest = (await _tradingRequestRepository.FindWithIncludeAsync(

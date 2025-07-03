@@ -188,6 +188,7 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
                 TradingRequestId = x.Id,
                 UserId = x.RequesterId,
                 FullName = x.Requester.FullName,
+                UserName = x.Requester.UserName,
                 AvatarUrl = x.Requester.AvatarUrl,
                 Status = x.Status,
             }).ToList();

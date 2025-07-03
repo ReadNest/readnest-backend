@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,8 @@ namespace ReadNest.WebAPI.Controllers
     {
         private readonly IPostUseCase _postUseCase;
         private readonly IViewTracker _viewTracker;
+
+        public const string NameIdentifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
         public PostController(IPostUseCase postUseCase, IViewTracker viewTracker)
         {
@@ -124,8 +127,11 @@ namespace ReadNest.WebAPI.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> IncreasePostViews(Guid postId)
         {
-            string ip = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "unknown";
-            var redisKey = $"view:{ip}:{postId}";
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Ok(ApiResponse<string>.Fail("User not found in token"));
+
+            var redisKey = $"view:{userId}:{postId}";
             TimeSpan ttl = TimeSpan.FromHours(6);
 
             if (await _viewTracker.ShouldIncreaseViewAsync(redisKey, ttl))

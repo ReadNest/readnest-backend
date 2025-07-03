@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReadNest.Application.Models.Requests.Event;
-using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Event;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.Event;
@@ -104,7 +103,7 @@ namespace ReadNest.Application.UseCases.Implementations.Event
                 Status = request.Status
             };
 
-            await _eventRepository.AddAsync(entity);
+            _ = await _eventRepository.AddAsync(entity);
 
             var response = new EventResponse
             {

@@ -9,7 +9,8 @@ namespace ReadNest.Application.Validators.Auth
         {
             _ = RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Tên đăng nhập là bắt buộc.")
-                .Length(3, 100).WithMessage("Tên đăng nhập phải có độ dài từ 3 đến 100 ký tự.");
+                .Length(3, 100).WithMessage("Tên đăng nhập phải có độ dài từ 3 đến 100 ký tự.")
+                .Matches(@"^\S+$").WithMessage("Tên đăng nhập không được chứa khoảng trắng.");
 
             _ = RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Mật khẩu là bắt buộc.")

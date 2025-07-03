@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ReadNest.Application.Models.Responses.ChatMessage
+﻿namespace ReadNest.Application.Models.Responses.ChatMessage
 {
     public class RecentChatterResponse
     {
@@ -12,7 +6,7 @@ namespace ReadNest.Application.Models.Responses.ChatMessage
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string AvatarUrl { get; set; }
-        public DateTime LastMessageTime { get; set; }
+        public DateTime LastMessageTime { get; set; } // LastMessage in the Conversation not the last message of the Chatter
         public int UnreadMessagesCount { get; set; }
         public string LastMessage { get; set; }
     }

@@ -6,5 +6,7 @@ namespace ReadNest.Application.Repositories
     {
         Task<IEnumerable<User>> GetAllChattersByUserIdAsync(Guid userId);
         Task<IEnumerable<ChatMessage>> GetFullConversationAsync(Guid userAId, Guid userBId);
+        Task<User?> GetUserWhoSentMessageToAsync(Guid receiverId, string senderUsername);
+        Task<User?> GetUserWhoSendMessageToByIdAsync(Guid senderId);
     }
 }

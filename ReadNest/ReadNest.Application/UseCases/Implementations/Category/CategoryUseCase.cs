@@ -73,6 +73,7 @@ namespace ReadNest.Application.UseCases.Implementations.Category
                 predicate: query => !query.IsDeleted,
                 pageNumber: request.PageIndex,
                 pageSize: request.PageSize,
+                include: null,
                 asNoTracking: true,
                 orderBy: query => query.OrderByDescending(x => x.CreatedAt)
                                        .ThenByDescending(x => x.UpdatedAt)

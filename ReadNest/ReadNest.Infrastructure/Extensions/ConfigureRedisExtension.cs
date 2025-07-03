@@ -11,7 +11,7 @@ namespace ReadNest.Infrastructure.Extensions
         {
             var redisOptions = configuration.GetSection(nameof(RedisOptions)).Get<RedisOptions>();
             var multiplexer = ConnectionMultiplexer.Connect(redisOptions.ConnectionStrings);
-            services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+            _ = services.AddSingleton<IConnectionMultiplexer>(multiplexer);
             return services;
         }
     }

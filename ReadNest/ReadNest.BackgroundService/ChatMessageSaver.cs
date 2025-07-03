@@ -51,7 +51,7 @@ namespace ReadNest.BackgroundServices
                         //var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                         //dbContext.ChatMessages.AddRange(messages);
                         //await dbContext.SaveChangesAsync(stoppingToken);
-                        await chatMessageUseCase.SaveRangeMessageAsync(messages); // Chờ hoàn thành lưu trữ
+                        _ = await chatMessageUseCase.SaveRangeMessageAsync(messages); // Chờ hoàn thành lưu trữ
 
                         //Sau khi flush → Refresh lại Redis cache từ DB
                         var distinctPairs = messages
@@ -61,6 +61,11 @@ namespace ReadNest.BackgroundServices
                         {
                             var userAId = pair.SenderId;
                             var userBId = pair.ReceiverId;
+
+                            // Xóa recentChatters cache trước khi refresh lại conversation
+                            await redisQueue.DeleteRecentChattersCacheAsync(userAId);
+                            await redisQueue.DeleteRecentChattersCacheAsync(userBId);
+
                             // Lấy toàn bộ cuộc trò chuyện từ DB
                             var fullConversation = await chatMessageUseCase.GetFullConversationAsync(pair.SenderId, pair.ReceiverId);
                             // Xóa cache cũ và lưu mới trong Redis

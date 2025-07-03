@@ -58,6 +58,15 @@ namespace ReadNest.WebAPI.Controllers
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPost("v2")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CreateTradingPostV2([FromBody] CreateTradingPostRequestV2 request)
+        {
+            var response = await _tradingPostUseCase.CreateTradingPostV2Async(request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
         [HttpPatch("{tradingPostId}/trading-requests/{tradingRequestId}")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

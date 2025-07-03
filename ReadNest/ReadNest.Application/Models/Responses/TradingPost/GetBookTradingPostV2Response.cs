@@ -9,6 +9,8 @@
         public string UserName { get; set; }
         public string ImageUrl { get; set; }
         public string Condition { get; set; }
+        public string ShortDesc { get; set; }
+        public string MessageToRequester { get; set; }
         public int NumberOfTradingRequests { get; set; }
         public List<GetTradingPostImageResponse> Images { get; set; }
     }

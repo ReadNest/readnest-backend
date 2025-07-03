@@ -13,5 +13,6 @@ namespace ReadNest.Application.UseCases.Interfaces.TradingPost
         Task<ApiResponse<string>> DeleteTradingPostAsync(Guid tradingPostId);
         Task<ApiResponse<string>> UpdateStatusTradingRequestAsync(Guid tradingPostId, Guid tradingRequestId, UpdateStatusTradingRequest request);
         Task<ApiResponse<string>> CreateTradingRequestAsync(CreateTradingRequest request);
+        Task<ApiResponse<string>> CreateTradingPostV2Async(CreateTradingPostRequestV2 request);
     }
 }

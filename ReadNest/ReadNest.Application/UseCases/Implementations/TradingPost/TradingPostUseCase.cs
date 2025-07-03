@@ -17,6 +17,7 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
         private readonly ITradingRequestRepository _tradingRequestRepository;
         private readonly IUserRepository _userRepository;
         private readonly CreateTradingPostRequestValidator _validator;
+        private readonly CreateTradingPostRequestV2Validator _validatorV2;
 
         /// <summary>
         /// Constructor
@@ -25,12 +26,14 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
         /// <param name="tradingRequestRepository"></param>
         /// <param name="userRepository"></param>
         /// <param name="validator"></param>
-        public TradingPostUseCase(ITradingPostRepository tradingPostRepository, ITradingRequestRepository tradingRequestRepository, IUserRepository userRepository, CreateTradingPostRequestValidator validator)
+        /// <param name="validatorV2"></param>
+        public TradingPostUseCase(ITradingPostRepository tradingPostRepository, ITradingRequestRepository tradingRequestRepository, IUserRepository userRepository, CreateTradingPostRequestValidator validator, CreateTradingPostRequestV2Validator validatorV2)
         {
             _tradingPostRepository = tradingPostRepository;
             _tradingRequestRepository = tradingRequestRepository;
             _userRepository = userRepository;
             _validator = validator;
+            _validatorV2 = validatorV2;
         }
 
         public async Task<ApiResponse<string>> CreateTradingPostAsync(CreateTradingPostRequest request)
@@ -55,6 +58,28 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
 
             _ = await _tradingPostRepository.AddAsync(tradingPost);
             await _tradingPostRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok(string.Empty);
+        }
+
+        public async Task<ApiResponse<string>> CreateTradingPostV2Async(CreateTradingPostRequestV2 request)
+        {
+            await _validatorV2.ValidateAndThrowAsync(request);
+
+            var tradingPost = new Domain.Entities.TradingPost
+            {
+                OwnerId = request.UserId,
+                Condition = string.Empty,
+                MessageToRequester = string.Empty,
+                Title = string.Empty,
+                ShortDesc = string.Empty,
+                Status = StatusEnum.InProgress.ToString(),
+                ExternalBookUrl = request.ExternalBookUrl,
+                Message = request.Message,
+            };
+
+            _ = await _tradingPostRepository.AddAsync(tradingPost);
+            // await _tradingPostRepository.SaveChangesAsync();
 
             return ApiResponse<string>.Ok(string.Empty);
         }
@@ -127,6 +152,8 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
                 ImageUrl = x.OfferedBook.ImageUrl,
                 Title = x.OfferedBook.Title,
                 Condition = x.Condition,
+                MessageToRequester = x.MessageToRequester,
+                ShortDesc = x.ShortDesc,
                 NumberOfTradingRequests = x.TradingRequests.Count(),
                 Images = x.Images.Select(x => new GetTradingPostImageResponse
                 {

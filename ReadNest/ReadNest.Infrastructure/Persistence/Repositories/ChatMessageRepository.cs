@@ -16,12 +16,30 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         /// </returns>
         public async Task<IEnumerable<User>> GetAllChattersByUserIdAsync(Guid userId)
         {
-            var users = await _context.Users
-                .Include(u => u.SentMessages)
-                .Where(u => u.SentMessages.Any(m => m.ReceiverId == userId)) // Get users who have sent messages to the specified user
+            //var users = await _context.Users
+            //    .Include(u => u.SentMessages)
+            //    .Where(u => u.SentMessages.Any(m => m.ReceiverId == userId)) // Get users who have sent messages to the specified user
+            //    .ToListAsync();
+
+            var userIds = await _context.ChatMessages
+                .Where(m => m.SenderId == userId || m.ReceiverId == userId)
+                .Select(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+                .Distinct()
                 .ToListAsync();
 
-            return users;
+            return await _context.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToListAsync();
+        }
+
+        public async Task<User?> GetUserWhoSentMessageToAsync(Guid receiverId, string senderUsername)
+        {
+            //Get Chatter who sent message to reveiverId and have username is senderUsername
+            return await _context.Users
+                .Include(u => u.SentMessages)
+                .FirstOrDefaultAsync(u =>
+                    u.UserName == senderUsername
+                );
         }
 
         public async Task<IEnumerable<ChatMessage>> GetFullConversationAsync(Guid userAId, Guid userBId)
@@ -30,6 +48,15 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .Where(m => (m.SenderId == userAId && m.ReceiverId == userBId) || (m.SenderId == userBId && m.ReceiverId == userAId))
                 .OrderBy(m => m.SentAt)
                 .ToListAsync();
+        }
+
+        public async Task<User?> GetUserWhoSendMessageToByIdAsync(Guid senderId)
+        {
+            return await _context.Users
+                .Include(u => u.SentMessages)
+                .FirstOrDefaultAsync(u =>
+                    u.Id == senderId
+                );
         }
     }
 }

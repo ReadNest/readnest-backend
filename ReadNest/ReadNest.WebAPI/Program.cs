@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using ReadNest.Application.Extensions;
 using ReadNest.BackgroundServices;
 using ReadNest.Infrastructure.Extensions;
@@ -26,6 +27,7 @@ namespace ReadNest.WebAPI
 
             // SignalR
             _ = builder.Services.AddSignalR();
+            _ = builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
             var app = builder.Build();
 

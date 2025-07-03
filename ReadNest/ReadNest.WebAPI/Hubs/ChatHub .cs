@@ -42,8 +42,9 @@ namespace ReadNest.WebAPI.Hubs
                 SentAt = DateTime.UtcNow, // Ensure a valid timestamp
                 IsRead = false, // Default to unread 
             };
-            // Broadcast gửi về cho all clients
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            // Broadcast the message to specific users (sender and receiver)
+            await Clients.Users([request.SenderId.ToString(), request.ReceiverId.ToString()])
+             .SendAsync("ReceiveMessage", message);
             // Đẩy vào redisQueue lưu tạm thời
             await _redisChatQueue.AddMessageAsync(message, false);
         }

@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using ReadNest.Application.Models.Requests.ChatMessage;
+using ReadNest.Application.Models.Responses.ChatMessage;
+using ReadNest.Application.Repositories;
 using ReadNest.Application.Services;
 using StackExchange.Redis;
 
@@ -7,6 +9,7 @@ namespace ReadNest.Infrastructure.Services
 {
     public class RedisChatQueue : IRedisChatQueue
     {
+        private string GetRecentChattersKey(Guid userId) => $"recentChatters:{userId}";
         private string GetChatKey(Guid senderId, Guid receiverId)
         {
             return senderId.CompareTo(receiverId) < 0 ? $"chat:{senderId}:{receiverId}" : $"chat:{receiverId}:{senderId}";
@@ -17,9 +20,12 @@ namespace ReadNest.Infrastructure.Services
         /// Cache Time To Live (TTL) for chat messages in Redis.
         /// </summary>
         private readonly TimeSpan _cacheTTL = TimeSpan.FromMinutes(3);
-        public RedisChatQueue(IConnectionMultiplexer redis)
+        private readonly IUserRepository _userRepository;
+
+        public RedisChatQueue(IConnectionMultiplexer redis, IUserRepository userRepository)
         {
             _redisDb = redis.GetDatabase();
+            _userRepository = userRepository;
         }
         /// <summary>
         /// Adds a message to the Redis cache for a chat between two users.
@@ -48,12 +54,12 @@ namespace ReadNest.Infrastructure.Services
             {
                 // If the message is saved, we can also add it to a pending messages set if needed
                 _ = await _redisDb.ListRightPushAsync(PendingChatKey, JsonSerializer.Serialize(message));
-                bool pendingKeyExists = await _redisDb.KeyExistsAsync(PendingChatKey);
-                if (!pendingKeyExists)
-                {
-                    _ = await _redisDb.KeyExpireAsync(PendingChatKey, _cacheTTL);
-                }
+                _ = await _redisDb.KeyExpireAsync(PendingChatKey, _cacheTTL); // luôn reset TTL mỗi lần push
             }
+
+            // Cập nhật recentChatters của cả sender và receiver
+            await AddOrUpdateRecentChatterAsync(message.SenderId, message.ReceiverId, message.Message, message.SentAt);
+            await AddOrUpdateRecentChatterAsync(message.ReceiverId, message.SenderId, message.Message, message.SentAt);
 
         }
         /// <summary>
@@ -62,7 +68,7 @@ namespace ReadNest.Infrastructure.Services
         /// <param name="userAId"></param>
         /// <param name="userBId"></param>
         /// returns>A list of chat messages sorted by sent time.</returns>
-        public async Task<List<ChatMessageCacheModel>> GetFullConversationDequeueAsync(Guid userAId, Guid userBId)
+        public async Task<List<ChatMessageCacheModel>> GetFullConversationFromCacheAsync(Guid userAId, Guid userBId)
         {
             var keyAB = GetChatKey(userAId, userBId);
             //var keyBA = GetChatKey(userBId, userAId);
@@ -74,13 +80,6 @@ namespace ReadNest.Infrastructure.Services
                 .Select(m => JsonSerializer.Deserialize<ChatMessageCacheModel>(m!)!)
                 .ToList();
 
-            //var messagesBA = redisMessagesBA
-            //    .Select(m => JsonSerializer.Deserialize<ChatMessageCacheModel>(m!)!)
-            //    .ToList();
-
-            //var fullConversation = messagesAB.Concat(messagesBA)
-            //    .OrderBy(m => m.SentAt)
-            //    .ToList();
             var fullConversation = messagesAB
                 .OrderBy(m => m.SentAt)
                 .ToList();
@@ -118,6 +117,76 @@ namespace ReadNest.Infrastructure.Services
             }
 
             _ = await _redisDb.KeyExpireAsync(key, _cacheTTL); // Reset TTL sau khi lưu mới
+        }
+
+        public async Task CacheRecentChattersAsync(Guid userId, List<RecentChatterResponse> chatters)
+        {
+            var key = GetRecentChattersKey(userId);
+            var serialized = JsonSerializer.Serialize(chatters);
+            await _redisDb.StringSetAsync(key, serialized, TimeSpan.FromMinutes(5));
+        }
+
+        public async Task<List<RecentChatterResponse>?> GetCachedRecentChattersAsync(Guid userId)
+        {
+            var key = GetRecentChattersKey(userId);
+            var cached = await _redisDb.StringGetAsync(key);
+            if (cached.IsNullOrEmpty) return null;
+
+            return JsonSerializer.Deserialize<List<RecentChatterResponse>>(cached!);
+        }
+        public async Task DeleteRecentChattersCacheAsync(Guid userId)
+        {
+            var key = $"recentChatters:{userId}";
+            await _redisDb.KeyDeleteAsync(key);
+        }
+        private async Task AddOrUpdateRecentChatterAsync(Guid ownerId, Guid chatterId, string lastMessage, DateTime sentAt)
+        {
+            var key = GetRecentChattersKey(ownerId);
+            var cached = await _redisDb.StringGetAsync(key);
+
+            List<RecentChatterResponse> chatters = new();
+
+            // Nếu cache đã tồn tại, deserialize danh sách chatters
+            if (!cached.IsNullOrEmpty)
+            {
+                chatters = JsonSerializer.Deserialize<List<RecentChatterResponse>>(cached!)!;
+            }
+            // Tìm chatter đã tồn tại trong danh sách
+            var existing = chatters.FirstOrDefault(c => c.UserId == chatterId);
+
+            // Nếu đã tồn tại, cập nhật thông tin
+            if (existing != null)
+            {
+                existing.LastMessage = lastMessage;
+                existing.LastMessageTime = sentAt;
+                // Xóa chatter cũ khỏi danh sách
+                chatters.RemoveAll(c => c.UserId == chatterId);
+                // Thêm chatter đã cập nhật vào đầu danh sách
+                chatters.Insert(0, existing);
+            }
+            // Nếu chưa tồn tại, tạo mới
+            else
+            {
+                // Truy vấn DB lấy thông tin người dùng nếu chưa có
+                var user = await _userRepository.GetByIdAsync(chatterId);
+                // Tạo mới chatter
+                var newChatter = new RecentChatterResponse
+                {
+                    UserId = chatterId,
+                    UserName = user?.UserName ?? "",
+                    FullName = user?.FullName ?? "",
+                    AvatarUrl = user?.AvatarUrl ?? "",
+                    LastMessage = lastMessage,
+                    LastMessageTime = sentAt,
+                    UnreadMessagesCount = 0
+                };
+                // Thêm chatter mới vào đầu danh sách
+                chatters.Insert(0, newChatter);
+            }
+            // Cập nhật cache với danh sách chatters mới
+            var updated = JsonSerializer.Serialize(chatters);
+            // Đặt lại danh sách đã cập nhật vào Redis với thời gian sống (TTL) = 5
+            await _redisDb.StringSetAsync(key, updated, TimeSpan.FromMinutes(5));
         }
     }
 }

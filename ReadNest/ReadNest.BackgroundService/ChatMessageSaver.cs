@@ -61,6 +61,11 @@ namespace ReadNest.BackgroundServices
                         {
                             var userAId = pair.SenderId;
                             var userBId = pair.ReceiverId;
+
+                            // Xóa recentChatters cache trước khi refresh lại conversation
+                            await redisQueue.DeleteRecentChattersCacheAsync(userAId);
+                            await redisQueue.DeleteRecentChattersCacheAsync(userBId);
+
                             // Lấy toàn bộ cuộc trò chuyện từ DB
                             var fullConversation = await chatMessageUseCase.GetFullConversationAsync(pair.SenderId, pair.ReceiverId);
                             // Xóa cache cũ và lưu mới trong Redis

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReadNest.Domain;
 using ReadNest.Domain.Base;
 using ReadNest.Domain.Entities;
 using ReadNest.Shared.Enums;
@@ -28,6 +29,11 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<EventReward> EventRewards { get; set; }
         public DbSet<Leaderboard> Leaderboards { get; set; }
         public DbSet<TradingPostImage> TradingPostImages { get; set; }
+        public DbSet<Feature> Features { get; set; }
+        public DbSet<Package> Packages { get; set; }
+        public DbSet<PackageFeature> PackageFeatures { get; set; }
+        public DbSet<UserSubscription> UserSubscriptions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -759,6 +765,81 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                           .HasConstraintName("fk_trading_post_images_post_id")
                           .OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity<Package>().ToTable("packages");
+            modelBuilder.Entity<Feature>().ToTable("features");
+            modelBuilder.Entity<UserSubscription>().ToTable("user_subscriptions");
+            modelBuilder.Entity<Transaction>().ToTable("transactions");
+            modelBuilder.Entity<PackageFeature>().ToTable("package_features");
+
+            // UserSubscription
+            modelBuilder.Entity<UserSubscription>()
+                .Property(us => us.UserId).HasColumnName("user_id");
+            modelBuilder.Entity<UserSubscription>()
+                .Property(us => us.PackageId).HasColumnName("package_id");
+            modelBuilder.Entity<UserSubscription>()
+                .Property(us => us.StartDate).HasColumnName("start_date");
+            modelBuilder.Entity<UserSubscription>()
+                .Property(us => us.EndDate).HasColumnName("end_date");
+            modelBuilder.Entity<UserSubscription>()
+                .Property(us => us.Status).HasColumnName("status");
+
+            // Package
+            modelBuilder.Entity<Package>()
+                .Property(p => p.Name).HasColumnName("name");
+            modelBuilder.Entity<Package>()
+                .Property(p => p.Price).HasColumnName("price");
+            modelBuilder.Entity<Package>()
+                .Property(p => p.DurationMonths).HasColumnName("duration_months");
+            modelBuilder.Entity<Package>()
+                .Property(p => p.Features).HasColumnName("features");
+
+            // Feature
+            modelBuilder.Entity<Feature>()
+                .Property(f => f.Name).HasColumnName("name");
+            modelBuilder.Entity<Feature>()
+                .Property(f => f.Description).HasColumnName("description");
+
+            // Transaction
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.UserId).HasColumnName("user_id");
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.PackageId).HasColumnName("package_id");
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Amount).HasColumnName("amount");
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.PaymentMethod).HasColumnName("payment_method");
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.TransactionStatus).HasColumnName("transaction_status");
+
+            modelBuilder.Entity<PackageFeature>()
+                .HasKey(pf => new { pf.PackageId, pf.FeatureId });
+
+            modelBuilder.Entity<PackageFeature>()
+                .Property(pf => pf.PackageId).HasColumnName("package_id");
+            modelBuilder.Entity<PackageFeature>()
+                .Property(pf => pf.FeatureId).HasColumnName("feature_id");
+
+            // Config relationships
+            modelBuilder.Entity<UserSubscription>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.UserSubscriptions)
+                .HasForeignKey(us => us.UserId);
+
+            modelBuilder.Entity<UserSubscription>()
+                .HasOne(us => us.Package)
+                .WithMany(p => p.UserSubscriptions)
+                .HasForeignKey(us => us.PackageId);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.Transactions)
+                .HasForeignKey(t => t.UserId);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Package)
+                .WithMany(p => p.Transactions)
+                .HasForeignKey(t => t.PackageId);
 
             base.OnModelCreating(modelBuilder);
         }

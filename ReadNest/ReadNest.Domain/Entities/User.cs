@@ -26,5 +26,7 @@ namespace ReadNest.Domain.Entities
         public ICollection<TradingPost> TradingPosts { get; set; }
         public ICollection<TradingRequest> TradingRequests { get; set; }
         public ICollection<Leaderboard> Leaderboards { get; set; }
+        public ICollection<UserSubscription> UserSubscriptions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

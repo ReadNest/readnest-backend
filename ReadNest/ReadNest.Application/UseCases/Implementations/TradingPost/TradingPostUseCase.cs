@@ -288,5 +288,43 @@ namespace ReadNest.Application.UseCases.Implementations.TradingPost
 
             return ApiResponse<string>.Ok(string.Empty);
         }
+
+        public async Task<ApiResponse<string>> UpdateTradingPostAsync(Guid tradingPostId, UpdateTradingPostRequest request)
+        {
+            var tradingPost = (await _tradingPostRepository.FindWithIncludeAsync(
+                predicate: query => !query.IsDeleted && query.Id == tradingPostId,
+                include: query => query.Include(x => x.Images),
+                asNoTracking: false))
+                .FirstOrDefault();
+
+            if (tradingPost == null)
+            {
+                return ApiResponse<string>.Fail(MessageId.E0000);
+            }
+
+            tradingPost.Title = request.Title;
+            tradingPost.Condition = request.Condition;
+            tradingPost.ShortDesc = request.ShortDescription;
+            tradingPost.MessageToRequester = request.MessageToRequester;
+
+            tradingPost.Images.Clear();
+
+            var newImages = request.Images.Select(r => new TradingPostImage
+            {
+                ImageUrl = r.ImageUrl,
+                Order = r.Order,
+                TradingPostId = tradingPostId
+            });
+
+            foreach (var image in newImages)
+            {
+                tradingPost.Images.Add(image);
+            }
+
+            await _tradingPostRepository.UpdateAsync(tradingPost);
+            await _tradingPostRepository.SaveChangesAsync();
+
+            return ApiResponse<string>.Ok(data: tradingPostId.ToString());
+        }
     }
 }

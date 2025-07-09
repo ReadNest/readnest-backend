@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ReadNest.Domain;
 using ReadNest.Domain.Base;
 using ReadNest.Domain.Entities;
 using ReadNest.Shared.Enums;

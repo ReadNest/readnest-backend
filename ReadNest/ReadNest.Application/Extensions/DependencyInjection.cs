@@ -13,6 +13,7 @@ using ReadNest.Application.UseCases.Implementations.EventReward;
 using ReadNest.Application.UseCases.Implementations.FavoriteBook;
 using ReadNest.Application.UseCases.Implementations.Feature;
 using ReadNest.Application.UseCases.Implementations.Leaderboard;
+using ReadNest.Application.UseCases.Implementations.Package;
 using ReadNest.Application.UseCases.Implementations.Post;
 using ReadNest.Application.UseCases.Implementations.TradingPost;
 using ReadNest.Application.UseCases.Implementations.User;
@@ -30,6 +31,7 @@ using ReadNest.Application.UseCases.Interfaces.EventReward;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
 using ReadNest.Application.UseCases.Interfaces.Feature;
 using ReadNest.Application.UseCases.Interfaces.Leaderboard;
+using ReadNest.Application.UseCases.Interfaces.Package;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.UseCases.Interfaces.TradingPost;
 using ReadNest.Application.UseCases.Interfaces.User;
@@ -59,6 +61,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<IChatMessageUseCase, ChatMessageUseCase>();
             _ = services.AddScoped<ITradingPostUseCase, TradingPostUseCase>();
             _ = services.AddScoped<IFeatureUseCase, FeatureUseCase>();
+            _ = services.AddScoped<IPackageUseCase, PackageUseCase>();
 
             return services;
         }

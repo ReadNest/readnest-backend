@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Requests.Feature;
 using ReadNest.Application.Models.Responses.Feature;
@@ -9,6 +10,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [Route("api/v1/features")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class FeatureController : ControllerBase
     {
         private readonly IFeatureUseCase _featureUseCase;

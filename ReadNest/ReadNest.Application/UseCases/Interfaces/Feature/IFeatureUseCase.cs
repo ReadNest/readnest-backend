@@ -9,5 +9,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Feature
         Task<ApiResponse<string>> CreateFeatureAsync(CreateFeatureRequest request);
         Task<ApiResponse<string>> DeleteFeatureAsync(Guid id);
         Task<ApiResponse<PagingResponse<GetFeatureResponse>>> GetFeaturesAsync(PagingRequest request);
+        Task<ApiResponse<List<GetFeatureResponse>>> GetAllFeaturesAsync();
     }
 }

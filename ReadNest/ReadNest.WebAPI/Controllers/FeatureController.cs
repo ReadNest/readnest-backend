@@ -24,6 +24,15 @@ namespace ReadNest.WebAPI.Controllers
             _featureUseCase = featureUseCase;
         }
 
+        [HttpGet("all")]
+        [ProducesResponseType(typeof(ApiResponse<List<GetFeatureResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAllFeatures()
+        {
+            var response = await _featureUseCase.GetAllFeaturesAsync();
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetFeatureResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

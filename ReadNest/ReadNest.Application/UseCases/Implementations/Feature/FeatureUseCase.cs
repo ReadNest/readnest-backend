@@ -55,6 +55,25 @@ namespace ReadNest.Application.UseCases.Implementations.Feature
             return ApiResponse<string>.Ok(id.ToString());
         }
 
+        public async Task<ApiResponse<List<GetFeatureResponse>>> GetAllFeaturesAsync()
+        {
+            var features = await _featureRepository.GetAllAsync();
+
+            if (!features.Any())
+            {
+                return ApiResponse<List<GetFeatureResponse>>.Fail(MessageId.E0005);
+            }
+
+            var response = features.Select(x => new GetFeatureResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+            }).ToList();
+
+            return ApiResponse<List<GetFeatureResponse>>.Ok(response);
+        }
+
         public async Task<ApiResponse<PagingResponse<GetFeatureResponse>>> GetFeaturesAsync(PagingRequest request)
         {
             var response = await _featureRepository.FindPagedAsync(

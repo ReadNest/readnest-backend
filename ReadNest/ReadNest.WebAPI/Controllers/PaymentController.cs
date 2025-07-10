@@ -35,16 +35,17 @@ namespace ReadNest.WebAPI.Controllers
         [HttpPost("webhook")]
         [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> HandleWebhookPayOS([FromBody] WebhookData request)
+        public async Task<IActionResult> HandleWebhookPayOS([FromBody] WebhookType request)
         {
-
-            return Ok(request);
+            var webHookData =  _transactionUseCase.VerifyPaymentWebhookData(request);
+            var response = _transactionUseCase.CreateUserSubscription(webHookData.Data);
+            return Ok(response);
         }
 
         [HttpPost("init-webhook")]
         public async Task<IActionResult> ConfirmWebhook()
         {
-            var response = await _transactionUseCase.InitWebhookPayOS();
+            var response = await _transactionUseCase.InitWebhookPayOSAsync();
             return Ok(response);
         }
     }

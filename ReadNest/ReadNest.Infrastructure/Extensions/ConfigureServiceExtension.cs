@@ -30,6 +30,7 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IFeatureRepository, FeatureRepository>();
             _ = services.AddScoped<IPackageRepository, PackageRepository>();
             _ = services.AddScoped<ITransactionRepository, TransactionRepository>();
+            _ = services.AddScoped<IUserSubscriptionRepository, UserSubscriptionRepository>();
 
             _ = services.AddScoped<IJwtService, JwtService>();
             _ = services.AddScoped<IPaymentGateway, PayOSPaymentGateway>();

@@ -11,5 +11,6 @@ namespace ReadNest.Application.UseCases.Interfaces.Transaction
             Guid transactionId,
             Guid packageId,
             Guid userId);
+        Task<ApiResponse<string>> InitWebhookPayOS();
     }
 }

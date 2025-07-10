@@ -81,5 +81,10 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
 
             return ApiResponse<GetPaymentLinkResponse>.Ok(new GetPaymentLinkResponse { CheckoutUrl = paymentLink });
         }
+
+        public async Task<ApiResponse<string>> InitWebhookPayOS()
+        {
+            return ApiResponse<string>.Ok(await _paymentGateway.InitWebhook());
+        }
     }
 }

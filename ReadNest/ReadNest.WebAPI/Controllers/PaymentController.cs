@@ -40,5 +40,12 @@ namespace ReadNest.WebAPI.Controllers
 
             return Ok(request);
         }
+
+        [HttpPost("init-webhook")]
+        public async Task<IActionResult> ConfirmWebhook()
+        {
+            var response = await _transactionUseCase.InitWebhookPayOS();
+            return Ok(response);
+        }
     }
 }

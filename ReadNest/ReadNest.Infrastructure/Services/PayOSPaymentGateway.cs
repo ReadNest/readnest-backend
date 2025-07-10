@@ -47,5 +47,17 @@ namespace ReadNest.Infrastructure.Services
 
             return response.checkoutUrl;
         }
+
+        public async Task<string> InitWebhook()
+        {
+            var payos = new PayOS(
+                apiKey: _options.ApiKey,
+                clientId: _options.ClientId,
+                checksumKey: _options.ChecksumKey
+            );
+
+            var result = await payos.confirmWebhook(_options.WebhookUrl);
+            return result;
+        }
     }
 }

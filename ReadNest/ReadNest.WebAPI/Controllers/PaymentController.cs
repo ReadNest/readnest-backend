@@ -38,7 +38,7 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> HandleWebhookPayOS([FromBody] WebhookType request)
         {
             var webHookData =  _transactionUseCase.VerifyPaymentWebhookData(request);
-            var response = _transactionUseCase.CreateUserSubscription(webHookData.Data);
+            var response = await _transactionUseCase.CreateUserSubscription(webHookData.Data);
             return Ok(response);
         }
 

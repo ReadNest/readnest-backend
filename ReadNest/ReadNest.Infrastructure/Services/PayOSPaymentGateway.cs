@@ -10,6 +10,7 @@ namespace ReadNest.Infrastructure.Services
     public class PayOSPaymentGateway : IPaymentGateway
     {
         private readonly PayOSOptions _options;
+        private readonly PayOS _payos;
 
         /// <summary>
         /// Constructor
@@ -18,17 +19,16 @@ namespace ReadNest.Infrastructure.Services
         public PayOSPaymentGateway(IOptions<PayOSOptions> options)
         {
             _options = options.Value;
-        }
-
-        public async Task<string> CreatePaymentLinkAsync(Domain.Entities.Transaction transaction, Package package, User user)
-        {
-            var payos = new PayOS(
+            _payos = new PayOS(
                 apiKey: _options.ApiKey,
                 clientId: _options.ClientId,
                 checksumKey: _options.ChecksumKey
             );
+        }
 
-            var response = await payos.createPaymentLink(new PaymentData
+        public async Task<string> CreatePaymentLinkAsync(Domain.Entities.Transaction transaction, Package package, User user)
+        {
+            var response = await _payos.createPaymentLink(new PaymentData
             (
                 orderCode: transaction.OrderCode,
                 amount: Convert.ToInt16(package.Price),
@@ -48,16 +48,15 @@ namespace ReadNest.Infrastructure.Services
             return response.checkoutUrl;
         }
 
-        public async Task<string> InitWebhook()
+        public async Task<string> InitWebhookPayOSAsync()
         {
-            var payos = new PayOS(
-                apiKey: _options.ApiKey,
-                clientId: _options.ClientId,
-                checksumKey: _options.ChecksumKey
-            );
-
-            var result = await payos.confirmWebhook(_options.WebhookUrl);
+            var result = await _payos.confirmWebhook(_options.WebhookUrl);
             return result;
+        }
+
+        public WebhookData VerifyWebHook(WebhookType webhookType)
+        {
+            return _payos.verifyPaymentWebhookData(webhookType);
         }
     }
 }

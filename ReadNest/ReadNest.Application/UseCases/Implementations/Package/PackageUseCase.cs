@@ -71,7 +71,7 @@ namespace ReadNest.Application.UseCases.Implementations.Package
             var response = await _packageRepository.GetPagedAsync(
                 pageNumber: request.PageIndex,
                 pageSize: request.PageSize,
-                include: query => query.Include(x => x.PackageFeatures));
+                include: query => query.Include(x => x.PackageFeatures).ThenInclude(x => x.Feature));
 
             var responseConverted = new PagingResponse<GetPackageResponse>
             {
@@ -80,6 +80,7 @@ namespace ReadNest.Application.UseCases.Implementations.Package
                 TotalItems = response.TotalItems,
                 Items = response.Items.Select(x => new GetPackageResponse
                 {
+                    Id = x.Id,
                     DurationMonths = x.DurationMonths,
                     Features = x.Features,
                     Name = x.Name,

@@ -10,7 +10,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [Route("api/v1/features")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class FeatureController : ControllerBase
     {
         private readonly IFeatureUseCase _featureUseCase;

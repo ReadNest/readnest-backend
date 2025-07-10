@@ -810,6 +810,8 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 .Property(t => t.PaymentMethod).HasColumnName("payment_method");
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.TransactionStatus).HasColumnName("transaction_status");
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.OrderCode).HasColumnName("order_code");
 
             modelBuilder.Entity<PackageFeature>()
                 .HasKey(pf => new { pf.PackageId, pf.FeatureId });

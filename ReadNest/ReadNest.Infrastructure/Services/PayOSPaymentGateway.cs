@@ -20,13 +20,13 @@ namespace ReadNest.Infrastructure.Services
             _options = options.Value;
         }
 
-        public async Task<string> CreatePaymentLinkAsync(Domain.Entities.Transaction transaction, Package package)
+        public async Task<string> CreatePaymentLinkAsync(Domain.Entities.Transaction transaction, Package package, User user)
         {
             var payos = new PayOS(
                 apiKey: _options.ApiKey,
                 clientId: _options.ClientId,
                 checksumKey: _options.ChecksumKey
-            );  
+            );
 
             var response = await payos.createPaymentLink(new PaymentData
             (
@@ -38,8 +38,10 @@ namespace ReadNest.Infrastructure.Services
                     new ItemData(name: package.Name, quantity: 1, price: Convert.ToInt32(package.Price))
                 },
                 cancelUrl: _options.CancelUrl,
-                returnUrl: _options.ReturnUrl
-                
+                returnUrl: _options.ReturnUrl,
+                buyerName: user.FullName,
+                buyerEmail: user.Address,
+                expiredAt: new DateTimeOffset(DateTime.UtcNow.AddMinutes(15)).ToUnixTimeSeconds()
             ));
 
             return response.checkoutUrl;

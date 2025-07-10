@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Net.payOS.Types;
 using ReadNest.Application.Models.Requests.Payment;
 using ReadNest.Application.Models.Responses.Payment;
 using ReadNest.Application.Services;
@@ -29,6 +30,15 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _transactionUseCase.GetPaymentLinkResponseAsync(transactionId, request.PackageId, request.UserId);
 
             return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPost("webhook")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> HandleWebhookPayOS([FromBody] WebhookData request)
+        {
+
+            return Ok(request);
         }
     }
 }

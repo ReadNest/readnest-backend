@@ -32,15 +32,16 @@ namespace ReadNest.Infrastructure.Services
             (
                 orderCode: transaction.OrderCode,
                 amount: Convert.ToInt16(package.Price),
-                description: $"Thanh toán gói {package.Name}",
+                description: $"Thanh toan {package.Name}",
                 items: new List<ItemData>
                 {
-                    new ItemData(name: package.Name, quantity: 1, price: Convert.ToInt32(package.Price))
+                    new(name: package.Name, quantity: 1, price: Convert.ToInt32(package.Price))
                 },
                 cancelUrl: _options.CancelUrl,
                 returnUrl: _options.ReturnUrl,
                 buyerName: user.FullName,
-                buyerEmail: user.Address,
+                buyerEmail: user.Email,
+                buyerAddress: user.Address,
                 expiredAt: new DateTimeOffset(DateTime.UtcNow.AddMinutes(15)).ToUnixTimeSeconds()
             ));
 

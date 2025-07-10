@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ReadNest.Infrastructure.Persistence.DBContext;
 
 #nullable disable
 
-namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
+namespace ReadNest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250708141821_AddEntitiesForPackageFeature")]
+    partial class AddEntitiesForPackageFeature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -779,19 +782,19 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("07d087ac-6e41-4db5-8815-867c9dd8b2e7"),
-                            CreatedAt = new DateTime(2025, 7, 10, 1, 37, 52, 660, DateTimeKind.Utc).AddTicks(56),
+                            Id = new Guid("6cebc411-0dc2-4076-b923-2c19b9f2af1c"),
+                            CreatedAt = new DateTime(2025, 7, 8, 14, 18, 21, 266, DateTimeKind.Utc).AddTicks(2029),
                             IsDeleted = false,
                             RoleName = "Admin",
-                            UpdatedAt = new DateTime(2025, 7, 10, 1, 37, 52, 660, DateTimeKind.Utc).AddTicks(58)
+                            UpdatedAt = new DateTime(2025, 7, 8, 14, 18, 21, 266, DateTimeKind.Utc).AddTicks(2034)
                         },
                         new
                         {
-                            Id = new Guid("adc4b013-1a38-4350-91b3-cc394ce17f80"),
-                            CreatedAt = new DateTime(2025, 7, 10, 1, 37, 52, 660, DateTimeKind.Utc).AddTicks(62),
+                            Id = new Guid("253e057e-32c3-4bbf-bc50-2ffcffa1c2d0"),
+                            CreatedAt = new DateTime(2025, 7, 8, 14, 18, 21, 266, DateTimeKind.Utc).AddTicks(2037),
                             IsDeleted = false,
                             RoleName = "User",
-                            UpdatedAt = new DateTime(2025, 7, 10, 1, 37, 52, 660, DateTimeKind.Utc).AddTicks(62)
+                            UpdatedAt = new DateTime(2025, 7, 8, 14, 18, 21, 266, DateTimeKind.Utc).AddTicks(2037)
                         });
                 });
 
@@ -939,56 +942,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasIndex("TradingPostId");
 
                     b.ToTable("trading_requests", (string)null);
-                });
-
-            modelBuilder.Entity("ReadNest.Domain.Entities.Transaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("amount");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<long>("OrderCode")
-                        .HasColumnType("bigint")
-                        .HasColumnName("order_code");
-
-                    b.Property<Guid>("PackageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("package_id");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("payment_method");
-
-                    b.Property<string>("TransactionStatus")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("transaction_status");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackageId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("transactions", (string)null);
                 });
 
             modelBuilder.Entity("ReadNest.Domain.Entities.User", b =>
@@ -1155,6 +1108,52 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("ReadNest.Domain.Transaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PackageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("package_id");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("payment_method");
+
+                    b.Property<string>("TransactionStatus")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("transaction_status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("transactions", (string)null);
                 });
 
             modelBuilder.Entity("book_categories", b =>
@@ -1455,25 +1454,6 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
                     b.Navigation("TradingPost");
                 });
 
-            modelBuilder.Entity("ReadNest.Domain.Entities.Transaction", b =>
-                {
-                    b.HasOne("ReadNest.Domain.Entities.Package", "Package")
-                        .WithMany("Transactions")
-                        .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ReadNest.Domain.Entities.User", "User")
-                        .WithMany("Transactions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Package");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ReadNest.Domain.Entities.User", b =>
                 {
                     b.HasOne("ReadNest.Domain.Entities.Role", "Role")
@@ -1517,6 +1497,25 @@ namespace ReadNest.Infrastructure.Infrastructure.Persistence.Migrations
 
                     b.HasOne("ReadNest.Domain.Entities.User", "User")
                         .WithMany("UserSubscriptions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Package");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ReadNest.Domain.Transaction", b =>
+                {
+                    b.HasOne("ReadNest.Domain.Entities.Package", "Package")
+                        .WithMany("Transactions")
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReadNest.Domain.Entities.User", "User")
+                        .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

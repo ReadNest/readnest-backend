@@ -9,5 +9,7 @@
         Completed,
         Cancelled,
         Expired,
+        Active,
+        Success
     }
 }

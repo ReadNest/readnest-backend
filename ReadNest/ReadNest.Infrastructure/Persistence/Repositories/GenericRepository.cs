@@ -260,7 +260,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
             if (orderBy != null)
                 query = orderBy(query);
 
-            var totalCount = await query.CountAsync();
+            var totalCount = await query.CountAsync(x => !x.IsDeleted);
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -285,7 +285,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
             if (orderBy != null)
                 query = orderBy(query);
 
-            var totalCount = await query.CountAsync();
+            var totalCount = await query.CountAsync(x => !x.IsDeleted);
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)

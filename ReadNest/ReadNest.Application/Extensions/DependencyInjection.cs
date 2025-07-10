@@ -11,9 +11,12 @@ using ReadNest.Application.UseCases.Implementations.CommentReport;
 using ReadNest.Application.UseCases.Implementations.Event;
 using ReadNest.Application.UseCases.Implementations.EventReward;
 using ReadNest.Application.UseCases.Implementations.FavoriteBook;
+using ReadNest.Application.UseCases.Implementations.Feature;
 using ReadNest.Application.UseCases.Implementations.Leaderboard;
+using ReadNest.Application.UseCases.Implementations.Package;
 using ReadNest.Application.UseCases.Implementations.Post;
 using ReadNest.Application.UseCases.Implementations.TradingPost;
+using ReadNest.Application.UseCases.Implementations.Transaction;
 using ReadNest.Application.UseCases.Implementations.User;
 using ReadNest.Application.UseCases.Implementations.UserBadge;
 using ReadNest.Application.UseCases.Interfaces.AffiliateLink;
@@ -27,9 +30,12 @@ using ReadNest.Application.UseCases.Interfaces.CommentReport;
 using ReadNest.Application.UseCases.Interfaces.Event;
 using ReadNest.Application.UseCases.Interfaces.EventReward;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
+using ReadNest.Application.UseCases.Interfaces.Feature;
 using ReadNest.Application.UseCases.Interfaces.Leaderboard;
+using ReadNest.Application.UseCases.Interfaces.Package;
 using ReadNest.Application.UseCases.Interfaces.Post;
 using ReadNest.Application.UseCases.Interfaces.TradingPost;
+using ReadNest.Application.UseCases.Interfaces.Transaction;
 using ReadNest.Application.UseCases.Interfaces.User;
 using ReadNest.Application.UseCases.Interfaces.UserBadge;
 using ReadNest.Application.Validators.Auth;
@@ -56,6 +62,9 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<ILeaderboardUseCase, LeaderboardUseCase>();
             _ = services.AddScoped<IChatMessageUseCase, ChatMessageUseCase>();
             _ = services.AddScoped<ITradingPostUseCase, TradingPostUseCase>();
+            _ = services.AddScoped<IFeatureUseCase, FeatureUseCase>();
+            _ = services.AddScoped<IPackageUseCase, PackageUseCase>();
+            _ = services.AddScoped<ITransactionUseCase, TransactionUseCase>();
 
             return services;
         }

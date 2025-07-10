@@ -9,7 +9,11 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
     {
         public async Task<Transaction> GetByOrderCodeAsync(long orderCode)
         {
-            return await _context.Transactions.Where(x => x.OrderCode == orderCode).FirstOrDefaultAsync();
+            return await _context.Transactions
+                .AsNoTracking()
+                .Where(x => x.OrderCode == orderCode)
+                .Include(x => x.Package)
+                .FirstOrDefaultAsync();
         }
     }
 }

@@ -86,19 +86,38 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             await _transactionRepository.UpdateAsync(transaction);
             await _transactionRepository.SaveChangesAsync();
 
+            var package = await _packageRepository.GetByIdAsync(transaction.PackageId);
+            if (package == null)
+            {
+                return ApiResponse<string>.Fail("Package not found");
+            }
+
+            var lastSubscription = await _userSubscriptionRepository
+                .GetActiveSubscriptionByUserIdAsync(transaction.UserId);
+
+            var startDate = DateTime.UtcNow;
+            if (lastSubscription != null && lastSubscription.EndDate != null && lastSubscription.EndDate > DateTime.UtcNow)
+            {
+                startDate = lastSubscription.EndDate.Value;
+            }
+
+            var endDate = startDate.AddMonths(package.DurationMonths);
+
             var subscription = new UserSubscription
             {
                 UserId = transaction.UserId,
                 PackageId = transaction.PackageId,
-                StartDate = DateTime.UtcNow,
+                StartDate = startDate,
+                EndDate = endDate,
                 Status = StatusEnum.Active.ToString()
             };
 
             _ = await _userSubscriptionRepository.AddAsync(subscription);
-
             await _transactionRepository.SaveChangesAsync();
+
             return ApiResponse<string>.Ok(subscription.Id.ToString());
         }
+
 
         public async Task<ApiResponse<GetPaymentLinkResponse>> GetPaymentLinkResponseAsync(
             Guid transactionId,

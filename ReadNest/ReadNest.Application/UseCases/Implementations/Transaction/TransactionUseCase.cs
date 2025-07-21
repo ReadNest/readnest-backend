@@ -103,7 +103,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
 
             var endDate = startDate.AddMonths(package.DurationMonths);
 
-            var subscription = new UserSubscription
+            var subscription = new Domain.Entities.UserSubscription
             {
                 UserId = transaction.UserId,
                 PackageId = transaction.PackageId,

@@ -11,7 +11,7 @@ namespace ReadNest.WebAPI.Controllers
     [ApiController]
     [Route("api/v1/books/{bookId}/affiliate-links")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "User")]
     public class AffiliateLinkController : ControllerBase
     {
         private readonly IAffiliateLinkUseCase _affiliateLinkUseCase;
@@ -31,6 +31,15 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> CreateAffiliateLink([FromRoute] Guid bookId, [FromBody] CreateAffiliateLinkRequest request)
         {
             var response = await _affiliateLinkUseCase.CreateAsync(bookId, request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateAffiliateLink([FromRoute] Guid bookId, [FromBody] UpdateAffiliateLinkRequest request)
+        {
+            var response = await _affiliateLinkUseCase.UpdateAsync(bookId, request);
             return response.Success ? Ok(response) : BadRequest(response);
         }
     }

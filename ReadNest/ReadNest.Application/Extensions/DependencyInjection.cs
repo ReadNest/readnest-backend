@@ -19,6 +19,7 @@ using ReadNest.Application.UseCases.Implementations.TradingPost;
 using ReadNest.Application.UseCases.Implementations.Transaction;
 using ReadNest.Application.UseCases.Implementations.User;
 using ReadNest.Application.UseCases.Implementations.UserBadge;
+using ReadNest.Application.UseCases.Implementations.UserSubscription;
 using ReadNest.Application.UseCases.Interfaces.AffiliateLink;
 using ReadNest.Application.UseCases.Interfaces.Auth;
 using ReadNest.Application.UseCases.Interfaces.Badge;
@@ -38,6 +39,7 @@ using ReadNest.Application.UseCases.Interfaces.TradingPost;
 using ReadNest.Application.UseCases.Interfaces.Transaction;
 using ReadNest.Application.UseCases.Interfaces.User;
 using ReadNest.Application.UseCases.Interfaces.UserBadge;
+using ReadNest.Application.UseCases.Interfaces.UserSubscription;
 using ReadNest.Application.Validators.Auth;
 
 namespace ReadNest.Application.Extensions
@@ -65,6 +67,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<IFeatureUseCase, FeatureUseCase>();
             _ = services.AddScoped<IPackageUseCase, PackageUseCase>();
             _ = services.AddScoped<ITransactionUseCase, TransactionUseCase>();
+            _ = services.AddScoped<IUserSubscriptionUseCase, UserSubscriptionUseCase>();
 
             return services;
         }

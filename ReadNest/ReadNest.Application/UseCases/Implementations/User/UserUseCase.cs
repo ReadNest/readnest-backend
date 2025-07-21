@@ -87,7 +87,8 @@ namespace ReadNest.Application.UseCases.Implementations.User
         {
             var user = (await _userRepository.FindWithIncludeAsync(
                                        predicate: query => query.Id == userId && !query.IsDeleted,
-                                       include: query => query.Include(x => x.Role),
+                                       include: query => query.Include(x => x.Role)
+                                                              .Include(x => x.UserSubscriptions),
                                        asNoTracking: true)).FirstOrDefault();
 
             if (user == null)
@@ -109,6 +110,7 @@ namespace ReadNest.Application.UseCases.Implementations.User
                 UserId = user.Id,
                 UserName = user.UserName,
                 SelectedBadgeCode = selectedBadge is null ? "DEFAULT" : selectedBadge.Badge.Code,
+                HasPurchasedPremium = user.UserSubscriptions.Any(x => x.Status == StatusEnum.Active.ToString())
             };
 
             return ApiResponse<GetUserResponse>.Ok(data); ;

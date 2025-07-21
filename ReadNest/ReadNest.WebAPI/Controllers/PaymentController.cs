@@ -46,7 +46,7 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> ConfirmWebhook()
         {
             var response = await _transactionUseCase.InitWebhookPayOSAsync();
-            return Ok(response);
+            return response.Success ? Ok(response) : BadRequest(response);
         }
     }
 }

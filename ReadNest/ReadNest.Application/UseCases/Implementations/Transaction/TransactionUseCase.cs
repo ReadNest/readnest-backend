@@ -6,9 +6,10 @@ using ReadNest.Application.Repositories;
 using ReadNest.Application.Services;
 using ReadNest.Application.UseCases.Interfaces.Transaction;
 using ReadNest.Application.Validators.Transaction;
-using ReadNest.Domain.Entities;
+using ReadNest.Domain.Events;
 using ReadNest.Shared.Common;
 using ReadNest.Shared.Enums;
+using ReadNest.Shared.Utils;
 
 namespace ReadNest.Application.UseCases.Implementations.Transaction
 {
@@ -19,6 +20,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
         private readonly ITransactionRepository _transactionRepository;
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
         private readonly IPaymentGateway _paymentGateway;
+        private readonly IRedisPublisher _redisPublisher;
         private readonly CreatePaymentLinkRequestValidator _createValidator;
 
         /// <summary>
@@ -29,6 +31,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
         /// <param name="transactionRepository"></param>
         /// <param name="userSubscriptionRepository"></param>
         /// <param name="paymentGateway"></param>
+        /// <param name="redisPublisher"></param>
         /// <param name="createValidator"></param>
         public TransactionUseCase(
             IUserRepository userRepository,
@@ -36,6 +39,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             ITransactionRepository transactionRepository,
             IUserSubscriptionRepository userSubscriptionRepository,
             IPaymentGateway paymentGateway,
+            IRedisPublisher redisPublisher,
             CreatePaymentLinkRequestValidator createValidator)
         {
             _packageRepository = packageRepository;
@@ -43,6 +47,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             _transactionRepository = transactionRepository;
             _userSubscriptionRepository = userSubscriptionRepository;
             _paymentGateway = paymentGateway;
+            _redisPublisher = redisPublisher;
             _createValidator = createValidator;
         }
 
@@ -72,8 +77,30 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
         public async Task<ApiResponse<string>> CreateUserSubscription(WebhookData webhookData)
         {
             var transaction = await _transactionRepository.GetByOrderCodeAsync(webhookData.orderCode);
+
             if (transaction == null)
             {
+                var failEvent = new InvoiceEmailEvent
+                {
+                    Email = "unknown@user.com",
+                    Subject = $"[ReadNest] Thanh toán thất bại – Không tìm thấy giao dịch",
+                    Body = HtmlUtil.GetFailureEmailTemplate("Khách hàng", webhookData.orderCode.ToString())
+                };
+                await _redisPublisher.PublishInvoiceEmailEventAsync(failEvent);
+
+                return ApiResponse<string>.Fail(MessageId.E0005);
+            }
+
+            if (webhookData.amount != transaction.Amount)
+            {
+                var failEvent = new InvoiceEmailEvent
+                {
+                    Email = transaction.User.Email,
+                    Subject = $"[ReadNest] Thanh toán thất bại – Số tiền không hợp lệ",
+                    Body = HtmlUtil.GetFailureEmailTemplate(transaction.User.FullName, webhookData.orderCode.ToString())
+                };
+                await _redisPublisher.PublishInvoiceEmailEventAsync(failEvent);
+
                 return ApiResponse<string>.Fail(MessageId.E0005);
             }
 
@@ -86,17 +113,58 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             await _transactionRepository.UpdateAsync(transaction);
             await _transactionRepository.SaveChangesAsync();
 
-            var subscription = new UserSubscription
+            var package = await _packageRepository.GetByIdAsync(transaction.PackageId);
+            if (package == null)
+            {
+                var failEvent = new InvoiceEmailEvent
+                {
+                    Email = transaction.User.Email,
+                    Subject = $"[ReadNest] Thanh toán thất bại – Gói Premium không tồn tại",
+                    Body = HtmlUtil.GetFailureEmailTemplate(transaction.User.FullName, webhookData.orderCode.ToString())
+                };
+                await _redisPublisher.PublishInvoiceEmailEventAsync(failEvent);
+
+                return ApiResponse<string>.Fail("Package not found");
+            }
+
+            var lastSubscription = await _userSubscriptionRepository
+                .GetActiveSubscriptionByUserIdAsync(transaction.UserId);
+
+            var startDate = DateTime.UtcNow;
+            if (lastSubscription != null && lastSubscription.EndDate != null && lastSubscription.EndDate > DateTime.UtcNow)
+            {
+                startDate = lastSubscription.EndDate.Value;
+            }
+
+            var endDate = startDate.AddMonths(package.DurationMonths);
+
+            var subscription = new Domain.Entities.UserSubscription
             {
                 UserId = transaction.UserId,
                 PackageId = transaction.PackageId,
-                StartDate = DateTime.UtcNow,
+                StartDate = startDate,
+                EndDate = endDate,
                 Status = StatusEnum.Active.ToString()
             };
 
             _ = await _userSubscriptionRepository.AddAsync(subscription);
-
             await _transactionRepository.SaveChangesAsync();
+
+            var successEvent = new InvoiceEmailEvent
+            {
+                Email = transaction.User.Email,
+                Subject = $"[ReadNest] Thanh toán thành công – Order Code: {transaction.OrderCode}",
+                Body = HtmlUtil.GetSuccessEmailTemplate(
+                    transaction.User.FullName,
+                    webhookData.orderCode.ToString(),
+                    subscription.StartDate.ToString("dd/MM/yyyy"),
+                    subscription.EndDate.Value.ToString("dd/MM/yyyy"),
+                    string.Empty
+                )
+            };
+
+            await _redisPublisher.PublishInvoiceEmailEventAsync(successEvent);
+
             return ApiResponse<string>.Ok(subscription.Id.ToString());
         }
 

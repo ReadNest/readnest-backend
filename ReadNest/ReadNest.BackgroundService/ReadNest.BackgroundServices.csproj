@@ -13,6 +13,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReadNest.Application\ReadNest.Application.csproj" />
+    <ProjectReference Include="..\ReadNest.Infrastructure\ReadNest.Infrastructure.csproj">
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

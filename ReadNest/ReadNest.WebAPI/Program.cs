@@ -24,6 +24,7 @@ namespace ReadNest.WebAPI
             _ = builder.Services.AddEndpointsApiExplorer();
             _ = builder.Services.AddSwaggerGen();
             _ = builder.Services.AddHostedService<ChatMessageSaver>();
+            _ = builder.Services.AddHostedService<EmailInvoiceConsumer>();
 
             // SignalR
             _ = builder.Services.AddSignalR();

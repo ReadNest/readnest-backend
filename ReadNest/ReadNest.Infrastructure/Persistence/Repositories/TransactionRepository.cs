@@ -13,6 +13,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(x => x.OrderCode == orderCode)
                 .Include(x => x.Package)
+                .Include(x => x.User)
                 .FirstOrDefaultAsync();
         }
     }

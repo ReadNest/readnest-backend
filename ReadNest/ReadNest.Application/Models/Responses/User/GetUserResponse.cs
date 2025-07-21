@@ -13,5 +13,6 @@
         public string RoleName { get; set; }
         // Badge
         public string SelectedBadgeCode { get; set; }
+        public bool HasPurchasedPremium { get; set; }
     }
 }

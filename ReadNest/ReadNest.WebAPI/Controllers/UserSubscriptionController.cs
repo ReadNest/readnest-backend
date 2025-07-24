@@ -21,7 +21,7 @@ namespace ReadNest.WebAPI.Controllers
             _userSubscriptionUseCase = userSubscriptionUseCase;
         }
 
-        [HttpGet]
+        [HttpGet("{userId}")]
         [ProducesResponseType(typeof(ApiResponse<GetUserSubscriptionResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetUserSubscriptionByUserId([FromRoute] Guid userId)

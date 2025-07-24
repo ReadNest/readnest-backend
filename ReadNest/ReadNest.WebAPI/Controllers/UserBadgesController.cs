@@ -36,5 +36,13 @@ namespace ReadNest.WebAPI.Controllers
             var response = await _userBadgeUseCase.SelectUserBadge(userId, badgeId);
             return Ok(response);
         }
+
+        [HttpPost("assign-badge-to-users")]
+        [ProducesResponseType(typeof(ApiResponse<string>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> AssignBadgeToUsers(string badgeCode, Guid userId)
+        {
+            var response = await _userBadgeUseCase.AssignBadgeToUser(badgeCode, userId);
+            return Ok(response);
+        }
     }
 }

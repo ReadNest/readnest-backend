@@ -8,5 +8,6 @@ namespace ReadNest.Application.Repositories
     {
         Task<FavoriteBook?> GetByUserAndBookAsync(Guid userId, Guid bookId);
         Task<PagingResponse<Book>> GetFavoriteBooksByUserPagedAsync(Guid userId, int pageNumber, int pageSize);
+        Task<int> CountFavByUser(Guid userId);
     }
 }

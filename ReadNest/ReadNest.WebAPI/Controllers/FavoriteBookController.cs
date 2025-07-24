@@ -33,7 +33,7 @@ namespace ReadNest.WebAPI.Controllers
         public async Task<IActionResult> ToggleFavorite([FromBody] ToggleFavoriteBookRequest request)
         {
             var response = await _favoriteBookUseCase.ToggleFavoriteAsync(request);
-            return response.Success ? Ok(response) : BadRequest(response);
+            return Ok(response);
         }
 
         [HttpGet("favorites/{userId}")]

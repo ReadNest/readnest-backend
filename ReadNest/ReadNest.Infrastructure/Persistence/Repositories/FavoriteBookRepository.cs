@@ -8,6 +8,12 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
 {
     public class FavoriteBookRepository(AppDbContext context) : GenericRepository<FavoriteBook, Guid>(context), IFavoriteBookRepository
     {
+        public async Task<int> CountFavByUser(Guid userId)
+        {
+            return await _context.FavoriteBooks
+                .Where(fb => fb.UserId == userId).CountAsync();
+        }
+
         public async Task<FavoriteBook?> GetByUserAndBookAsync(Guid userId, Guid bookId)
         {
             return await _context.FavoriteBooks

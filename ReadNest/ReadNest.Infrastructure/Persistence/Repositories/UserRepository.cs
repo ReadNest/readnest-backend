@@ -48,6 +48,18 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
             return user;
         }
 
+        public async Task<bool> isActivePremium(Guid userId)
+        {
+            var user = await _context.Users
+                .Include(x => x.UserSubscriptions)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null || user.UserSubscriptions == null)
+                return false;
+
+            return user.UserSubscriptions
+                .Any(sub => sub.Status == StatusEnum.Active.ToString()) ;
+        }
+
         public async Task<User?> LoginAsync(string username, string password)
         {
             var user = await _context.Users.Include(x => x.Role).AsNoTracking().FirstOrDefaultAsync(x => x.UserName == username && !x.IsDeleted);

@@ -8,5 +8,6 @@ namespace ReadNest.Application.Services
         Task<string> GenerateRefreshTokenAsync(Guid userId);
         ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
         Task<bool> ValidateRefreshTokenAsync(Guid userId, string refreshToken);
+        Task<Guid> GetUserIdAsync(string token);
     }
 }

@@ -7,6 +7,7 @@ using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Models.Responses.Category;
 using ReadNest.Application.Models.Responses.TradingPost;
 using ReadNest.Application.Repositories;
+using ReadNest.Application.Services;
 using ReadNest.Application.UseCases.Interfaces.Book;
 using ReadNest.Application.Validators.Book;
 using ReadNest.Domain.Entities;
@@ -20,6 +21,8 @@ namespace ReadNest.Application.UseCases.Implementations.Book
         private readonly IBookRepository _bookRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly CreateBookRequestValidator _validator;
+        private readonly IRedisUserTrackingService _redisUserTrackingService;
+        private readonly IJwtService _jwtService;
 
         /// <summary>
         /// Constructor
@@ -27,11 +30,20 @@ namespace ReadNest.Application.UseCases.Implementations.Book
         /// <param name="bookRepository"></param>
         /// <param name="categoryRepository"></param>
         /// <param name="validator"></param>
-        public BookUseCase(IBookRepository bookRepository, ICategoryRepository categoryRepository, CreateBookRequestValidator validator)
+        /// <param name="redisUserTrackingService"></param>
+        /// <param name="jwtService"></param>
+        public BookUseCase(
+            IBookRepository bookRepository,
+            ICategoryRepository categoryRepository,
+            CreateBookRequestValidator validator,
+            IRedisUserTrackingService redisUserTrackingService,
+            IJwtService jwtService)
         {
             _bookRepository = bookRepository;
             _categoryRepository = categoryRepository;
             _validator = validator;
+            _redisUserTrackingService = redisUserTrackingService;
+            _jwtService = jwtService;
         }
 
         public async Task<ApiResponse<GetBookResponse>> CreateBookAsync(CreateBookRequest request)
@@ -99,8 +111,13 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<string>.Ok(string.Empty);
         }
 
-        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> FilterBooksAsync(BookFilterRequest request)
+        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> FilterBooksAsync(BookFilterRequest request, string token)
         {
+            var userId = await _jwtService.GetUserIdAsync(token);
+            if (userId != Guid.Empty && !string.IsNullOrEmpty(request.Keyword))
+            {
+                await _redisUserTrackingService.TrackKeywordSearchAsync(userId, request.Keyword);
+            }
 
             var response = await _bookRepository.FilterBooks(request);
             return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(response, MessageId.I0000);
@@ -184,7 +201,7 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<List<GetBookTradingPostResponse>>.Ok(response);
         }
 
-        public async Task<ApiResponse<GetBookResponse>> GetByIdAsync(Guid bookId)
+        public async Task<ApiResponse<GetBookResponse>> GetByIdAsync(Guid bookId, string token)
         {
             var books = await _bookRepository.FindWithIncludeAsync(
                 predicate: b => b.Id == bookId && !b.IsDeleted,
@@ -199,6 +216,12 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             if (book == null)
             {
                 return ApiResponse<GetBookResponse>.Fail(MessageId.E0005);
+            }
+
+            var userId = await _jwtService.GetUserIdAsync(token);
+            if (userId != Guid.Empty)
+            {
+                await _redisUserTrackingService.TrackBookClickAsync(userId, bookId);
             }
 
             var response = new GetBookResponse
@@ -233,9 +256,15 @@ namespace ReadNest.Application.UseCases.Implementations.Book
             return ApiResponse<GetBookResponse>.Ok(response);
         }
 
-        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> SearchBooksAsync(PagingRequest paging, string? keyword)
+        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> SearchBooksAsync(PagingRequest paging, string? keyword, string token)
         {
             var normalizedKeyword = StringUtil.NormalizeKeyword(keyword);
+
+            var userId = await _jwtService.GetUserIdAsync(token);
+            if (userId != Guid.Empty)
+            {
+                await _redisUserTrackingService.TrackKeywordSearchAsync(userId, normalizedKeyword);
+            }
 
             Expression<Func<Domain.Entities.Book, bool>> filter = b =>
                                     !b.IsDeleted &&

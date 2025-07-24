@@ -39,7 +39,10 @@ namespace ReadNest.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> SearchBooks([FromQuery] PagingRequest paging, [FromQuery] string? keyword)
         {
-            var response = await _bookUseCase.SearchBooksAsync(paging, keyword);
+            var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authHeader?.Substring("Bearer ".Length).Trim() ?? string.Empty;
+
+            var response = await _bookUseCase.SearchBooksAsync(paging, keyword, token);
             return Ok(response);
         }
 
@@ -47,7 +50,10 @@ namespace ReadNest.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> FilterBooks([FromQuery] BookFilterRequest request)
         {
-            var response = await _bookUseCase.FilterBooksAsync(request);
+            var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authHeader?.Substring("Bearer ".Length).Trim() ?? string.Empty;
+
+            var response = await _bookUseCase.FilterBooksAsync(request, token);
             return Ok(response);
         }
 
@@ -57,7 +63,10 @@ namespace ReadNest.WebAPI.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetBookById([FromRoute] Guid bookId)
         {
-            var response = await _bookUseCase.GetByIdAsync(bookId);
+            var authHeader = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+            var token = authHeader?.Substring("Bearer ".Length).Trim() ?? string.Empty;
+
+            var response = await _bookUseCase.GetByIdAsync(bookId, token);
             return response.Success ? Ok(response) : NotFound(response);
         }
 

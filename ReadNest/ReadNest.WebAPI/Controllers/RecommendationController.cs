@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.UseCases.Interfaces.Recommendation;
 
 namespace ReadNest.WebAPI.Controllers
@@ -10,6 +9,10 @@ namespace ReadNest.WebAPI.Controllers
     {
         private readonly IRecommendationUseCase _useCase;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="useCase"></param>
         public RecommendationController(IRecommendationUseCase useCase)
         {
             _useCase = useCase;

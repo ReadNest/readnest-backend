@@ -13,6 +13,7 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.Configure<RedisOptions>(configuration.GetSection(nameof(RedisOptions)));
             _ = services.Configure<PayOSOptions>(configuration.GetSection(nameof(PayOSOptions)));
             _ = services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+            _ = services.Configure<GeminiOptions>(configuration.GetSection(nameof(GeminiOptions)));
 
             return services;
         }

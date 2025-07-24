@@ -35,6 +35,8 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddScoped<IJwtService, JwtService>();
             _ = services.AddScoped<IPaymentGateway, PayOSPaymentGateway>();
             _ = services.AddScoped<IEmailService, EmailService>();
+            _ = services.AddScoped<IBookCoverService, BookCoverService>();
+            _ = services.AddScoped<IGeminiService, GeminiService>();
 
             // Redis services
             _ = services.AddScoped<IViewTracker, RedisViewTracker>();

@@ -4,7 +4,7 @@ using ReadNest.Application.UseCases.Interfaces.Recommendation;
 
 namespace ReadNest.WebAPI.Controllers
 {
-    [Route("api/recommendations")]
+    [Route("api/v1/recommendations")]
     [ApiController]
     public class RecommendationController : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace ReadNest.WebAPI.Controllers
             _useCase = useCase;
         }
 
-        [HttpGet("{userId:guid}")]
+        [HttpGet("/api/v1/user/{userId:guid}/recommendations")]
         public async Task<IActionResult> GetRecommendationBooksAsync([FromRoute] Guid userId)
         {
             return Ok(await _useCase.RecommendBooksAsync(userId));

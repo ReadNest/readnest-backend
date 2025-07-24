@@ -33,6 +33,7 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
         public DbSet<PackageFeature> PackageFeatures { get; set; }
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<UserSearchHistory> UserSearchHistories { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -842,9 +843,19 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 .WithMany(p => p.Transactions)
                 .HasForeignKey(t => t.PackageId);
 
+            // User Search History
+            modelBuilder.Entity<UserSearchHistory>().ToTable("user_search_histories");
+
+            modelBuilder.Entity<UserSearchHistory>()
+                        .Property(t => t.UserId).HasColumnName("user_id");
+
+            modelBuilder.Entity<UserSearchHistory>()
+                        .Property(t => t.Keyword)
+                        .HasColumnName("keyword")
+                        .HasMaxLength(200);
+
             base.OnModelCreating(modelBuilder);
         }
-
 
         public override int SaveChanges()
         {
@@ -875,7 +886,6 @@ namespace ReadNest.Infrastructure.Persistence.DBContext
                 else if (entry.State == EntityState.Modified)
                 {
                     entry.Property(nameof(BaseEntity<Guid>.CreatedAt)).IsModified = false;
-
                     entity.UpdatedAt = DateTime.UtcNow;
                 }
             }

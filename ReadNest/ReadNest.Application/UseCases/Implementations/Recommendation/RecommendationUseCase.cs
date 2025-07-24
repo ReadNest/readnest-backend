@@ -39,10 +39,6 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
                 {
                     var booksFromClicks = await _bookRepository.RecommendFromBookIdsAsync(topClickedBookIds);
                     var mapped = MapBooks(booksFromClicks);
-
-                    // Bỏ trùng
-                    recommendedBooks.AddRange(mapped
-                        .Where(b => !recommendedBooks.Any(r => r.Id == b.Id)));
                 }
             }
 
@@ -53,9 +49,6 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
                 {
                     var booksFromKeywords = await _bookRepository.RecommendFromKeywordsAsync(topKeywords);
                     var mapped = MapBooks(booksFromKeywords);
-
-                    recommendedBooks.AddRange(mapped
-                        .Where(b => !recommendedBooks.Any(r => r.Id == b.Id)));
                 }
             }
 
@@ -64,6 +57,8 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
                 var popularBooks = await _bookRepository.GetPopularBooksAsync(10);
                 recommendedBooks.AddRange(MapBooks(popularBooks));
             }
+
+            recommendedBooks = recommendedBooks.DistinctBy(b => b.Id).ToList();
 
             var response = new PagingResponse<GetBookSearchResponse>
             {

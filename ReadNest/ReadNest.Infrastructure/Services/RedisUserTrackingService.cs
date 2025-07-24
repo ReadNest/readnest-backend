@@ -1,4 +1,5 @@
 ﻿using ReadNest.Application.Services;
+using ReadNest.Domain.Entities;
 using StackExchange.Redis;
 
 namespace ReadNest.Infrastructure.Services
@@ -21,7 +22,7 @@ namespace ReadNest.Infrastructure.Services
             _ = await _redis.KeyDeleteAsync(string.Format(KeywordsKeyPattern, userId));
         }
 
-        public async Task<List<Guid>> GetTopBookClicksAsync(int userId, int top = 5)
+        public async Task<List<Guid>> GetTopBookClicksAsync(Guid userId, int top = 5)
         {
             var key = string.Format(ClicksKeyPattern, userId);
             var results = await _redis.SortedSetRangeByRankWithScoresAsync(

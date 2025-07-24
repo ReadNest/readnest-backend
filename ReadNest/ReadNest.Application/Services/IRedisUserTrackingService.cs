@@ -3,7 +3,7 @@
     public interface IRedisUserTrackingService
     {
         Task TrackBookClickAsync(Guid userId, Guid bookId);
-        Task<List<Guid>> GetTopBookClicksAsync(int userId, int top = 5);
+        Task<List<Guid>> GetTopBookClicksAsync(Guid userId, int top = 5);
         Task TrackKeywordSearchAsync(Guid userId, string keyword);
         Task<List<string>> GetTopKeywordsAsync(Guid userId, int top = 5);
         Task ClearUserTrackingAsync(Guid userId);

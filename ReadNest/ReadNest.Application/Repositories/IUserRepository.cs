@@ -10,5 +10,6 @@ namespace ReadNest.Application.Repositories
         Task<User?> GetByUserIdAsync(Guid userId);
         Task<User> GetByUserNameAsync(string userName);
         Task<IEnumerable<User>> GetAllUsersWithRoleUserAsync();
+        Task<bool> isActivePremium(Guid userId);
     }
 }

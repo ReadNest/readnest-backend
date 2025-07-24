@@ -5,6 +5,7 @@ using ReadNest.Application.Models.Responses.Payment;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.Services;
 using ReadNest.Application.UseCases.Interfaces.Transaction;
+using ReadNest.Application.UseCases.Interfaces.UserBadge;
 using ReadNest.Application.Validators.Transaction;
 using ReadNest.Domain.Events;
 using ReadNest.Shared.Common;
@@ -21,6 +22,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
         private readonly IUserSubscriptionRepository _userSubscriptionRepository;
         private readonly IPaymentGateway _paymentGateway;
         private readonly IRedisPublisher _redisPublisher;
+        private readonly IUserBadgeUseCase _userBadgeUseCase;
         private readonly CreatePaymentLinkRequestValidator _createValidator;
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
         /// <param name="paymentGateway"></param>
         /// <param name="redisPublisher"></param>
         /// <param name="createValidator"></param>
+        /// <param name="userBadgeUseCase"></param>
         public TransactionUseCase(
             IUserRepository userRepository,
             IPackageRepository packageRepository,
@@ -40,6 +43,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             IUserSubscriptionRepository userSubscriptionRepository,
             IPaymentGateway paymentGateway,
             IRedisPublisher redisPublisher,
+            IUserBadgeUseCase userBadgeUseCase,
             CreatePaymentLinkRequestValidator createValidator)
         {
             _packageRepository = packageRepository;
@@ -48,6 +52,7 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             _userSubscriptionRepository = userSubscriptionRepository;
             _paymentGateway = paymentGateway;
             _redisPublisher = redisPublisher;
+            _userBadgeUseCase = userBadgeUseCase;
             _createValidator = createValidator;
         }
 
@@ -164,6 +169,8 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             };
 
             await _redisPublisher.PublishInvoiceEmailEventAsync(successEvent);
+
+            await _userBadgeUseCase.AssignBadgeToUser("PREMIUM", transaction.User.Id);
 
             return ApiResponse<string>.Ok(subscription.Id.ToString());
         }

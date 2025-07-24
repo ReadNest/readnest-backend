@@ -55,6 +55,40 @@ namespace ReadNest.Application.UseCases.Implementations.UserBadge
 
         }
 
+        public async Task<ApiResponse<string>> AssignBadgeToUser(string badgeCode, Guid userId)
+        {
+            var existBadge = await _badgeRepository.GetByCodeAsync(badgeCode);
+            if (existBadge is null)
+            {
+                return ApiResponse<string>.Fail("Badge code does not exist!");
+            }
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user is null)
+            {
+                return ApiResponse<string>.Fail("User does not exist!");
+            }
+            var existingUserBadges = await _userBadgeRepository.GetByBadgeIdAsync(existBadge.Id);
+            // Kiểm tra xem người dùng đã có badge này chưa
+            if (existingUserBadges.Any(ub => ub.UserId == userId))
+            {
+                return ApiResponse<string>.Ok("User already has this badge.");
+            }
+            // Tạo mới UserBadge
+            var userBadge = new Domain.Entities.UserBadge
+            {
+                UserId = userId,
+                BadgeId = existBadge.Id,
+                IsSelected = false,
+            };
+            var result = await _userBadgeRepository.AddAsync(userBadge);
+            if (result is null)
+            {
+                return ApiResponse<string>.Fail("Failed to assign badge to user.");
+            }
+            await _userBadgeRepository.SaveChangesAsync();
+            return ApiResponse<string>.Ok("Badge assigned to user successfully.");
+        }
+
         public async Task<ApiResponse<string>> SelectUserBadge(Guid userId, Guid badgeId)
         {
             var userBadges = await _userBadgeRepository.GetAvailableByUserIdAsync(userId);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Repositories;
@@ -67,5 +68,116 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         {
             return await _context.Categories.AsNoTracking().Where(x => bookIds.Contains(x.Id) && !x.IsDeleted).ToListAsync();
         }
+
+        public async Task<List<Book>> RecommendFromBookIdsAsync(List<Guid> bookIds)
+        {
+            if (bookIds == null || !bookIds.Any())
+                return new List<Book>();
+
+            var sqlQuery = @"
+                                WITH top_books AS (
+                                    SELECT unnest(@BookIds) AS book_id
+                                ), related_categories AS (
+                                    SELECT DISTINCT bc.category_id
+                                    FROM book_categories bc
+                                    JOIN top_books tb ON bc.book_id = tb.book_id
+                                )
+                                SELECT DISTINCT b.*
+                                FROM books b
+                                JOIN book_categories bc ON b.id = bc.book_id
+                                JOIN related_categories rc ON bc.category_id = rc.category_id
+                                WHERE b.""IsDeleted"" = false
+                                  AND b.id <> ALL(@BookIds)
+                                LIMIT 20;";
+
+            var param = new NpgsqlParameter("@BookIds", bookIds);
+            var books = await _context.Books
+                .FromSqlRaw(sqlQuery, param)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return books;
+        }
+
+        public async Task<List<Book>> RecommendFromFavoritesBooksAsync(Guid userId)
+        {
+            var sqlQuery = @"
+                                WITH table1 AS (
+                                    SELECT bc.category_id, bc.book_id 
+                                    FROM favorite_books fb 
+                                    JOIN book_categories bc ON (fb.book_id = bc.book_id)
+                                    WHERE fb.user_id = @UserId
+                                ), table2 AS (
+                                    SELECT bc.book_id
+                                    FROM book_categories bc 
+                                    JOIN table1 t1 ON (bc.category_id = t1.category_id AND bc.book_id <> t1.book_id)
+                                )
+                                SELECT *
+                                FROM books b
+                                JOIN table2 t ON (b.id = t.book_id)
+                                WHERE b.""IsDeleted"" = false";
+
+            var books = await _context.Books
+                    .FromSqlRaw(sqlQuery, new NpgsqlParameter("@UserId", userId))
+                    .AsNoTracking()
+                    .ToListAsync();
+
+            return books;
+        }
+
+        public async Task<List<Book>> GetPopularBooksAsync(int limit = 10)
+        {
+            var sqlQuery = $@"
+                                SELECT b.*
+                                FROM books b
+                                LEFT JOIN (
+                                    SELECT fb.book_id, COUNT(*) AS fav_count
+                                    FROM favorite_books fb
+                                    GROUP BY fb.book_id
+                                ) favs ON favs.book_id = b.id
+                                WHERE b.""IsDeleted"" = false
+                                ORDER BY COALESCE(favs.fav_count, 0) DESC
+                                LIMIT @Limit;";
+
+            var param = new NpgsqlParameter("@Limit", limit);
+
+            var books = await _context.Books
+                .FromSqlRaw(sqlQuery, param)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return books;
+        }
+
+
+        public async Task<List<Book>> RecommendFromKeywordsAsync(List<string> keywords)
+        {
+            if (keywords == null || !keywords.Any())
+                return new List<Book>();
+
+            // Tạo điều kiện search: (ILIKE %keyword1% OR ILIKE %keyword2% ...)
+            var conditions = string.Join(" OR ",
+                keywords.Select((k, i) => $"b.title ILIKE @kw{i} OR b.author ILIKE @kw{i}"));
+
+            var sqlQuery = $@"
+                                 SELECT *
+                                 FROM books b
+                                 WHERE b.""IsDeleted"" = false
+                                   AND ({conditions})
+                                 LIMIT 20;";
+
+            var parameters = keywords
+                .Select((k, i) => new NpgsqlParameter($"@kw{i}", $"%{k}%"))
+                .ToArray();
+
+            var books = await _context.Books
+                .FromSqlRaw(sqlQuery, parameters)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return books;
+        }
+
+
     }
 }

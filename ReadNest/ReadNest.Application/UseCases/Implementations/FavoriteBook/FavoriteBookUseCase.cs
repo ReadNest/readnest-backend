@@ -4,6 +4,7 @@ using ReadNest.Application.Models.Responses.Category;
 using ReadNest.Application.Models.Responses.FavoriteBook;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.UseCases.Interfaces.FavoriteBook;
+using ReadNest.Domain.Entities;
 using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
@@ -11,10 +12,12 @@ namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
     public class FavoriteBookUseCase : IFavoriteBookUseCase
     {
         private readonly IFavoriteBookRepository _favoriteBookRepository;
+        private readonly IUserRepository _userRepository;
 
-        public FavoriteBookUseCase(IFavoriteBookRepository favoriteBookRepository)
+        public FavoriteBookUseCase(IFavoriteBookRepository favoriteBookRepository, IUserRepository userRepository)
         {
             _favoriteBookRepository = favoriteBookRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ApiResponse<ToggleFavoriteBookResponse>> ToggleFavoriteAsync(ToggleFavoriteBookRequest request)
@@ -24,6 +27,23 @@ namespace ReadNest.Application.UseCases.Implementations.FavoriteBook
 
             if (existing == null)
             {
+                var numFav = await _favoriteBookRepository.CountFavByUser(request.UserId);
+                if (numFav >= 5)
+                {
+                    var hasActive = await _userRepository.isActivePremium(request.UserId);
+                    if (hasActive == false)
+                    {
+                        //return ApiResponse<ToggleFavoriteBookResponse>.Fail("Cannot add more favorite book.");
+                        return new ApiResponse<ToggleFavoriteBookResponse>
+                        {
+                            Success = false,
+                            Message = "Cannot add more favorite book.",
+                            Data = new ToggleFavoriteBookResponse()
+                        };
+                    }
+                }
+
+
                 var newFavorite = new Domain.Entities.FavoriteBook
                 {
                     Id = Guid.NewGuid(),

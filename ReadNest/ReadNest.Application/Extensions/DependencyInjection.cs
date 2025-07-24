@@ -15,6 +15,7 @@ using ReadNest.Application.UseCases.Implementations.Feature;
 using ReadNest.Application.UseCases.Implementations.Leaderboard;
 using ReadNest.Application.UseCases.Implementations.Package;
 using ReadNest.Application.UseCases.Implementations.Post;
+using ReadNest.Application.UseCases.Implementations.Recommendation;
 using ReadNest.Application.UseCases.Implementations.TradingPost;
 using ReadNest.Application.UseCases.Implementations.Transaction;
 using ReadNest.Application.UseCases.Implementations.User;
@@ -35,6 +36,7 @@ using ReadNest.Application.UseCases.Interfaces.Feature;
 using ReadNest.Application.UseCases.Interfaces.Leaderboard;
 using ReadNest.Application.UseCases.Interfaces.Package;
 using ReadNest.Application.UseCases.Interfaces.Post;
+using ReadNest.Application.UseCases.Interfaces.Recommendation;
 using ReadNest.Application.UseCases.Interfaces.TradingPost;
 using ReadNest.Application.UseCases.Interfaces.Transaction;
 using ReadNest.Application.UseCases.Interfaces.User;
@@ -68,6 +70,7 @@ namespace ReadNest.Application.Extensions
             _ = services.AddScoped<IPackageUseCase, PackageUseCase>();
             _ = services.AddScoped<ITransactionUseCase, TransactionUseCase>();
             _ = services.AddScoped<IUserSubscriptionUseCase, UserSubscriptionUseCase>();
+            _ = services.AddScoped<IRecommendationUseCase, RecommendationUseCase>();
 
             return services;
         }

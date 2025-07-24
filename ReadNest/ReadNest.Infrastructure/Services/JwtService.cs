@@ -84,6 +84,33 @@ namespace ReadNest.Infrastructure.Services
             throw new NotImplementedException();
         }
 
+        public async Task<Guid> GetUserIdAsync(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return Guid.Empty;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidIssuer = _jwtSettings.Issuer,
+                ValidAudience = _jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = false
+            }, out _);
+
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                return await Task.FromResult(Guid.Empty);
+            }
+
+            return await Task.FromResult(userId);
+        }
+
+
         /// <summary>
         /// ValidateRefreshTokenAsync
         /// </summary>

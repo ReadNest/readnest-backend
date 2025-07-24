@@ -9,5 +9,6 @@ namespace ReadNest.Application.Repositories
     {
         public Task<PagingResponse<GetBookSearchResponse>> FilterBooks(BookFilterRequest request);
         public Task<IEnumerable<Category>> GetCategoriesByBookIds(List<Guid> bookIds);
+        public Task<List<Book>> RecommendFromFavoritesBooksAsync(Guid userId);
     }
 }

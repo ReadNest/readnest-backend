@@ -49,6 +49,5 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
                 PageSize = pageSize
             };
         }
-
     }
 }

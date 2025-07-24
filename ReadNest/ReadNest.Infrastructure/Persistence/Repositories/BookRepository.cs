@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ReadNest.Application.Models.Requests.Book;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.Repositories;
@@ -66,6 +67,31 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<Category>> GetCategoriesByBookIds(List<Guid> bookIds)
         {
             return await _context.Categories.AsNoTracking().Where(x => bookIds.Contains(x.Id) && !x.IsDeleted).ToListAsync();
+        }
+
+        public async Task<List<Book>> RecommendFromFavoritesBooksAsync(Guid userId)
+        {
+            var sqlQuery = @"
+                                WITH table1 AS (
+                                    SELECT bc.category_id, bc.book_id 
+                                    FROM favorite_books fb 
+                                    JOIN book_categories bc ON (fb.book_id = bc.book_id)
+                                    WHERE fb.user_id = @UserId
+                                ), table2 AS (
+                                    SELECT bc.book_id
+                                    FROM book_categories bc 
+                                    JOIN table1 t1 ON (bc.category_id = t1.category_id AND bc.book_id <> t1.book_id)
+                                )
+                                SELECT *
+                                FROM books b
+                                JOIN table2 t ON (b.id = t.book_id)
+                                WHERE b.""IsDeleted"" = false";
+
+            var books = await _context.Books
+                    .FromSqlRaw(sqlQuery, new NpgsqlParameter("@UserId", userId))
+                    .ToListAsync();
+
+            return books;
         }
     }
 }

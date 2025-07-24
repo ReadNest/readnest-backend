@@ -157,7 +157,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
 
             // Tạo điều kiện search: (ILIKE %keyword1% OR ILIKE %keyword2% ...)
             var conditions = string.Join(" OR ",
-                keywords.Select((k, i) => $"b.\"Title\" ILIKE @kw{i} OR b.\"Author\" ILIKE @kw{i}"));
+                keywords.Select((k, i) => $"b.title ILIKE @kw{i} OR b.author ILIKE @kw{i}"));
 
             var sqlQuery = $@"
                                  SELECT *

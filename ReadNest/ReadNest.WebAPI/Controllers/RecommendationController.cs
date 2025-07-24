@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.UseCases.Interfaces.Recommendation;
+using ReadNest.Shared.Common;
 
 namespace ReadNest.WebAPI.Controllers
 {
@@ -18,10 +21,11 @@ namespace ReadNest.WebAPI.Controllers
             _useCase = useCase;
         }
 
-        [HttpGet("/api/v1/user/{userId:guid}/recommendations")]
-        public async Task<IActionResult> GetRecommendationBooksAsync([FromRoute] Guid userId)
+        [HttpGet("{userId:guid}")]
+        [ProducesResponseType(typeof(ApiResponse<PagingResponse<GetBookSearchResponse>>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetRecommendationBooksAsync([FromRoute] Guid userId, [FromQuery] PagingRequest request)
         {
-            return Ok(await _useCase.RecommendBooksAsync(userId));
+            return Ok(await _useCase.RecommendBooksAsync(userId, request));
         }
     }
 }

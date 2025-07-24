@@ -2,6 +2,7 @@
 using ReadNest.Application.Repositories;
 using ReadNest.Application.Services;
 using ReadNest.Application.UseCases.Interfaces.Recommendation;
+using ReadNest.Shared.Common;
 
 namespace ReadNest.Application.UseCases.Implementations.Recommendation
 {
@@ -24,7 +25,7 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
             _redisUserTrackingService = redisUserTrackingService;
         }
 
-        public async Task<List<GetBookSearchResponse>> RecommendBooksAsync(Guid userId)
+        public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> RecommendBooksAsync(Guid userId, PagingRequest request)
         {
             var recommendedBooks = new List<GetBookSearchResponse>();
 
@@ -64,7 +65,16 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
                 recommendedBooks.AddRange(MapBooks(popularBooks));
             }
 
-            return recommendedBooks.ToList();
+            var response = new PagingResponse<GetBookSearchResponse>
+            {
+                TotalItems = recommendedBooks.Count,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = recommendedBooks.Skip((request.PageIndex - 1) * request.PageSize)
+                                        .Take(request.PageSize),
+            };
+
+            return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(response);
         }
 
         private List<GetBookSearchResponse> MapBooks(IEnumerable<Domain.Entities.Book> books)

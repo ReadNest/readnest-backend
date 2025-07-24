@@ -89,6 +89,7 @@ namespace ReadNest.Infrastructure.Persistence.Repositories
 
             var books = await _context.Books
                     .FromSqlRaw(sqlQuery, new NpgsqlParameter("@UserId", userId))
+                    .AsNoTracking()
                     .ToListAsync();
 
             return books;

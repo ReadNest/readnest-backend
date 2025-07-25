@@ -1,7 +1,11 @@
-﻿using FluentValidation;
+﻿using System.Transactions;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Net.payOS.Types;
 using ReadNest.Application.Models.Requests.Payment;
+using ReadNest.Application.Models.Requests.Transaction;
 using ReadNest.Application.Models.Responses.Payment;
+using ReadNest.Application.Models.Responses.Transaction;
 using ReadNest.Application.Repositories;
 using ReadNest.Application.Services;
 using ReadNest.Application.UseCases.Interfaces.Transaction;
@@ -192,6 +196,38 @@ namespace ReadNest.Application.UseCases.Implementations.Transaction
             }
 
             return ApiResponse<GetPaymentLinkResponse>.Ok(new GetPaymentLinkResponse { CheckoutUrl = paymentLink });
+        }
+
+        public async Task<ApiResponse<PagingResponse<GetTransactionResponse>>> GetTransactionsByUserIdAsync(Guid userId, GetTransactionRequest request)
+        {
+            var transactions = await _transactionRepository.FindWithIncludePagedAsync(
+                predicate: query => !query.IsDeleted && query.UserId == userId &&
+                            (request.Status == null || query.TransactionStatus.ToLower() == request.Status.ToLower()),
+                include: query => query.Include(x => x.Package),
+                pageNumber: request.PageIndex,
+                pageSize: request.PageSize,
+                orderBy: query => query
+                .OrderByDescending(x => x.TransactionStatus == StatusEnum.Success.ToString())
+                .OrderByDescending(x => x.UpdatedAt));
+
+            var response = new PagingResponse<GetTransactionResponse>
+            {
+                Items = transactions.Select(x => new GetTransactionResponse
+                {
+                    Id = x.Id,
+                    Amount = x.Amount,
+                    UpdatedAt = x.UpdatedAt,
+                    OrderCode = x.OrderCode,
+                    PackageName = x.Package.Name,
+                    PaymentMethod = x.PaymentMethod,
+                    TransactionStatus = x.TransactionStatus
+                }),
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                TotalItems = await _transactionRepository.CountAsync(query => !query.IsDeleted && query.UserId == userId)              
+            };
+
+            return ApiResponse<PagingResponse<GetTransactionResponse>>.Ok(response);
         }
 
         public async Task<ApiResponse<string>> InitWebhookPayOSAsync()

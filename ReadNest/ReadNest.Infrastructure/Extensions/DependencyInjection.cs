@@ -11,8 +11,8 @@ namespace ReadNest.Infrastructure.Extensions
             _ = services.AddCustomDbContext(configuration);
             _ = services.AddCustomJwt(configuration);
             _ = services.AddCustomRedis(configuration);
+            _ = services.AddConfigureGemini(configuration);
             _ = services.AddServices();
-
 
             return services;
         }

@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReadNest.Application.Models.Responses.Book;
 using ReadNest.Application.UseCases.Interfaces.Recommendation;
@@ -8,6 +10,7 @@ namespace ReadNest.WebAPI.Controllers
 {
     [Route("api/v1/recommendations")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User,Admin")]
     public class RecommendationController : ControllerBase
     {
         private readonly IRecommendationUseCase _useCase;

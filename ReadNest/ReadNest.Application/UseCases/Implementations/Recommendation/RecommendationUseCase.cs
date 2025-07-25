@@ -10,6 +10,8 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
     {
         private readonly IBookRepository _bookRepository;
         private readonly IRedisUserTrackingService _redisUserTrackingService;
+        private readonly IGeminiService _geminiService;
+        private readonly IBookCoverService _bookCoverService;
 
         /// <summary>
         /// Constructor
@@ -17,12 +19,18 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
         /// <param name="favoriteBookRepository"></param>
         /// <param name="bookRepository"></param>
         /// <param name="redisUserTrackingService"></param>
+        /// <param name="bookCoverService"></param>
+        /// <param name="geminiService"></param>
         public RecommendationUseCase(
             IBookRepository bookRepository,
-            IRedisUserTrackingService redisUserTrackingService)
+            IRedisUserTrackingService redisUserTrackingService,
+            IGeminiService geminiService,
+            IBookCoverService bookCoverService)
         {
             _bookRepository = bookRepository;
             _redisUserTrackingService = redisUserTrackingService;
+            _geminiService = geminiService;
+            _bookCoverService = bookCoverService;
         }
 
         public async Task<ApiResponse<PagingResponse<GetBookSearchResponse>>> RecommendBooksAsync(Guid userId, PagingRequest request)
@@ -71,6 +79,27 @@ namespace ReadNest.Application.UseCases.Implementations.Recommendation
 
             return ApiResponse<PagingResponse<GetBookSearchResponse>>.Ok(response);
         }
+
+        public async Task<ApiResponse<List<BookSuggestion>>> RecommendBooksByGeminiAsync(List<UserAnswer> answers)
+        {
+            var books = await _geminiService.GetRecommendationsAsync(answers);
+
+            foreach (var book in books)
+            {
+                var cover = await _bookCoverService.GetBookInfoAsync(book.Title, book.Author);
+                if (cover != null)
+                {
+                    book.Image = cover.Thumbnail;
+                    book.InfoLink = cover.InfoLink;
+                }
+                else
+                {
+                    book.Image = "https://via.placeholder.com/150";
+                }
+            }
+
+            return ApiResponse<List<BookSuggestion>>.Ok(books);
+        }        
 
         private List<GetBookSearchResponse> MapBooks(IEnumerable<Domain.Entities.Book> books)
         {

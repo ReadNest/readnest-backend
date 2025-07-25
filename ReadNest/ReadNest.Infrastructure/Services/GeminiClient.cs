@@ -8,15 +8,22 @@ namespace ReadNest.Infrastructure.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _model;
+        private readonly string _apiKey;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="apiKey"></param>
+        /// <param name="baseUrl"></param>
+        /// <param name="model"></param>
         public GeminiClient(string apiKey, string baseUrl, string model = "gemini-1.5-flash-latest")
         {
+            _apiKey = apiKey;
             _model = model;
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri(baseUrl)
             };
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
         }
 
         public async Task<string> AskAsync(string prompt)
@@ -25,24 +32,30 @@ namespace ReadNest.Infrastructure.Services
             {
                 contents = new[]
                 {
-                    new
+                new
+                {
+                    parts = new[]
                     {
-                        parts = new[]
-                        {
-                            new { text = prompt }
-                        }
+                        new { text = prompt }
                     }
                 }
+            }
             };
 
+            var url = $"models/{_model}:generateContent?key={_apiKey}";
+
             var response = await _httpClient.PostAsync(
-                $"models/{_model}:generateContent",
+                url,
                 new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json")
             );
 
-            response.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Gemini API Error ({response.StatusCode}): {error}");
+            }
 
+            var json = await response.Content.ReadAsStringAsync();
             dynamic result = JsonConvert.DeserializeObject(json);
             return (string)result.candidates[0].content.parts[0].text;
         }

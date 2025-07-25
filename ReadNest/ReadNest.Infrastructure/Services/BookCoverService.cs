@@ -15,7 +15,6 @@ namespace ReadNest.Infrastructure.Services
             _httpClient = httpClientFactory.CreateClient(options.Value.GoogleBooks);
         }
 
-
         public async Task<BookSearchResult> GetBookInfoAsync(string title, string author)
         {
             string query = $"volumes?q=intitle:{title}+inauthor:{author}";
@@ -31,9 +30,9 @@ namespace ReadNest.Infrastructure.Services
                 return new BookSearchResult
                 {
                     Title = volume.title,
-                    Author = volume.authors != null ? string.Join(", ", volume.authors.ToObject<List<string>>()) : "Unknown",
-                    Thumbnail = volume.imageLinks?.thumbnail ?? "https://via.placeholder.com/150",
-                    InfoLink = volume.infoLink ?? ""
+                    Author = volume.authors != null ? string.Join(", ", volume.authors.ToObject<List<string>>()) : "Chưa tìm thấy tên tác giả",
+                    Thumbnail = volume.imageLinks?.thumbnail ?? string.Empty,
+                    InfoLink = volume.infoLink ?? string.Empty
                 };
             }
 

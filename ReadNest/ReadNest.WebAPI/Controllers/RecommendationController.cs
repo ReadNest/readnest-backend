@@ -34,7 +34,7 @@ namespace ReadNest.WebAPI.Controllers
         [HttpPost("recommend")]
         [ProducesResponseType(typeof(ApiResponse<List<BookSuggestion>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> RecommendBooks([FromBody] List<UserAnswer> answers)
-        {
+        {   
             var books = await _useCase.RecommendBooksByGeminiAsync(answers);
             return Ok(books);
         }

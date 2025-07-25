@@ -6,7 +6,7 @@ using ReadNest.Shared.Common;
 
 namespace ReadNest.WebAPI.Controllers
 {
-    [Route("api/user-subscriptions")]
+    [Route("api/v1/user-subscriptions")]
     [ApiController]
     public class UserSubscriptionController : ControllerBase
     {

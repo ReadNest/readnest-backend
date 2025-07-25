@@ -86,7 +86,7 @@ namespace ReadNest.Application.UseCases.Implementations.Post
 
         public async Task<ApiResponse<GetPostResponse>> CreateAsync(CreatePostRequest request)
         {
-            await _validator.ValidateAndThrowAsync(request);
+            //await _validator.ValidateAndThrowAsync(request);
 
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)

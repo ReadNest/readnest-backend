@@ -30,6 +30,12 @@ namespace ReadNest.WebAPI
             _ = builder.Services.AddSignalR();
             _ = builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
+            _ = builder.Services.Configure<HostOptions>(options =>
+            {
+                // This ensures that errors in background services won't stop the host
+                options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
